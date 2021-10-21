@@ -1,0 +1,10 @@
+{
+    "name": "⏳ Time's Up API by Play-IT",
+    "version": "0.1.0",
+    "description": "This API provides various data through HTTP requests to manage Time's Up by Play-IT games.",
+    "template": {
+        "forceLanguage": "en",
+        "withCompare": true,
+        "withGenerator": true
+    }
+}

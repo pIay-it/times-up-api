@@ -1,0 +1,7 @@
+{
+  "uid": "times-up-api-sandbox",
+  "append": true,
+  "silent": false,
+  "watch": false,
+  "script": "app.js"
+}
