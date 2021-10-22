@@ -6,6 +6,7 @@
 
 * `forever` configs for `sandbox` and `production` are ready to be deployed on the future server.
 * `eslint` config implemented.
+* Sentry ready to catch errors and send notifications to Slack.
 * Main config file with `.env` variables.
 
 ### 🛣 Routes

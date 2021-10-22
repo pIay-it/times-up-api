@@ -13,6 +13,7 @@
 ## 📋 Table of Contents
 
 1. ⏳ [What is this API ?](#what-is-this-api)
+2. 🔨 [Installation](#installation)
 2. 🔌 [Let's go](#lets-go)
 3. ⚙️ [Other useful commands](#other-useful-commands)
 4. ©️ [License](#license)
