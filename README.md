@@ -23,6 +23,30 @@ This API provides various data through HTTP requests to manage Time's Up parties
 
 This is the project's API used by [**Time's Up Web**](https://github.com/pIay-it/times-up-web), the main web **VueJS** client.  
 
+## <a name="installation">🔨 Installation</a>
+
+1. Install dependencies with `npm install` (add `--production` to omit dev dependencies).
+2. Copy `.env.example` and paste it as `.env`.
+3. Replace environment values in the fresh new `.env` file if necessary (When **⚠️️ Required** is specified):
+    * **DB_USER**: User for authenticating into the MongoDB database.
+        - _**⚠️ Required if MongoDB auth is enabled**_
+    * **DB_PASSWORD**: Password for authenticating into the MongoDB database.
+        - _**⚠️ Required if MongoDB auth is enabled**_
+    * **DB_NAME**: Name of the MongoDB database.
+        - _**Not required - Default value**: `times-up`_
+    * **BASIC_USERNAME**: Username for basic authentication.
+        - _**Not required - Default value**: `root`_
+    * **BASIC_PASSWORD**: Password for basic authentication.
+        - _**Not required - Default value**: `secret`_
+    * **PORT**: Which port the API must run.
+        - _**Not required - Default value**: `4242`_
+    * **SENTRY_ENABLED**: Set to `true` if you want errors to be caught and sent to Sentry.
+        - _**Not required**_
+    * **SENTRY_PROJECT_ID**: Sentry project's ID. 
+        - _**⚠️ Required if Sentry is enabled**_
+    * **SENTRY_KEY**: Sentry secret key.
+        - _**⚠️ Required if Sentry is enabled**_
+
 ## <a name="lets-go">🔌 Let's go</a>
 
 To start the API **on development mode**, simply run `npm start`.
