@@ -4,17 +4,29 @@
 
 ### 🚀 New features
 
+* Starting this awesome project.
+* Express server and project architecture.
 * `forever` configs for `sandbox` and `production` are ready to be deployed on the future server.
-* `eslint` config implemented.
+* `eslint` config and rules.
 * Sentry ready to catch errors and send notifications to Slack.
 * Main config file with `.env` variables.
+* Script `update-version` to update project version on `package.json`, `apidoc` config and API main route.
+* MIT license.
 
 ### 🛣 Routes
 
+* Route `GET /` for checking API status and version.
+
 ### 📚 Documentation
 
-* `README.md` file added.
-* `CONTRIBUTING.md` file added.
+* `README.md` file.
+* `CONTRIBUTING.md` file.
+* Route `GET /`.
+
+### 🧪 Tests
+
+* Test environment set up. You can run it with `npm test`.
+* Test for route `GET /` added.
 
 ### 📦 Packages
 
