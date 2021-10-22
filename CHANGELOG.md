@@ -5,6 +5,7 @@
 ### 🚀 New features
 
 * `forever` configs for `sandbox` and `production` are ready to be deployed on the future server.
+* `eslint` config implemented.
 
 ### 🛣 Routes
 
