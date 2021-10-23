@@ -1,4 +1,4 @@
-    module.exports = {
+module.exports = {
     root: true,
     env: {
         node: true,
@@ -59,6 +59,7 @@
         "no-unsafe-finally": "error",
         "no-unsafe-negation": "error",
         "no-unsafe-optional-chaining": "error",
+        "no-unused-private-class-members": "error",
         "no-unused-vars": "error",
         "no-use-before-define": "error",
         "no-useless-backreference": "error",

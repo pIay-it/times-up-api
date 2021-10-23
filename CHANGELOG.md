@@ -21,7 +21,8 @@
 
 * `README.md` file.
 * `CONTRIBUTING.md` file.
-* Route `GET /`.
+* Header for classes structure and footer for codes and values in APIDoc.
+* Route `GET /` in APIDoc.
 
 ### 🧪 Tests
 
