@@ -14,6 +14,19 @@
 
 ### Fields annotated with `*` are optional. Therefore, classes properties aren't always set.
 
+## <a id="card-class"></a>🃏️ Card
+
+Games are made of cards to guess by players. Each card has a label, some categories and a difficulty to guess.
+
+| Field                | Type     | Description                                                                     |
+|----------------------|:--------:|---------------------------------------------------------------------------------|
+| _id                  | ObjectId | Card's ID.                                                                      |
+| categories           | String[] | Card's categories. (_Possibilities: [Codes - Card Categories](#card-categories))|
+| difficulty           | Number   | Card's difficulty to guess. Set from 1 (easiest) to 5 (hardest).                |
+| **description***     | String   | Card's description which can help to guess it.                                  |
+| createdAt            | Date     | When the card was created.                                                      |
+| updatedAt            | Date     | When the card was updated.                                                      |
+
 ## <a id="error-class"></a>⚠️ API Error
 
 Class returned from API HTTP requests when something went wrong.
