@@ -15,7 +15,7 @@ const CardSchema = new Schema({
         type: Number,
         required: true,
         min: 1,
-        max: 5,
+        max: 3,
     },
     description: { type: String },
     imageURL: { type: String },

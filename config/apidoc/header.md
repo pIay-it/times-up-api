@@ -21,8 +21,9 @@ Games are made of cards to guess by players. Each card has a label, some categor
 | Field                | Type     | Description                                                                     |
 |----------------------|:--------:|---------------------------------------------------------------------------------|
 | _id                  | ObjectId | Card's ID.                                                                      |
+| label                | String   | Card's label to be guessed.                                                     |
 | categories           | String[] | Card's categories. (_Possibilities: [Codes - Card Categories](#card-categories))|
-| difficulty           | Number   | Card's difficulty to guess. Set from 1 (easiest) to 5 (hardest).                |
+| difficulty           | Number   | Card's difficulty to guess. Set from 1 (easiest) to 3 (hardest).                |
 | **description***     | String   | Card's description which can help to guess it.                                  |
 | **imageURL***        | String   | Card's image URL which can help to guess it.                                    |
 | createdAt            | Date     | When the card was created.                                                      |

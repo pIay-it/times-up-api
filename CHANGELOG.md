@@ -11,11 +11,12 @@
 * Sentry ready to catch errors and send notifications to Slack.
 * Main config file with `.env` variables.
 * Script `update-version` to update project version on `package.json`, `apidoc` config and API main route.
-* MIT license.
+* MIT license. 
 
 ### 🛣 Routes
 
 * Route `GET /` for checking API status and version.
+* Route `GET /cards` for getting all available cards.
 
 ### 📚 Documentation
 
@@ -23,7 +24,8 @@
 * `CONTRIBUTING.md` file.
 * Header for classes structure and footer for codes and values in APIDoc.
 * Route `GET /` in APIDoc.
-* `Card` class with category possible values.
+* `Card` class with category possible values in APIDoc.
+* Route `GET /cards` in APIDoc.
 
 ### 🧪 Tests
 
