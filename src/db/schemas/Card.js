@@ -18,6 +18,7 @@ const CardSchema = new Schema({
         max: 5,
     },
     description: { type: String },
+    imageURL: { type: String },
 }, {
     timestamps: true,
     versionKey: false,

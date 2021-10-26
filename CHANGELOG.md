@@ -23,6 +23,7 @@
 * `CONTRIBUTING.md` file.
 * Header for classes structure and footer for codes and values in APIDoc.
 * Route `GET /` in APIDoc.
+* `Card` class with category possible values.
 
 ### 🧪 Tests
 
