@@ -1,6 +1,6 @@
+const { flatten } = require("mongo-dot-notation");
 const Card = require("../db/models/Card");
 const { checkRequestData } = require("../helpers/functions/Express");
-const { toTitleCase } = require("../helpers/functions/String");
 const { sendError, generateError } = require("../helpers/functions/Error");
 
 exports.find = (search, projection, options = {}) => Card.find(search, projection, options);
@@ -33,11 +33,10 @@ exports.fillCategories = data => {
 };
 
 exports.checkAndFillDataBeforeCreate = async data => {
-    const existingCard = await this.findOne({ label: { $regex: new RegExp(data.label, "iu") } });
-    if (existingCard) {
+    const sameLabelCard = await this.findOne({ label: { $regex: new RegExp(data.label, "iu") } });
+    if (sameLabelCard) {
         throw generateError("CARD_ALREADY_EXISTS", `There is already an existing card with label "${data.label}".`);
     }
-    data.label = toTitleCase(data.label);
     this.fillCategories(data);
 };
 
@@ -50,6 +49,31 @@ exports.create = async(data, options = {}) => {
     }
     const card = await Card.create(data, options);
     return toJSON ? card.toJSON() : card;
+};
+
+exports.checkAndFillDataBeforeUpdate = async(data, existingCard) => {
+    if (!existingCard) {
+        throw generateError("NOT_FOUND", `Card not found.`);
+    }
+    if (data.label) {
+        const sameLabelCard = await this.findOne({ _id: { $ne: existingCard._id }, label: { $regex: new RegExp(data.label, "iu") } });
+        if (sameLabelCard) {
+            throw generateError("CARD_ALREADY_EXISTS", `There is already an existing card with label "${data.label}".`);
+        }
+    }
+    if (data.categories) {
+        this.fillCategories(data);
+    }
+};
+
+exports.findOneAndUpdate = async(search, data, options = {}) => {
+    const { toJSON } = options;
+    delete options.toJSON;
+    options.new = options.new === undefined ? true : options.new;
+    const existingCard = await this.findOne(search);
+    await this.checkAndFillDataBeforeUpdate(data, existingCard);
+    const updatedCard = await Card.findOneAndUpdate(search, flatten(data), options);
+    return toJSON ? updatedCard.toJSON() : updatedCard;
 };
 
 exports.getCards = async(req, res) => {
@@ -78,6 +102,16 @@ exports.postCard = async(req, res) => {
     try {
         const { body } = checkRequestData(req);
         const card = await this.create(body);
+        return res.status(200).json(card);
+    } catch (e) {
+        sendError(res, e);
+    }
+};
+
+exports.patchCard = async(req, res) => {
+    try {
+        const { body, params } = checkRequestData(req);
+        const card = await this.findOneAndUpdate({ _id: params.id }, body);
         return res.status(200).json(card);
     } catch (e) {
         sendError(res, e);

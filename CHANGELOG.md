@@ -18,6 +18,8 @@
 * Route `GET /` for checking API status and version.
 * Route `GET /cards` for getting all available cards.
 * Route `GET /cards/:id` for getting a card with an ID.
+* Route `POST /cards` for creating a new card.
+* Route `PATCH /cards/:id` for updating a card.
 
 ### 📚 Documentation
 
@@ -28,11 +30,17 @@
 * `Card` class with category possible values in APIDoc.
 * Route `GET /cards` in APIDoc.
 * Route `GET /cards/:id` in APIDoc.
+* Route `POST /cards` in APIDoc.
+* Route `PATCH /cards/:id` in APIDoc.
 
 ### 🧪 Tests
 
 * Test environment set up. You can run it with `npm test`.
-* Test for route `GET /` added.
+* Tests for route `GET /`.
+* Tests for route `GET /cards`.
+* Tests for route `GET /cards/:id`.
+* Tests for route `POST /cards`.
+* Tests for route `PATCH /cards/:id`.
 
 ### 📦 Packages
 
