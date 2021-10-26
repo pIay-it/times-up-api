@@ -1,6 +1,7 @@
-const { param } = require("express-validator");
+const { param, body } = require("express-validator");
 const Card = require("../controllers/Card");
 const { basicLimiter } = require("../helpers/constants/Route");
+const { getCardCategories } = require("../helpers/functions/Card");
 
 module.exports = app => {
     /**
@@ -29,11 +30,50 @@ module.exports = app => {
      * @apiName GetCard
      * @apiGroup Cards 🃏️
      *
-     * @apiParam {ObjectId} id Card's ID.
+     * @apiParam (Route Parameters) {ObjectId} id Card's ID.
      * @apiUse CardResponse
      */
     app.get("/cards/:id", basicLimiter, [
         param("id")
             .isMongoId().withMessage("Must be a valid ObjectId."),
     ], Card.getCard);
+
+    /**
+     * @api {POST} /cards C] Create a card
+     * @apiName CreateCard
+     * @apiGroup Cards 🃏️
+     *
+     * @apiParam (Request Body Parameters) {String} label Card's label to guess.
+     * @apiParam (Request Body Parameters) {String[]} categories Card's categories, can't be empty. (_Possibilities: [Codes - Card Categories](#card-categories))<br/><br/>⚠️ WARNING: Adding some `sub-categories` will automatically add their main category. (e.g : `nature` will be automatically added if there is `animal` in the array)
+     * @apiParam (Request Body Parameters) {Number{>= 1 && <= 3}} difficulty Card's difficulty to guess. Set from 1 (easiest) to 3 (hardest).
+     * @apiParam (Request Body Parameters) {String} [description] Card's description which can help to guess it.
+     * @apiParam (Request Body Parameters) {String} [imageURL] Card's image URL which can help to guess it. Must be HTTPS.
+     * @apiUse CardResponse
+     */
+    app.post("/cards", basicLimiter, [
+        body("label")
+            .isString().withMessage("Must be a valid string.")
+            .trim()
+            .notEmpty().withMessage("Can't be empty."),
+        body("categories")
+            .isArray().withMessage("Must be a valid array.")
+            .notEmpty().withMessage("Can't be empty."),
+        body("categories.*")
+            .isString().withMessage("Must be a valid string.")
+            .trim()
+            .isIn(getCardCategories()).withMessage(`Must be one of the following values: ${getCardCategories()}.`),
+        body("difficulty")
+            .isInt({ min: 1, max: 3 }).withMessage("Must be a valid number between 1 and 3.")
+            .toInt(),
+        body("description")
+            .optional()
+            .isString().withMessage("Must be a valid string.")
+            .trim()
+            .notEmpty().withMessage("Can't be empty."),
+        body("imageURL")
+            .optional()
+            .isString().withMessage("Must be a valid string.")
+            .trim()
+            .isURL({ protocols: ["https"] }).withMessage("Must be a valid HTTPS URL."),
+    ], Card.postCard);
 };

@@ -15,4 +15,8 @@ exports.errorMetadata = {
         code: 4,
         HTTPCode: 500,
     },
+    CARD_ALREADY_EXISTS: {
+        code: 5,
+        HTTPCode: 400,
+    },
 };

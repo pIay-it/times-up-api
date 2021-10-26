@@ -44,3 +44,4 @@ Description for each case below :
 | 2    | UNAUTHORIZED                               |    401    | You're not authorized.                                                                                    |
 | 3    | NOT_FOUND                                  |    404    | The requested resource is not found.                                                                      |
 | 4    | INTERNAL_SERVER_ERROR                      |    500    | The server got an error, this is not your fault.                                                          |
+| 5    | CARD_ALREADY_EXISTS                        |    400    | There is already an existing card with provided label.                                                    |
