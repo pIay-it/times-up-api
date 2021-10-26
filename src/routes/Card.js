@@ -1,3 +1,4 @@
+const { param } = require("express-validator");
 const Card = require("../controllers/Card");
 const { basicLimiter } = require("../helpers/constants/Route");
 
@@ -22,4 +23,17 @@ module.exports = app => {
      * @apiUse CardResponse
      */
     app.get("/cards", basicLimiter, Card.getCards);
+
+    /**
+     * @api {GET} /cards/:id B] Get a card
+     * @apiName GetCard
+     * @apiGroup Cards 🃏️
+     *
+     * @apiParam {ObjectId} id Card's ID.
+     * @apiUse CardResponse
+     */
+    app.get("/cards/:id", basicLimiter, [
+        param("id")
+            .isMongoId().withMessage("Must be a valid ObjectId."),
+    ], Card.getCard);
 };

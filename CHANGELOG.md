@@ -17,6 +17,7 @@
 
 * Route `GET /` for checking API status and version.
 * Route `GET /cards` for getting all available cards.
+* Route `GET /cards/:id` for getting a card with an ID.
 
 ### 📚 Documentation
 
@@ -26,6 +27,7 @@
 * Route `GET /` in APIDoc.
 * `Card` class with category possible values in APIDoc.
 * Route `GET /cards` in APIDoc.
+* Route `GET /cards/:id` in APIDoc.
 
 ### 🧪 Tests
 
