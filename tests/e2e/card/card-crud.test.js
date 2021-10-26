@@ -187,4 +187,33 @@ describe("A - Card CRUD [Create / Read / Update / Delete]", () => {
                 done();
             });
     });
+    it(`🃏 Delete the Pac-Man card (DELETE /cards/:id)`, done => {
+        chai.request(server)
+            .delete(`/cards/${pacManCard._id}`)
+            .end((err, res) => {
+                expect(res).to.have.status(200);
+                const card = res.body;
+                expect(card._id).to.be.equal(pacManCard._id);
+                done();
+            });
+    });
+    it(`🃏 Can't delete the Pac-Man card twice (DELETE /cards/:id)`, done => {
+        chai.request(server)
+            .delete(`/cards/${pacManCard._id}`)
+            .end((err, res) => {
+                expect(res).to.have.status(404);
+                expect(res.body.type).to.equal("NOT_FOUND");
+                done();
+            });
+    });
+    it(`🃏 Can't delete a card with unknown ID (DELETE /cards/:id)`, done => {
+        chai.request(server)
+            // eslint-disable-next-line new-cap
+            .delete(`/cards/${mongoose.Types.ObjectId()}`)
+            .end((err, res) => {
+                expect(res).to.have.status(404);
+                expect(res.body.type).to.equal("NOT_FOUND");
+                done();
+            });
+    });
 });

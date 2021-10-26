@@ -20,6 +20,7 @@
 * Route `GET /cards/:id` for getting a card with an ID.
 * Route `POST /cards` for creating a new card.
 * Route `PATCH /cards/:id` for updating a card.
+* Route `DELETE /cards/:id` for deleting a card.
 
 ### 📚 Documentation
 
@@ -32,6 +33,7 @@
 * Route `GET /cards/:id` in APIDoc.
 * Route `POST /cards` in APIDoc.
 * Route `PATCH /cards/:id` in APIDoc.
+* Route `DELETE /cards/:id` in APIDoc.
 
 ### 🧪 Tests
 
@@ -41,6 +43,7 @@
 * Tests for route `GET /cards/:id`.
 * Tests for route `POST /cards`.
 * Tests for route `PATCH /cards/:id`.
+* Tests for route `DELETE /cards/:id`.
 
 ### 📦 Packages
 

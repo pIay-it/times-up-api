@@ -76,6 +76,15 @@ exports.findOneAndUpdate = async(search, data, options = {}) => {
     return toJSON ? updatedCard.toJSON() : updatedCard;
 };
 
+exports.findOneAndDelete = async search => {
+    const card = await this.findOne(search);
+    if (!card) {
+        throw generateError("NOT_FOUND", `Card not found.`);
+    }
+    await Card.deleteOne(search);
+    return card;
+};
+
 exports.getCards = async(req, res) => {
     try {
         const cards = await this.find();
@@ -112,6 +121,16 @@ exports.patchCard = async(req, res) => {
     try {
         const { body, params } = checkRequestData(req);
         const card = await this.findOneAndUpdate({ _id: params.id }, body);
+        return res.status(200).json(card);
+    } catch (e) {
+        sendError(res, e);
+    }
+};
+
+exports.deleteCard = async(req, res) => {
+    try {
+        const { params } = checkRequestData(req);
+        const card = await this.findOneAndDelete({ _id: params.id });
         return res.status(200).json(card);
     } catch (e) {
         sendError(res, e);

@@ -128,4 +128,17 @@ module.exports = app => {
             .trim()
             .isURL({ protocols: ["https"] }).withMessage("Must be a valid HTTPS URL."),
     ], Card.patchCard);
+
+    /**
+     * @api {DELETE} /cards/:id D] Delete a card
+     * @apiName DeleteCard
+     * @apiGroup Cards 🃏️
+     *
+     * @apiParam (Route Parameters) {ObjectId} id Card's ID.
+     * @apiUse CardResponse
+     */
+    app.delete("/cards/:id", basicLimiter, [
+        param("id")
+            .isMongoId().withMessage("Must be a valid ObjectId."),
+    ], Card.deleteCard);
 };
