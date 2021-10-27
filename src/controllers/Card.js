@@ -85,9 +85,22 @@ exports.findOneAndDelete = async search => {
     return card;
 };
 
+exports.getFindSearch = query => {
+    const search = {};
+    if (query.categories) {
+        search.categories = query.categories;
+    }
+    return search;
+};
+
+exports.getFindOptions = options => ({ limit: options.limit });
+
 exports.getCards = async(req, res) => {
     try {
-        const cards = await this.find();
+        const { query } = checkRequestData(req);
+        const findSearch = this.getFindSearch(query);
+        const findOptions = this.getFindOptions(query);
+        const cards = await this.find(findSearch, null, findOptions);
         return res.status(200).json(cards);
     } catch (e) {
         sendError(res, e);

@@ -1,4 +1,4 @@
-const { param, body } = require("express-validator");
+const { param, body, query } = require("express-validator");
 const Card = require("../controllers/Card");
 const { basicLimiter } = require("../helpers/constants/Route");
 const { getCardCategories } = require("../helpers/functions/Card");
@@ -22,9 +22,27 @@ module.exports = app => {
      * @apiName GetCards
      * @apiGroup Cards 🃏️
      *
+     * @apiParam (Query String Parameters) {String} [categories] Filter by categories. Multiple categories can be specified.<br/><br/> - Separate values with `,` for filtering cards containing all those categories. (AND operator)<br/> - Separate values with `|` for filtering cards containing any of those categories. (OR operator)<br/><br/>You can't mix `,` and `|`, don't insert space.<hr/>Example: `video-game,art` for cards having `video-game` AND `art` categories or `nature|animal` for cards having `nature` OR `animal` categories.
+     * @apiParam (Query String Parameters) {Number{>= 1}} [limit] Limit the number of cards returned.
      * @apiUse CardResponse
      */
-    app.get("/cards", basicLimiter, Card.getCards);
+    app.get("/cards", basicLimiter, [
+        query("categories")
+            .optional()
+            .isString().withMessage("Must be a valid string")
+            .custom(value => (/^[a-z-]+(?:,[a-z-]+)*$|^[a-z-]+(?:\|[a-z-]+)*$/u).test(value) ? Promise.resolve() : Promise.reject(new Error()))
+            .withMessage("Each value must be separated by a `,` or `|` without space. (e.g: `field1,field2` or `field1|field2`)")
+            .customSanitizer(categories => {
+                if ((/^[a-z-]+(?:,[a-z-]+)*$/u).test(categories)) {
+                    return { $all: categories.split(",") };
+                }
+                return { $in: categories.split("|") };
+            }),
+        query("limit")
+            .optional()
+            .isInt({ min: 1 }).withMessage("Must be a valid number greater than 0.")
+            .toInt(),
+    ], Card.getCards);
 
     /**
      * @api {GET} /cards/:id B] Get a card

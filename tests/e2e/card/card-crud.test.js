@@ -129,6 +129,53 @@ describe("A - Card CRUD [Create / Read / Update / Delete]", () => {
                 done();
             });
     });
+    it(`🃏 Get only two cards (GET /cards?limit=2)`, done => {
+        chai.request(server)
+            .get("/cards?limit=2")
+            .end((err, res) => {
+                expect(res).to.have.status(200);
+                const cards = res.body;
+                expect(cards).to.be.an("array");
+                expect(cards.length).to.equal(2);
+                done();
+            });
+    });
+    it(`🃏 Get cards with the art category (GET /cards?categories=art)`, done => {
+        chai.request(server)
+            .get("/cards?categories=art")
+            .end((err, res) => {
+                expect(res).to.have.status(200);
+                const cards = res.body;
+                expect(cards).to.be.an("array");
+                expect(cards.length).to.equal(2);
+                expect(cards.every(({ categories }) => categories.includes("art"))).to.be.true;
+                done();
+            });
+    });
+    it(`🃏 Get cards with the art and video-game categories (GET /cards?categories=art,video-game)`, done => {
+        chai.request(server)
+            .get("/cards?categories=art,video-game")
+            .end((err, res) => {
+                expect(res).to.have.status(200);
+                const cards = res.body;
+                expect(cards).to.be.an("array");
+                expect(cards.length).to.equal(1);
+                expect(cards.every(({ categories }) => categories.includes("art") && categories.includes("video-game"))).to.be.true;
+                done();
+            });
+    });
+    it(`🃏 Get cards with the art or video-game categories (GET /cards?categories=art|video-game)`, done => {
+        chai.request(server)
+            .get("/cards?categories=art|video-game")
+            .end((err, res) => {
+                expect(res).to.have.status(200);
+                const cards = res.body;
+                expect(cards).to.be.an("array");
+                expect(cards.length).to.equal(2);
+                expect(cards.every(({ categories }) => categories.includes("art") || categories.includes("video-game"))).to.be.true;
+                done();
+            });
+    });
     it(`🃏 Get the Pac-Man card (GET /cards/:id)`, done => {
         chai.request(server)
             .get(`/cards/${pacManCard._id}`)
