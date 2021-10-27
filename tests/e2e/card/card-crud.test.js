@@ -140,6 +140,18 @@ describe("A - Card CRUD [Create / Read / Update / Delete]", () => {
                 done();
             });
     });
+    it(`🃏 Get all available cards only with "createdAt" and "label" fields (GET /cards?fields=createdAt,label)`, done => {
+        chai.request(server)
+            .get("/cards?fields=createdAt,label")
+            .end((err, res) => {
+                expect(res).to.have.status(200);
+                const cards = res.body;
+                console.log(cards);
+                expect(cards).to.be.an("array");
+                expect(cards.every(card => card._id && card.label && card.createdAt && !card.categories && !card.difficulty && !card.updatedAt)).to.be.true;
+                done();
+            });
+    });
     it(`🃏 Get cards with the art category (GET /cards?categories=art)`, done => {
         chai.request(server)
             .get("/cards?categories=art")

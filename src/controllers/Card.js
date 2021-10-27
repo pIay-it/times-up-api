@@ -93,14 +93,17 @@ exports.getFindSearch = query => {
     return search;
 };
 
+exports.getFindProjection = query => query.fields ? query.fields.split(",") : null;
+
 exports.getFindOptions = options => ({ limit: options.limit });
 
 exports.getCards = async(req, res) => {
     try {
         const { query } = checkRequestData(req);
         const findSearch = this.getFindSearch(query);
+        const findProjection = this.getFindProjection(query);
         const findOptions = this.getFindOptions(query);
-        const cards = await this.find(findSearch, null, findOptions);
+        const cards = await this.find(findSearch, findProjection, findOptions);
         return res.status(200).json(cards);
     } catch (e) {
         sendError(res, e);
