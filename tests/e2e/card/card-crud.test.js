@@ -146,9 +146,20 @@ describe("A - Card CRUD [Create / Read / Update / Delete]", () => {
             .end((err, res) => {
                 expect(res).to.have.status(200);
                 const cards = res.body;
-                console.log(cards);
                 expect(cards).to.be.an("array");
                 expect(cards.every(card => card._id && card.label && card.createdAt && !card.categories && !card.difficulty && !card.updatedAt)).to.be.true;
+                done();
+            });
+    });
+    it(`🃏 Get cards with "an" in the label (GET /cards?label=AN)`, done => {
+        chai.request(server)
+            .get("/cards?label=AN")
+            .end((err, res) => {
+                expect(res).to.have.status(200);
+                const cards = res.body;
+                expect(cards).to.be.an("array");
+                expect(cards.length).to.equal(2);
+                expect(cards.every(({ label }) => label.match(new RegExp(/an/u, "ui")))).to.be.true;
                 done();
             });
     });

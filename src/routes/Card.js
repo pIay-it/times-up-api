@@ -22,15 +22,22 @@ module.exports = app => {
      * @apiName GetCards
      * @apiGroup Cards 🃏️
      *
+     * @apiParam (Query String Parameters) {String} [label] Filter by label. All cards containing the specified label (case insensitive) will be returned.
      * @apiParam (Query String Parameters) {String} [categories] Filter by categories. Multiple categories can be specified.<br/><br/> - Separate values with `,` for filtering cards containing all those categories. (AND operator)<br/> - Separate values with `|` for filtering cards containing any of those categories. (OR operator)<br/><br/>You can't mix `,` and `|`, don't insert space.<hr/>Example: `video-game,art` for cards having `video-game` AND `art` categories or `nature|animal` for cards having `nature` OR `animal` categories.
      * @apiParam (Query String Parameters) {String} [fields] Specifies which fields to include. Each value must be separated by a `,` without space. (e.g: `label,createdAt`)
      * @apiParam (Query String Parameters) {Number{>= 1}} [limit] Limit the number of cards returned.
      * @apiUse CardResponse
      */
     app.get("/cards", basicLimiter, [
+        query("label")
+            .optional()
+            .isString().withMessage("Must be a valid string.")
+            .trim()
+            .notEmpty().withMessage("Can't be empty.")
+            .customSanitizer(label => ({ $regex: label, $options: "ui" })),
         query("categories")
             .optional()
-            .isString().withMessage("Must be a valid string")
+            .isString().withMessage("Must be a valid string.")
             .custom(value => (/^[a-z-]+(?:,[a-z-]+)*$|^[a-z-]+(?:\|[a-z-]+)*$/u).test(value) ? Promise.resolve() : Promise.reject(new Error()))
             .withMessage("Each value must be separated by a `,` or `|` without space. (e.g: `field1,field2` or `field1|field2`)")
             .customSanitizer(categories => {
@@ -41,7 +48,7 @@ module.exports = app => {
             }),
         query("fields")
             .optional()
-            .isString().withMessage("Must be a valid string")
+            .isString().withMessage("Must be a valid string.")
             .custom(value => (/^[A-z]+(?:,[A-z]+)*$/u).test(value) ? Promise.resolve() : Promise.reject(new Error()))
             .withMessage("Each value must be separated by a `,` without space. (e.g: `label,createdAt`)"),
         query("limit")
