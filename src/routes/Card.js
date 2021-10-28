@@ -24,6 +24,7 @@ module.exports = app => {
      *
      * @apiParam (Query String Parameters) {String} [label] Filter by label. All cards containing the specified label (case insensitive) will be returned.
      * @apiParam (Query String Parameters) {String} [categories] Filter by categories. Multiple categories can be specified.<br/><br/> - Separate values with `,` for filtering cards containing all those categories. (AND operator)<br/> - Separate values with `|` for filtering cards containing any of those categories. (OR operator)<br/><br/>You can't mix `,` and `|`, don't insert space.<hr/>Example: `video-game,art` for cards having `video-game` AND `art` categories or `nature|animal` for cards having `nature` OR `animal` categories.
+     * @apiParam (Query String Parameters) {Number{>= 1 && <= 3}} [difficulty] Filter by difficulty.
      * @apiParam (Query String Parameters) {String} [fields] Specifies which fields to include. Each value must be separated by a `,` without space. (e.g: `label,createdAt`)
      * @apiParam (Query String Parameters) {Number{>= 1}} [limit] Limit the number of cards returned.
      * @apiUse CardResponse
@@ -46,6 +47,10 @@ module.exports = app => {
                 }
                 return { $in: categories.split("|") };
             }),
+        query("difficulty")
+            .optional()
+            .isInt({ min: 1, max: 3 }).withMessage("Must be a valid number between 1 and 3.")
+            .toInt(),
         query("fields")
             .optional()
             .isString().withMessage("Must be a valid string.")

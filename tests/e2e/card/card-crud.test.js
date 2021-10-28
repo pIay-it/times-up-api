@@ -199,6 +199,18 @@ describe("A - Card CRUD [Create / Read / Update / Delete]", () => {
                 done();
             });
     });
+    it(`🃏 Get cards with the difficulty of 2 (GET /cards?difficulty=2)`, done => {
+        chai.request(server)
+            .get("/cards?difficulty=2")
+            .end((err, res) => {
+                expect(res).to.have.status(200);
+                const cards = res.body;
+                expect(cards).to.be.an("array");
+                expect(cards.length).to.equal(1);
+                expect(cards.every(({ difficulty }) => difficulty === 2)).to.be.true;
+                done();
+            });
+    });
     it(`🃏 Get the Pac-Man card (GET /cards/:id)`, done => {
         chai.request(server)
             .get(`/cards/${pacManCard._id}`)

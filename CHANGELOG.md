@@ -16,7 +16,7 @@
 ### 🛣 Routes
 
 * Route `GET /` for checking API status and version.
-* Route `GET /cards` for getting all available cards. Filter by label or categories, limit results, specify fields.
+* Route `GET /cards` for getting all available cards. Filter by label, categories or difficulty, limit results, specify fields.
 * Route `GET /cards/:id` for getting a card with an ID.
 * Route `POST /cards` for creating a new card.
 * Route `PATCH /cards/:id` for updating a card.

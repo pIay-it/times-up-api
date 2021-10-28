@@ -86,7 +86,7 @@ exports.findOneAndDelete = async search => {
 };
 
 exports.getFindSearch = query => {
-    const searchFields = ["label", "categories"];
+    const searchFields = ["label", "categories", "difficulty"];
     const search = {};
     for (const field in query) {
         if (searchFields.includes(field)) {
