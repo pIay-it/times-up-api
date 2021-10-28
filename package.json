@@ -44,6 +44,10 @@
         "express-validator": "^6.13.0",
         "mongo-dot-notation": "^2.0.0",
         "mongoose": "^6.0.12",
+        "passport": "^0.5.0",
+        "passport-http": "^0.3.0",
+        "passport-jwt": "^4.0.0",
+        "passport-local": "^1.0.0",
         "requirejs": "^2.3.6",
         "xss": "^1.0.10"
     }

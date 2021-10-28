@@ -1,13 +1,15 @@
 require("dotenv").config();
+require("./src/helpers/functions/Passport");
 const { bold } = require("colors");
 const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const Config = require("./config");
+const passport = require("passport");
 const { sendError, generateError } = require("./src/helpers/functions/Error");
 const { connect: connectToDatabase } = require("./src/helpers/functions/Mongoose");
 const routes = require("./src/routes");
+const Config = require("./config");
 
 if (Config.sentry.enabled) {
     const Sentry = require("@sentry/node");
@@ -37,6 +39,7 @@ connectToDatabase().then(() => {
             next();
         }
     });
+    app.use(passport.initialize());
     routes(app);
     app.listen(Config.app.port);
     if (Config.app.nodeEnv !== "test") {

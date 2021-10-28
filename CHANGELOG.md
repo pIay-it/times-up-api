@@ -9,6 +9,7 @@
 * `forever` configs for `sandbox` and `production` are ready to be deployed on the future server.
 * `eslint` config and rules.
 * Sentry ready to catch errors and send notifications to Slack.
+* Basic authentication with `passport` for some routes.
 * Main config file with `.env` variables.
 * Script `update-version` to update project version on `package.json`, `apidoc` config and API main route.
 * MIT license. 
@@ -18,9 +19,9 @@
 * Route `GET /` for checking API status and version.
 * Route `GET /cards` for getting all available cards. Filter by label, categories or difficulty, limit results, specify fields.
 * Route `GET /cards/:id` for getting a card with an ID.
-* Route `POST /cards` for creating a new card.
-* Route `PATCH /cards/:id` for updating a card.
-* Route `DELETE /cards/:id` for deleting a card.
+* Route `POST /cards` for creating a new card protected with basic authentication.
+* Route `PATCH /cards/:id` for updating a card protected with basic authentication.
+* Route `DELETE /cards/:id` for deleting a card protected with basic authentication.
 
 ### 📚 Documentation
 

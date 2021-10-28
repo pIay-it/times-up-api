@@ -1,6 +1,7 @@
 const { param, body, query } = require("express-validator");
 const Card = require("../controllers/Card");
 const { basicLimiter } = require("../helpers/constants/Route");
+const { basicAuth } = require("../helpers/functions/Passport");
 const { getCardCategories } = require("../helpers/functions/Card");
 const { toTitleCase, filterOutHTMLTags } = require("../helpers/functions/String");
 
@@ -79,6 +80,7 @@ module.exports = app => {
      * @api {POST} /cards C] Create a card
      * @apiName CreateCard
      * @apiGroup Cards 🃏️
+     * @apiPermission Basic
      *
      * @apiParam (Request Body Parameters) {String} label Card's label to guess.<br/><br/>This value will be Title Cased (all words will be capitalized only on first letter).
      * @apiParam (Request Body Parameters) {String[]} categories Card's categories, can't be empty. (_Possibilities: [Codes - Card Categories](#card-categories))<br/><br/>⚠️ WARNING: Adding some `sub-categories` will automatically add their main category. (e.g : `nature` will be automatically added if there is `animal` in the array)
@@ -87,7 +89,7 @@ module.exports = app => {
      * @apiParam (Request Body Parameters) {String} [imageURL] Card's image URL which can help to guess it. Must be HTTPS.
      * @apiUse CardResponse
      */
-    app.post("/cards", basicLimiter, [
+    app.post("/cards", basicAuth, basicLimiter, [
         body("label")
             .isString().withMessage("Must be a valid string.")
             .customSanitizer(label => filterOutHTMLTags(label))
@@ -121,6 +123,7 @@ module.exports = app => {
      * @api {PATCH} /cards/:id D] Update a card
      * @apiName UpdateCard
      * @apiGroup Cards 🃏️
+     * @apiPermission Basic
      *
      * @apiParam (Route Parameters) {ObjectId} id Card's ID.
      * @apiParam (Request Body Parameters) {String} [label] Card's label to guess.<br/><br/>This value will be Title Cased (all words will be capitalized only on first letter).
@@ -130,7 +133,7 @@ module.exports = app => {
      * @apiParam (Request Body Parameters) {String} [imageURL] Card's image URL which can help to guess it. Must be HTTPS.
      * @apiUse CardResponse
      */
-    app.patch("/cards/:id", basicLimiter, [
+    app.patch("/cards/:id", basicAuth, basicLimiter, [
         param("id")
             .isMongoId().withMessage("Must be a valid ObjectId."),
         body("label")
@@ -166,14 +169,15 @@ module.exports = app => {
     ], Card.patchCard);
 
     /**
-     * @api {DELETE} /cards/:id D] Delete a card
+     * @api {DELETE} /cards/:id E] Delete a card
      * @apiName DeleteCard
      * @apiGroup Cards 🃏️
+     * @apiPermission Basic
      *
      * @apiParam (Route Parameters) {ObjectId} id Card's ID.
      * @apiUse CardResponse
      */
-    app.delete("/cards/:id", basicLimiter, [
+    app.delete("/cards/:id", basicAuth, basicLimiter, [
         param("id")
             .isMongoId().withMessage("Must be a valid ObjectId."),
     ], Card.deleteCard);

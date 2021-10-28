@@ -4,6 +4,10 @@ module.exports = app => {
     fs.readdirSync(__dirname).forEach(file => {
         if (file === "index.js") {
             /**
+             *
+             *
+             * @apiDefine Basic Basic authentication with username and password.
+             *
              * @api {GET} / A] Get API info
              * @apiName GetAPIInfo
              * @apiGroup API 🔌

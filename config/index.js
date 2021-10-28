@@ -5,8 +5,8 @@ const Config = {
         nodeEnv: process.env.NODE_ENV || "production",
         port: process.env.PORT || 4242,
         basicAuth: {
-            username: process.env.BASIC_USERNAME || "root",
-            password: process.env.BASIC_PASSWORD || "secret",
+            username: process.env.BASIC_AUTH_USERNAME || "root",
+            password: process.env.BASIC_AUTH_PASSWORD || "secret",
         },
     },
     db: {

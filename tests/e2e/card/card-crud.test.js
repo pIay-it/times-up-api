@@ -4,6 +4,7 @@ const chaiHttp = require("chai-http");
 const mongoose = require("mongoose");
 const app = require("../../../app");
 const { resetDatabase } = require("../../../src/helpers/functions/Test");
+const Config = require("../../../config");
 
 chai.use(chaiHttp);
 const { expect } = chai;
@@ -16,9 +17,20 @@ describe("A - Card CRUD [Create / Read / Update / Delete]", () => {
         server = app.listen(3000, done);
     });
     after(done => resetDatabase(done));
+    it(`🔒 Can't create a card without basic authentication credentials (POST /cards)`, done => {
+        chai.request(server)
+            .post("/cards")
+            .send({ label: "Doudou ", categories: [" personality"], difficulty: 2 })
+            .end((err, res) => {
+                expect(res).to.have.status(401);
+                expect(res.body.type).to.equal("UNAUTHORIZED");
+                done();
+            });
+    });
     it("🔖 Can't create a card without any category (POST /cards)", done => {
         chai.request(server)
             .post("/cards")
+            .auth(Config.app.basicAuth.username, Config.app.basicAuth.password)
             .send({ label: "Doudou", categories: [], difficulty: 2 })
             .end((err, res) => {
                 expect(res).to.have.status(400);
@@ -29,6 +41,7 @@ describe("A - Card CRUD [Create / Read / Update / Delete]", () => {
     it(`🃏 Creates a card "Doudou" with "personality" category and 2 difficulty (POST /cards)`, done => {
         chai.request(server)
             .post("/cards")
+            .auth(Config.app.basicAuth.username, Config.app.basicAuth.password)
             .send({ label: "Doudou ", categories: [" personality"], difficulty: 2 })
             .end((err, res) => {
                 expect(res).to.have.status(200);
@@ -44,6 +57,7 @@ describe("A - Card CRUD [Create / Read / Update / Delete]", () => {
     it(`🃏 Can't create a second card labeled "Doudou" (POST /cards)`, done => {
         chai.request(server)
             .post("/cards")
+            .auth(Config.app.basicAuth.username, Config.app.basicAuth.password)
             .send({ label: " douDou ", categories: [" personality"], difficulty: 2 })
             .end((err, res) => {
                 expect(res).to.have.status(400);
@@ -54,6 +68,7 @@ describe("A - Card CRUD [Create / Read / Update / Delete]", () => {
     it(`🃏 Can't create a card with a label only with HTML tags (POST /cards)`, done => {
         chai.request(server)
             .post("/cards")
+            .auth(Config.app.basicAuth.username, Config.app.basicAuth.password)
             .send({ label: " <h3></h3> ", categories: [" personality"], difficulty: 2 })
             .end((err, res) => {
                 expect(res).to.have.status(400);
@@ -64,6 +79,7 @@ describe("A - Card CRUD [Create / Read / Update / Delete]", () => {
     it(`🃏 Creates a card "Cat" with "animal" category and 1 difficulty ("nature" category should be implicitly added) (POST /cards)`, done => {
         chai.request(server)
             .post("/cards")
+            .auth(Config.app.basicAuth.username, Config.app.basicAuth.password)
             .send({ label: "        cat ", categories: [" animal"], difficulty: 1 })
             .end((err, res) => {
                 expect(res).to.have.status(200);
@@ -80,6 +96,7 @@ describe("A - Card CRUD [Create / Read / Update / Delete]", () => {
     it(`🃏 Creates a card "Peter Pan" with "book" and "movie" categories and 1 difficulty ("art" category should be implicitly added) (POST /cards)`, done => {
         chai.request(server)
             .post("/cards")
+            .auth(Config.app.basicAuth.username, Config.app.basicAuth.password)
             .send({ label: "        PETER PAN   ", categories: [" book", "movie "], difficulty: 1 })
             .end((err, res) => {
                 expect(res).to.have.status(200);
@@ -97,6 +114,7 @@ describe("A - Card CRUD [Create / Read / Update / Delete]", () => {
     it(`🃏 Creates a card "Pac-Man" with "video-game" and "art" categories and 1 difficulty (HTML tags are filtered out for label and description) (POST /cards)`, done => {
         chai.request(server)
             .post("/cards")
+            .auth(Config.app.basicAuth.username, Config.app.basicAuth.password)
             .send({ label: "<h1>pac-man</h1>", categories: ["video-game", "art"], difficulty: 1, description: "<em>   Waka waka         </em>", imageURL: "   https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Pacman.svg/1200px-Pacman.svg.png" })
             .end((err, res) => {
                 expect(res).to.have.status(200);
@@ -232,9 +250,20 @@ describe("A - Card CRUD [Create / Read / Update / Delete]", () => {
                 done();
             });
     });
+    it(`🔒 Can't update a card without basic authentication credentials (PATCH /cards/:id)`, done => {
+        chai.request(server)
+            .patch(`/cards/${pacManCard._id}`)
+            .send({ label: "pac-man", categories: ["video-game", "character"], difficulty: 3 })
+            .end((err, res) => {
+                expect(res).to.have.status(401);
+                expect(res.body.type).to.equal("UNAUTHORIZED");
+                done();
+            });
+    });
     it(`🃏 Update the Pac-Man card (PATCH /cards/:id)`, done => {
         chai.request(server)
             .patch(`/cards/${pacManCard._id}`)
+            .auth(Config.app.basicAuth.username, Config.app.basicAuth.password)
             .send({ label: "pac-man", categories: ["video-game", "character"], difficulty: 3 })
             .end((err, res) => {
                 expect(res).to.have.status(200);
@@ -251,6 +280,7 @@ describe("A - Card CRUD [Create / Read / Update / Delete]", () => {
     it(`🃏 Can't update a card with an already existing label (PATCH /cards/:id)`, done => {
         chai.request(server)
             .patch(`/cards/${pacManCard._id}`)
+            .auth(Config.app.basicAuth.username, Config.app.basicAuth.password)
             .send({ label: "doudou", difficulty: 1 })
             .end((err, res) => {
                 expect(res).to.have.status(400);
@@ -262,6 +292,7 @@ describe("A - Card CRUD [Create / Read / Update / Delete]", () => {
         chai.request(server)
             // eslint-disable-next-line new-cap
             .patch(`/cards/${mongoose.Types.ObjectId()}`)
+            .auth(Config.app.basicAuth.username, Config.app.basicAuth.password)
             .send({ label: "doudou", difficulty: 1 })
             .end((err, res) => {
                 expect(res).to.have.status(404);
@@ -269,9 +300,19 @@ describe("A - Card CRUD [Create / Read / Update / Delete]", () => {
                 done();
             });
     });
+    it(`🔒 Can't delete a card without basic authentication credentials (DELETE /cards/:id)`, done => {
+        chai.request(server)
+            .delete(`/cards/${pacManCard._id}`)
+            .end((err, res) => {
+                expect(res).to.have.status(401);
+                expect(res.body.type).to.equal("UNAUTHORIZED");
+                done();
+            });
+    });
     it(`🃏 Delete the Pac-Man card (DELETE /cards/:id)`, done => {
         chai.request(server)
             .delete(`/cards/${pacManCard._id}`)
+            .auth(Config.app.basicAuth.username, Config.app.basicAuth.password)
             .end((err, res) => {
                 expect(res).to.have.status(200);
                 const card = res.body;
@@ -282,6 +323,7 @@ describe("A - Card CRUD [Create / Read / Update / Delete]", () => {
     it(`🃏 Can't delete the Pac-Man card twice (DELETE /cards/:id)`, done => {
         chai.request(server)
             .delete(`/cards/${pacManCard._id}`)
+            .auth(Config.app.basicAuth.username, Config.app.basicAuth.password)
             .end((err, res) => {
                 expect(res).to.have.status(404);
                 expect(res.body.type).to.equal("NOT_FOUND");
@@ -292,6 +334,7 @@ describe("A - Card CRUD [Create / Read / Update / Delete]", () => {
         chai.request(server)
             // eslint-disable-next-line new-cap
             .delete(`/cards/${mongoose.Types.ObjectId()}`)
+            .auth(Config.app.basicAuth.username, Config.app.basicAuth.password)
             .end((err, res) => {
                 expect(res).to.have.status(404);
                 expect(res.body.type).to.equal("NOT_FOUND");
