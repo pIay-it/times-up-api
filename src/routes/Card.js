@@ -3,7 +3,7 @@ const Card = require("../controllers/Card");
 const { basicLimiter } = require("../helpers/constants/Route");
 const { basicAuth } = require("../helpers/functions/Passport");
 const { getCardCategories } = require("../helpers/functions/Card");
-const { toTitleCase, filterOutHTMLTags } = require("../helpers/functions/String");
+const { toTitleCase, filterOutHTMLTags, removeMultipleSpacesToSingle } = require("../helpers/functions/String");
 
 module.exports = app => {
     /**
@@ -94,6 +94,7 @@ module.exports = app => {
             .isString().withMessage("Must be a valid string.")
             .customSanitizer(label => filterOutHTMLTags(label))
             .trim()
+            .customSanitizer(label => removeMultipleSpacesToSingle(label))
             .customSanitizer(label => toTitleCase(label))
             .notEmpty().withMessage("Can't be empty."),
         body("categories")
@@ -111,6 +112,7 @@ module.exports = app => {
             .isString().withMessage("Must be a valid string.")
             .customSanitizer(label => filterOutHTMLTags(label))
             .trim()
+            .customSanitizer(label => removeMultipleSpacesToSingle(label))
             .notEmpty().withMessage("Can't be empty."),
         body("imageURL")
             .optional()
@@ -141,6 +143,7 @@ module.exports = app => {
             .isString().withMessage("Must be a valid string.")
             .customSanitizer(label => filterOutHTMLTags(label))
             .trim()
+            .customSanitizer(label => removeMultipleSpacesToSingle(label))
             .customSanitizer(label => toTitleCase(label))
             .notEmpty().withMessage("Can't be empty."),
         body("categories")
@@ -160,6 +163,7 @@ module.exports = app => {
             .isString().withMessage("Must be a valid string.")
             .customSanitizer(label => filterOutHTMLTags(label))
             .trim()
+            .customSanitizer(label => removeMultipleSpacesToSingle(label))
             .notEmpty().withMessage("Can't be empty."),
         body("imageURL")
             .optional()

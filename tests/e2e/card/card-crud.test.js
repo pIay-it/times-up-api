@@ -97,7 +97,7 @@ describe("A - Card CRUD [Create / Read / Update / Delete]", () => {
         chai.request(server)
             .post("/cards")
             .auth(Config.app.basicAuth.username, Config.app.basicAuth.password)
-            .send({ label: "        PETER PAN   ", categories: [" book", "movie "], difficulty: 1 })
+            .send({ label: "        PETER           PAN   ", categories: [" book", "movie "], difficulty: 1 })
             .end((err, res) => {
                 expect(res).to.have.status(200);
                 peterPanCard = res.body;

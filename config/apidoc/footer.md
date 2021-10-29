@@ -32,6 +32,17 @@ Some categories are called `sub-categories`, meaning that attaching it to a card
 | 🥊 sport          | An activity involving skills and/or physical efforts individually or in a team.   | - Football<br/>- Golf<br/>- Chess<br/>- E-Sport                                                                                       | 🤿 activity                     |
 | 🩺 job            | An activity that a person does regularly to earn some money.                      | - Doctor<br/>- Entrepreneur<br/>- Cashier<br/>- Barman                                                                                | 🤿 activity                     |
 
+## <a id="game-statuses"></a>🎲 Game Statuses
+
+The game's status is updated through all its lifecycle.
+
+| Status           | Description                                                                                                     |
+|:----------------:|:---------------------------------------------------------------------------------------------------------------:|
+| 👥 preparing     | First status when the game is created. During this phase, most of the game's parameters can be redefined.       | 
+| 🎲 playing       | Game is currently playing, it can be canceled at anytime.                                                       | 
+| 🏆 done          | Game is finished because the final round is over. Results are available.                                        | 
+| ❌ canceled      | Game is canceled and thus can't be updated anymore.                                                             |
+
 ## <a id="errors"></a>⚠️ Errors
 
 If you have an error from the API, you'll get a generic structure. (_See: [Classes - Error](#error-class)_)

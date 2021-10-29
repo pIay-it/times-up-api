@@ -2,18 +2,14 @@ const { Schema } = require("mongoose");
 const { getCardCategories } = require("../../helpers/functions/Card");
 
 const CardSchema = new Schema({
-    label: {
-        type: String,
-        required: true,
-    },
+    label: { type: String },
     categories: {
         type: [String],
         enum: getCardCategories(),
-        required: true,
+        default: undefined,
     },
     difficulty: {
         type: Number,
-        required: true,
         min: 1,
         max: 3,
     },

@@ -18,16 +18,49 @@
 
 Games are made of cards to guess by players. Each card has a label, some categories and a difficulty to guess.
 
-| Field                | Type     | Description                                                                     |
-|----------------------|:--------:|---------------------------------------------------------------------------------|
-| _id                  | ObjectId | Card's ID.                                                                      |
-| label                | String   | Card's label to be guessed.                                                     |
-| categories           | String[] | Card's categories. (_Possibilities: [Codes - Card Categories](#card-categories))|
-| difficulty           | Number   | Card's difficulty to guess. Set from 1 (easiest) to 3 (hardest).                |
-| **description***     | String   | Card's description which can help to guess it.                                  |
-| **imageURL***        | String   | Card's image URL which can help to guess it.                                    |
-| createdAt            | Date     | When the card was created.                                                      |
-| updatedAt            | Date     | When the card was updated.                                                      |
+| Field                | Type     | Description                                                                             |
+|----------------------|:--------:|-----------------------------------------------------------------------------------------|
+| _id                  | ObjectId | Card's ID.                                                                              |
+| **label***           | String   | Card's label to be guessed.                                                             |
+| **categories***      | String[] | Card's categories. (_Possibilities: [Codes - Card Categories](#card-categories)_)       |
+| **difficulty***      | Number   | Card's difficulty to guess. Set from 1 (easiest) to 3 (hardest).                        |
+| **description***     | String   | Card's description which can help to guess it.                                          |
+| **imageURL***        | String   | Card's image URL which can help to guess it.                                            |
+| createdAt            | Date     | When the card was created.                                                              |
+| updatedAt            | Date     | When the card was updated.                                                              |
+
+## <a id="player-class"></a>👤 Player
+
+| Field                | Type               | Description                                                                                                                           |
+|----------------------|:------------------:|---------------------------------------------------------------------------------------------------------------------------------------|
+| _id                  | ObjectId           | Player's ID.                                                                                                                          |
+| name                 | String             | Player's name. Must be unique among all players.                                                                                      |
+| **team***            | String             | Player's team. Set if `game.options.players.areTeamUp` is `true`. If set, at least `2` players must belong to a team.                 |
+
+## <a id="game-class"></a>🎲 Game
+
+| Field                                              | Type                       | Description                                                                                                                                          |
+|----------------------------------------------------|:--------------------------:|------------------------------------------------------------------------------------------------------------------------------------------------------|
+| _id                                                | ObjectId                   | Game's ID.                                                                                                                                           |
+| players                                            | [Player](#player-class)    | Game's players. (_See: [Classes - Player](#player-class)_)                                                                                           |
+| cards                                              | [Card](#card-class)        | Game's cards to guess. (_See: [Classes - Card](#card-class)_)                                                                                        |
+| status                                             | String                     | Game's status. (_Possibilities: [Codes - Game Statuses](#game-statuses))                                                                             |
+| round                                              | Number                     | Game's current round. Final round can be either `3` or `4` depending on game's options.                                                              |
+| options                                            | Object                     | Game's options to personalize the party.                                                                                                             |
+| <i style="margin-left: 15px"></i>⮑ players        | Object                     | Game's options related to players.                                                                                                                   |
+| <i style="margin-left: 30px"></i>⮑ areTeamUp      | Boolean                    | If set to `true`, teams are made among players. Else, players must win by themselves. Default is `true` based on official rules.                     |
+| <i style="margin-left: 15px"></i>⮑ cards          | Object                     | Game's options related to cards.                                                                                                                     |
+| <i style="margin-left: 30px"></i>⮑ count          | Number                     | Number of cards to guess during each rounds. Default is `40` based on official rules.                                                                |
+| <i style="margin-left: 30px"></i>⮑ categories     | String[]                   | Cards categories to include for cards to guess. Default are all categories. (_Possibilities: [Codes - Card Categories](#card-categories)_)           |
+| <i style="margin-left: 30px"></i>⮑ difficulties   | Number[]                   | Cards difficulties to include for cards to guess. Default are all difficulties. `[1, 2, 3]`                                                          |
+| <i style="margin-left: 30px"></i>⮑ helpers        | Object                     | Game's options related to cards helpers that help players to guess cards.                                                                            |
+| <i style="margin-left: 45px"></i>⮑ areDisplayed   | Boolean                    | If set to `true`, description and/or image can be displayed to guess the card more easily. Default is `true`.                                        |
+| <i style="margin-left: 15px"></i>⮑ rounds         | Object                     | Game's options related to rounds.                                                                                                                    |
+| <i style="margin-left: 30px"></i>⮑ count          | Number                     | Number of rounds for this game. Default is `3` based on official rules.                                                                              |
+| <i style="margin-left: 30px"></i>⮑ turns          | Object                     | Game's options related to rounds turns.                                                                                                              |
+| <i style="margin-left: 45px"></i>⮑ timeLimit      | Number                     | Time in seconds allowed for a player's turn. Default is `30` seconds based on official rules.                                                        |
+| createdAt                                          | Date                       | When the game was created.                                                                                                                           |
+| updatedAt                                          | Date                       | When the game was updated.                                                                                                                           |
 
 ## <a id="error-class"></a>⚠️ API Error
 
