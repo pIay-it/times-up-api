@@ -4,6 +4,19 @@ const PlayerSchema = require("./Player");
 const { getGameStatuses, getGameDefaultOptions } = require("../../helpers/functions/Game");
 const { getCardCategories } = require("../../helpers/functions/Card");
 
+const gameHistory = {
+    round: {
+        type: Number,
+        required: true,
+        min: 1,
+        max: 4,
+    },
+    cards: {
+        type: [CardSchema],
+        default: undefined,
+    },
+};
+
 const gameOptions = {
     players: {
         areTeamUp: {
@@ -73,9 +86,19 @@ const GameSchema = new Schema({
         min: 1,
         max: 4,
     },
+    turn: {
+        type: Number,
+        required: true,
+        default: 1,
+        min: 1,
+    },
     options: {
         type: gameOptions,
         default: getGameDefaultOptions(),
+    },
+    history: {
+        type: [gameHistory],
+        default: undefined,
     },
 }, {
     timestamps: true,

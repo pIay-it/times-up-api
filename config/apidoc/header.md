@@ -14,21 +14,6 @@
 
 ### Fields annotated with `*` are optional. Therefore, classes properties aren't always set.
 
-## <a id="card-class"></a>🃏️ Card
-
-Games are made of cards to guess by players. Each card has a label, some categories and a difficulty to guess.
-
-| Field                | Type     | Description                                                                             |
-|----------------------|:--------:|-----------------------------------------------------------------------------------------|
-| _id                  | ObjectId | Card's ID.                                                                              |
-| **label***           | String   | Card's label to be guessed.                                                             |
-| **categories***      | String[] | Card's categories. (_Possibilities: [Codes - Card Categories](#card-categories)_)       |
-| **difficulty***      | Number   | Card's difficulty to guess. Set from 1 (easiest) to 3 (hardest).                        |
-| **description***     | String   | Card's description which can help to guess it.                                          |
-| **imageURL***        | String   | Card's image URL which can help to guess it.                                            |
-| createdAt            | Date     | When the card was created.                                                              |
-| updatedAt            | Date     | When the card was updated.                                                              |
-
 ## <a id="player-class"></a>👤 Player
 
 | Field                | Type               | Description                                                                                                                           |
@@ -37,6 +22,24 @@ Games are made of cards to guess by players. Each card has a label, some categor
 | name                 | String             | Player's name. Must be unique among all players.                                                                                      |
 | **team***            | String             | Player's team. Set if `game.options.players.areTeamUp` is `true`. If set, at least `2` players must belong to a team.                 |
 
+## <a id="card-class"></a>🃏️ Card
+
+Games are made of cards to guess by players. Each card has a label, some categories and a difficulty to guess.
+
+| Field                                             | Type                       | Description                                                                                                                                   |
+|---------------------------------------------------|:--------------------------:|-----------------------------------------------------------------------------------------------------------------------------------------------|
+| _id                                               | ObjectId                   | Card's ID.                                                                                                                                    |
+| **label***                                        | String                     | Card's label to be guessed.                                                                                                                   |
+| **categories***                                   | String[]                   | Card's categories. (_Possibilities: [Codes - Card Categories](#card-categories)_)                                                             |
+| **difficulty***                                   | Number                     | Card's difficulty to guess. Set from 1 (easiest) to 3 (hardest).                                                                              |
+| **description***                                  | String                     | Card's description which can help to guess it.                                                                                                |
+| **imageURL***                                     | String                     | Card's image URL which can help to guess it.                                                                                                  |
+| **guessed***                                      | Object                     | Set if the card has been guessed by a player or a team.                                                                                       |
+| <i style="margin-left: 15px"></i>⮑ from          | [Player](#player-class)    | Set if the card has been guessed by a player or a team. Then, value is equal to the speaker when the card was guessed.                        |
+| <i style="margin-left: 15px"></i>⮑ **by***       | [Player](#player-class)    | Set if the card has been guessed by a player and if players are not teaming up. Then, value must be equal to the player who guessed the card. |
+| createdAt                                         | Date                       | When the card was created.                                                                                                                    |
+| updatedAt                                         | Date                       | When the card was updated.                                                                                                                    |
+
 ## <a id="game-class"></a>🎲 Game
 
 | Field                                              | Type                       | Description                                                                                                                                          |
@@ -44,8 +47,9 @@ Games are made of cards to guess by players. Each card has a label, some categor
 | _id                                                | ObjectId                   | Game's ID.                                                                                                                                           |
 | players                                            | [Player](#player-class)    | Game's players. (_See: [Classes - Player](#player-class)_)                                                                                           |
 | cards                                              | [Card](#card-class)        | Game's cards to guess. (_See: [Classes - Card](#card-class)_)                                                                                        |
-| status                                             | String                     | Game's status. (_Possibilities: [Codes - Game Statuses](#game-statuses))                                                                             |
+| status                                             | String                     | Game's status. (_Possibilities: [Codes - Game Statuses](#game-statuses)_)                                                                            |
 | round                                              | Number                     | Game's current round. Final round can be either `3` or `4` depending on game's options.                                                              |
+| turn                                               | Number                     | Game's current turn for the current round. Set back to `1` when changing round.                                                                      |
 | options                                            | Object                     | Game's options to personalize the party.                                                                                                             |
 | <i style="margin-left: 15px"></i>⮑ players        | Object                     | Game's options related to players.                                                                                                                   |
 | <i style="margin-left: 30px"></i>⮑ areTeamUp      | Boolean                    | If set to `true`, teams are made among players. Else, players must win by themselves. Default is `true` based on official rules.                     |
