@@ -22,6 +22,8 @@
 * Route `POST /cards` for creating a new card protected with basic authentication.
 * Route `PATCH /cards/:id` for updating a card protected with basic authentication.
 * Route `DELETE /cards/:id` for deleting a card protected with basic authentication.
+* Route `GET /games` for getting all available games. Limit results, specify fields.
+* Route `GET /games/:id` for getting a game with an ID.
 
 ### 📚 Documentation
 
@@ -38,6 +40,8 @@
 * Route `POST /cards` in APIDoc.
 * Route `PATCH /cards/:id` in APIDoc.
 * Route `DELETE /cards/:id` in APIDoc.
+* Route `GET /games` in APIDoc.
+* Route `GET /games/:id` in APIDoc.
 
 ### 🧪 Tests
 

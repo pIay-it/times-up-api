@@ -1,6 +1,6 @@
 const { cardCategories } = require("./Card");
 
-exports.gameDefaultOptionsgameStatuses = ["preparing", "playing", "done", "canceled"];
+exports.gameStatuses = ["preparing", "playing", "done", "canceled"];
 
 exports.gameDefaultOptions = {
     players: { areTeamUp: true },
