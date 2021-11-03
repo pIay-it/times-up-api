@@ -29,7 +29,10 @@
 * `CONTRIBUTING.md` file.
 * Header for classes structure and footer for codes and values in APIDoc.
 * Route `GET /` in APIDoc.
-* `Card` class with category possible values in APIDoc.
+* `Card` class with possible category and status values in APIDoc.
+* `Player` class in APIDoc.
+* `Game` class with possible status values in APIDoc.
+* `GameHistory` class in APIDoc.
 * Route `GET /cards` in APIDoc.
 * Route `GET /cards/:id` in APIDoc.
 * Route `POST /cards` in APIDoc.

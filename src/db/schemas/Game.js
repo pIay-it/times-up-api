@@ -1,68 +1,9 @@
 const { Schema } = require("mongoose");
 const CardSchema = require("./Card");
 const PlayerSchema = require("./Player");
+const GameOptionsSchema = require("./GameOptions");
+const GameHistorySchema = require("./GameHistory");
 const { getGameStatuses, getGameDefaultOptions } = require("../../helpers/functions/Game");
-const { getCardCategories } = require("../../helpers/functions/Card");
-
-const gameHistory = {
-    round: {
-        type: Number,
-        required: true,
-        min: 1,
-        max: 4,
-    },
-    cards: {
-        type: [CardSchema],
-        default: undefined,
-    },
-};
-
-const gameOptions = {
-    players: {
-        areTeamUp: {
-            type: Boolean,
-            default: true,
-        },
-    },
-    cards: {
-        count: {
-            type: Number,
-            min: 5,
-            max: 100,
-            default: 40,
-        },
-        categories: {
-            type: [String],
-            default: getCardCategories(),
-        },
-        difficulties: {
-            type: [Number],
-            default: [1, 2, 3],
-        },
-        helpers: {
-            areDisplayed: {
-                type: Boolean,
-                default: true,
-            },
-        },
-    },
-    rounds: {
-        count: {
-            type: Number,
-            min: 3,
-            max: 4,
-            default: 3,
-        },
-        turns: {
-            timeLimit: {
-                type: Number,
-                min: 10,
-                max: 120,
-                default: 30,
-            },
-        },
-    },
-};
 
 const GameSchema = new Schema({
     players: {
@@ -92,12 +33,17 @@ const GameSchema = new Schema({
         default: 1,
         min: 1,
     },
+    speaker: {
+        type: PlayerSchema,
+        required: true,
+    },
+    guesser: { type: PlayerSchema },
     options: {
-        type: gameOptions,
+        type: GameOptionsSchema,
         default: getGameDefaultOptions(),
     },
     history: {
-        type: [gameHistory],
+        type: [GameHistorySchema],
         default: undefined,
     },
 }, {

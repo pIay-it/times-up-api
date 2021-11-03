@@ -32,6 +32,17 @@ Some categories are called `sub-categories`, meaning that attaching it to a card
 | 🥊 sport          | An activity involving skills and/or physical efforts individually or in a team.   | - Football<br/>- Golf<br/>- Chess<br/>- E-Sport                                                                                       | 🤿 activity                     |
 | 🩺 job            | An activity that a person does regularly to earn some money.                      | - Doctor<br/>- Entrepreneur<br/>- Cashier<br/>- Barman                                                                                | 🤿 activity                     |
 
+## <a id="card-statuses"></a>❓Card Statuses
+
+The cards' status is updated during the current game's round. When all cards have the `guessed` status, round is over.
+
+| Status             | Description                                                                                                                   |
+|:------------------:|:-----------------------------------------------------------------------------------------------------------------------------:|
+| ❓ to-guess        | First status when the round starts.                                                                                           | 
+| 🗑️ discarded       | Card has been discarded because the rules were not followed. It can't be played twice during the current game's turn.         | 
+| ⏭️ skipped         | Card has been skipped. It can't be played twice during the current game's turn.                                               | 
+| ✅ guessed         | Card has been guessed. It can't be played twice during the current game's round.                                              |
+
 ## <a id="game-statuses"></a>🎲 Game Statuses
 
 The game's status is updated through all its lifecycle.

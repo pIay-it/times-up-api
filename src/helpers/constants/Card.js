@@ -23,3 +23,5 @@ exports.cardCategories = [
     "sport",
     "job",
 ];
+
+exports.cardStatuses = ["to-guess", "discarded", "skipped", "guessed"];
