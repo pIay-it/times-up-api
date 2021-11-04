@@ -1,6 +1,6 @@
 const { param, body, query } = require("express-validator");
 const Card = require("../controllers/Card");
-const { basicLimiter } = require("../helpers/constants/Route");
+const { defaultLimiter } = require("../helpers/constants/Route");
 const { basicAuth } = require("../helpers/functions/Passport");
 const { getCardCategories } = require("../helpers/functions/Card");
 const { toTitleCase, filterOutHTMLTags, removeMultipleSpacesToSingle } = require("../helpers/functions/String");
@@ -31,7 +31,7 @@ module.exports = app => {
      * @apiParam (Query String Parameters) {Number{>= 1}} [limit] Limit the number of cards returned.
      * @apiUse CardResponse
      */
-    app.get("/cards", basicLimiter, [
+    app.get("/cards", defaultLimiter, [
         query("label")
             .optional()
             .isString().withMessage("Must be a valid string.")
@@ -72,7 +72,7 @@ module.exports = app => {
      * @apiParam (Route Parameters) {ObjectId} id Card's ID.
      * @apiUse CardResponse
      */
-    app.get("/cards/:id", basicLimiter, [
+    app.get("/cards/:id", defaultLimiter, [
         param("id")
             .isMongoId().withMessage("Must be a valid ObjectId."),
     ], Card.getCard);
@@ -90,7 +90,7 @@ module.exports = app => {
      * @apiParam (Request Body Parameters) {String} [imageURL] Card's image URL which can help to guess it. Must be HTTPS.
      * @apiUse CardResponse
      */
-    app.post("/cards", basicAuth, basicLimiter, [
+    app.post("/cards", basicAuth, defaultLimiter, [
         body("label")
             .isString().withMessage("Must be a valid string.")
             .customSanitizer(label => filterOutHTMLTags(label))
@@ -136,7 +136,7 @@ module.exports = app => {
      * @apiParam (Request Body Parameters) {String} [imageURL] Card's image URL which can help to guess it. Must be HTTPS.
      * @apiUse CardResponse
      */
-    app.patch("/cards/:id", basicAuth, basicLimiter, [
+    app.patch("/cards/:id", basicAuth, defaultLimiter, [
         param("id")
             .isMongoId().withMessage("Must be a valid ObjectId."),
         body("label")
@@ -182,7 +182,7 @@ module.exports = app => {
      * @apiParam (Route Parameters) {ObjectId} id Card's ID.
      * @apiUse CardResponse
      */
-    app.delete("/cards/:id", basicAuth, basicLimiter, [
+    app.delete("/cards/:id", basicAuth, defaultLimiter, [
         param("id")
             .isMongoId().withMessage("Must be a valid ObjectId."),
     ], Card.deleteCard);

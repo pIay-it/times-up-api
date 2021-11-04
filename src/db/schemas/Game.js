@@ -33,10 +33,7 @@ const GameSchema = new Schema({
         default: 1,
         min: 1,
     },
-    speaker: {
-        type: PlayerSchema,
-        required: true,
-    },
+    speaker: { type: PlayerSchema },
     guesser: { type: PlayerSchema },
     options: {
         type: GameOptionsSchema,
@@ -49,6 +46,11 @@ const GameSchema = new Schema({
 }, {
     timestamps: true,
     versionKey: false,
+});
+
+GameSchema.post("save", doc => {
+    doc.speaker = doc.players[0];
+    doc.save();
 });
 
 module.exports = GameSchema;

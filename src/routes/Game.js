@@ -1,7 +1,8 @@
-const { query, param } = require("express-validator");
+const { query, param, body } = require("express-validator");
 const Game = require("../controllers/Game");
-const { basicLimiter } = require("../helpers/constants/Route");
+const { defaultLimiter, gameCreationLimiter } = require("../helpers/constants/Route");
 const { basicAuth } = require("../helpers/functions/Passport");
+const { filterOutHTMLTags, removeMultipleSpacesToSingle } = require("../helpers/functions/String");
 
 module.exports = app => {
     /**
@@ -36,12 +37,13 @@ module.exports = app => {
      * @api {GET} /games A] Get games
      * @apiName GetGames
      * @apiGroup Games 🎲
+     * @apiPermission Basic
      *
      * @apiParam (Query String Parameters) {String} [fields] Specifies which fields to include. Each value must be separated by a `,` without space. (e.g: `label,createdAt`)
      * @apiParam (Query String Parameters) {Number{>= 1}} [limit] Limit the number of games returned.
      * @apiUse GameResponse
      */
-    app.get("/games", basicAuth, basicLimiter, [
+    app.get("/games", basicAuth, defaultLimiter, [
         query("fields")
             .optional()
             .isString().withMessage("Must be a valid string.")
@@ -61,8 +63,30 @@ module.exports = app => {
      * @apiParam (Route Parameters) {ObjectId} id Game's ID.
      * @apiUse GameResponse
      */
-    app.get("/games/:id", basicLimiter, [
+    app.get("/games/:id", defaultLimiter, [
         param("id")
             .isMongoId().withMessage("Must be a valid ObjectId."),
     ], Game.getGame);
+
+    /**
+     * @api {POST} /games C] Create a game
+     * @apiName CreateGame
+     * @apiGroup Games 🎲
+     *
+     * @apiParam (Request Body Parameters) {Object[]} players Game's players. Must contain between 4 and 20 players.
+     * @apiParam (Request Body Parameters) {String{>= 1 && <= 30}} players.name Player's name. Must be unique in the array and between 1 and 30 characters long.
+     * @apiUse GameResponse
+     */
+    app.post("/games", gameCreationLimiter, [
+        body("players")
+            .isArray().withMessage("Must be a valid array")
+            .custom(value => value.length >= 4 && value.length <= 20 ? Promise.resolve() : Promise.reject(new Error()))
+            .withMessage("Must contain between 4 and 20 players"),
+        body("players.*.name")
+            .isString().withMessage("Must be a valid string")
+            .customSanitizer(name => filterOutHTMLTags(name))
+            .trim()
+            .customSanitizer(name => removeMultipleSpacesToSingle(name))
+            .isLength({ min: 1, max: 30 }).withMessage("Must be between 1 and 30 characters long"),
+    ], Game.postGame);
 };

@@ -19,4 +19,8 @@ exports.errorMetadata = {
         code: 5,
         HTTPCode: 400,
     },
+    PLAYERS_NAME_NOT_UNIQUE: {
+        code: 6,
+        HTTPCode: 400,
+    },
 };

@@ -5,12 +5,10 @@ const mongoose = require("mongoose");
 const app = require("../../../app");
 const { resetDatabase } = require("../../../src/helpers/functions/Test");
 const Config = require("../../../config");
-
-chai.use(chaiHttp);
 const { expect } = chai;
-
 let server, doudouCard, catCard, peterPanCard, pacManCard;
 
+chai.use(chaiHttp);
 describe("A - Card CRUD [Create / Read / Update / Delete]", () => {
     before(done => resetDatabase(done));
     before(done => {

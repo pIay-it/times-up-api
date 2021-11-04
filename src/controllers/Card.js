@@ -5,6 +5,8 @@ const { sendError, generateError } = require("../helpers/functions/Error");
 
 exports.find = (search, projection, options = {}) => Card.find(search, projection, options);
 
+exports.aggregate = aggregation => Card.aggregate(aggregation);
+
 exports.findOne = (search, projection, options = {}) => Card.findOne(search, projection, options);
 
 exports.fillCategories = data => {
