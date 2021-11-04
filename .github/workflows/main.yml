@@ -1,4 +1,4 @@
-name: Time's Up API Default Workflow
+name: Time's Up by Play-IT API Default Workflow
 on: push
 jobs:
     build:
