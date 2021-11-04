@@ -4,19 +4,19 @@ jobs:
     build:
         runs-on: ubuntu-latest
         steps:
-            - id: Setup GitHub repository
-              run: actions/checkout@v2
-            - id: Setup NodeJS v14
-              run: actions/setup-node@v2
+            - name: Setup GitHub repository
+              uses: actions/checkout@v2
+            - name: Setup NodeJS v14
+              uses: actions/setup-node@v2
               with:
                 node-version: '14'
-            - id: Setup MongoDB v5
-              run: supercharge/mongodb-github-action@1.6.0
+            - name: Setup MongoDB v5
+              uses: supercharge/mongodb-github-action@1.6.0
               with:
                 mongodb-version: '5'
-            - id: Installing project dependencies
+            - name: Installing project dependencies
               run: npm install
-            - id: Checking and linting code
+            - name: Checking and linting code
               run: npm run lint
-            - id: Running tests
+            - name: Running tests
               run: npm test
