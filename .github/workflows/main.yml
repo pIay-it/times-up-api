@@ -12,8 +12,8 @@ jobs:
                 node-version: '14'
             - id: Setup MongoDB v5
               run: supercharge/mongodb-github-action@1.6.0
-              with:
-                mongodb-version: '5'
+                with:
+                  mongodb-version: '5'
             - id: Installing project dependencies
               run: npm install
             - id: Checking and linting code
