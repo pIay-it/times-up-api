@@ -17,6 +17,7 @@ const CardSchema = new Schema({
         min: 1,
         max: 3,
     },
+    // TODO: Time to guess
     description: { type: String },
     imageURL: { type: String },
 }, {
