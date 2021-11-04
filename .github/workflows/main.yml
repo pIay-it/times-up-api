@@ -8,12 +8,12 @@ jobs:
               run: actions/checkout@v2
             - id: Setup NodeJS v14
               run: actions/setup-node@v2
-                with:
-                  node-version: '14'
+              with:
+                node-version: '14'
             - id: Setup MongoDB v5
               run: supercharge/mongodb-github-action@1.6.0
-                with:
-                  mongodb-version: '5'
+              with:
+                mongodb-version: '5'
             - id: Installing project dependencies
               run: npm install
             - id: Checking and linting code
