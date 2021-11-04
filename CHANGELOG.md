@@ -13,6 +13,7 @@
 * Main config file with `.env` variables.
 * Script `update-version` to update project version on `package.json`, `apidoc` config and API main route.
 * MIT license. 
+* Travis configuration for testing and integrating commits. 
 
 ### 🛣 Routes
 
