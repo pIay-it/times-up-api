@@ -20,12 +20,8 @@ jobs:
               run: npm run lint
             - name: Running tests
               run: npm test
-    slackNotification:
-        name: Slack Notification
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v2
-            - name: Slack Notification
+            - name: Send Slack notification
               uses: rtCamp/action-slack-notify@v2
               env:
                 SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+                SLACK_MESSAGE: 'Dit donc Doudou, regarde-moi ces nouvelles choses :rocket:'
