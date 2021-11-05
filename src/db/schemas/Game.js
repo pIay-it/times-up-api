@@ -1,6 +1,7 @@
 const { Schema } = require("mongoose");
 const CardSchema = require("./Card");
 const PlayerSchema = require("./Player");
+const GameSummarySchema = require("./GameSummary");
 const GameOptionsSchema = require("./GameOptions");
 const GameHistorySchema = require("./GameHistory");
 const { getGameStatuses, getGameDefaultOptions } = require("../../helpers/functions/Game");
@@ -35,6 +36,7 @@ const GameSchema = new Schema({
     },
     speaker: { type: PlayerSchema },
     guesser: { type: PlayerSchema },
+    summary: { type: GameSummarySchema },
     options: {
         type: GameOptionsSchema,
         default: getGameDefaultOptions(),

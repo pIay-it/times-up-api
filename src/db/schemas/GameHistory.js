@@ -23,6 +23,11 @@ const GameHistorySchema = new Schema({
         type: [CardSchema],
         default: undefined,
     },
+    score: {
+        type: Number,
+        required: true,
+        min: 0,
+    },
 }, {
     timestamps: true,
     versionKey: false,

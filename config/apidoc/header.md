@@ -80,6 +80,7 @@ A game's history is a past play. All history is sorted in reverse chronological 
 | speaker                                            | [Player](#player-class)              | Game's speaker for the turn. The speaker is the one trying to make his team or partner guesses cards.                                                |
 | **guesser***                                       | [Player](#player-class)              | Game's guesser for the turn, set only if `options.players.areTeamUp` is `false`. The guesser is the one trying to guess the card.                    |
 | **cards***                                         | [Card](#card-class)[]                | Game's cards which status changed to `discarded`, `skipped` or `guessed`.                                                                            |
+| score                                              | Number                               | Total of points scored by the speaker for his team or himself.                                                                                       |
 | createdAt                                          | Date                                 | When the play was created.                                                                                                                           |
 | updatedAt                                          | Date                                 | When the play was updated.                                                                                                                           |
 
