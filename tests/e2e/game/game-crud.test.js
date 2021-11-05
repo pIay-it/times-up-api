@@ -31,10 +31,10 @@ describe("A - Game CRUD [Create / Read / Update / Delete]", () => {
             });
     });
     createDummyCards();
-    it(`🎲 Creates a game with 4 players and default options (POST /games)`, done => {
+    it(`🎲 Creates a fast game with 4 players, default options and "playing" status to start (POST /games)`, done => {
         chai.request(server)
             .post("/games")
-            .send({ players })
+            .send({ players, status: "playing" })
             .end((err, res) => {
                 expect(res).to.have.status(200);
                 game = res.body;
@@ -51,7 +51,7 @@ describe("A - Game CRUD [Create / Read / Update / Delete]", () => {
                 expect(players[3].team).to.equal("Rouge");
                 expect(game.cards).to.be.an("array");
                 expect(game.cards.length).to.equal(40);
-                expect(game.status).to.equal("preparing");
+                expect(game.status).to.equal("playing");
                 expect(game.round).to.equal(1);
                 expect(game.turn).to.equal(1);
                 expect(game.speaker).to.deep.equal(players[0]);

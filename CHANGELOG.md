@@ -25,6 +25,7 @@
 * Route `DELETE /cards/:id` for deleting a card protected with basic authentication.
 * Route `GET /games` for getting all available games. Limit results, specify fields.
 * Route `GET /games/:id` for getting a game with an ID.
+* Route `POST /games` for creating a new game.
 
 ### 📚 Documentation
 
@@ -43,6 +44,7 @@
 * Route `DELETE /cards/:id` in APIDoc.
 * Route `GET /games` in APIDoc.
 * Route `GET /games/:id` in APIDoc.
+* Route `POST /games` in APIDoc.
 
 ### 🧪 Tests
 
@@ -53,6 +55,7 @@
 * Tests for route `POST /cards`.
 * Tests for route `PATCH /cards/:id`.
 * Tests for route `DELETE /cards/:id`.
+* Tests for route `POST /games`.
 
 ### 📦 Packages
 

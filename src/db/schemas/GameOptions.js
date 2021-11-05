@@ -41,7 +41,7 @@ const GameHistorySchema = new Schema({
             timeLimit: {
                 type: Number,
                 min: 10,
-                max: 120,
+                max: 180,
                 default: 30,
             },
         },
