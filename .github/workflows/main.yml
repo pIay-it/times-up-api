@@ -23,5 +23,7 @@ jobs:
             - name: Send Slack notification
               uses: rtCamp/action-slack-notify@v2
               env:
+                SLACK_USERNAME: GitHub Actions
+                SLACK_ICON: 'https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png?size=48'
                 SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-                SLACK_MESSAGE: 'Dit donc Doudou, regarde-moi ces nouvelles choses :rocket:'
+                SLACK_TITLE: 'Commit message'
