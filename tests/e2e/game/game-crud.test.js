@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const { describe, it, before, after } = require("mocha");
 const chai = require("chai");
 const chaiHttp = require("chai-http");
@@ -6,7 +7,7 @@ const { getCardCategories } = require("../../../src/helpers/functions/Card");
 const { resetDatabase, createDummyCards } = require("../../../src/helpers/functions/Test");
 const Config = require("../../../config");
 const { expect } = chai;
-let server, game;
+let server, firstGame, secondGame;
 let players = [
     { name: "   Doudou    " },
     { name: "      <span>Juju</span>" },
@@ -38,10 +39,10 @@ describe("A - Game CRUD [Create / Read / Update / Delete]", () => {
             .send({ players, status: "playing" })
             .end((err, res) => {
                 expect(res).to.have.status(200);
-                game = res.body;
-                players = game.players;
-                expect(game.players).to.be.an("array");
-                expect(game.players.length).to.equal(4);
+                firstGame = res.body;
+                players = firstGame.players;
+                expect(firstGame.players).to.be.an("array");
+                expect(firstGame.players.length).to.equal(4);
                 expect(players[0].name).to.equal("Doudou");
                 expect(players[0].team).to.equal("Bleue");
                 expect(players[1].name).to.equal("Juju");
@@ -50,21 +51,21 @@ describe("A - Game CRUD [Create / Read / Update / Delete]", () => {
                 expect(players[2].team).to.equal("Bleue");
                 expect(players[3].name).to.equal("Thom");
                 expect(players[3].team).to.equal("Rouge");
-                expect(game.cards).to.be.an("array");
-                expect(game.cards.length).to.equal(40);
-                expect(game.status).to.equal("playing");
-                expect(game.round).to.equal(1);
-                expect(game.turn).to.equal(1);
-                expect(game.speaker).to.deep.equal(players[0]);
-                expect(game.guesser).to.not.exist;
-                expect(game.options.players.areTeamUp).to.be.true;
-                expect(game.options.cards.count).to.equal(40);
-                expect(game.options.cards.categories).to.deep.equal(getCardCategories());
-                expect(game.options.cards.difficulties).to.deep.equal([1, 2, 3]);
-                expect(game.options.cards.helpers.areDisplayed).to.be.true;
-                expect(game.options.rounds.count).to.equal(3);
-                expect(game.options.rounds.turns.timeLimit).to.equal(30);
-                expect(game.history).to.not.exist;
+                expect(firstGame.cards).to.be.an("array");
+                expect(firstGame.cards.length).to.equal(40);
+                expect(firstGame.status).to.equal("playing");
+                expect(firstGame.round).to.equal(1);
+                expect(firstGame.turn).to.equal(1);
+                expect(firstGame.speaker).to.deep.equal(players[0]);
+                expect(firstGame.guesser).to.not.exist;
+                expect(firstGame.options.players.areTeamUp).to.be.true;
+                expect(firstGame.options.cards.count).to.equal(40);
+                expect(firstGame.options.cards.categories).to.deep.equal(getCardCategories());
+                expect(firstGame.options.cards.difficulties).to.deep.equal([1, 2, 3]);
+                expect(firstGame.options.cards.helpers.areDisplayed).to.be.true;
+                expect(firstGame.options.rounds.count).to.equal(3);
+                expect(firstGame.options.rounds.turns.timeLimit).to.equal(30);
+                expect(firstGame.history).to.not.exist;
                 done();
             });
     });
@@ -74,10 +75,10 @@ describe("A - Game CRUD [Create / Read / Update / Delete]", () => {
             .send({ players: [...players, { name: "Nana" }] })
             .end((err, res) => {
                 expect(res).to.have.status(200);
-                game = res.body;
-                players = game.players;
-                expect(game.players).to.be.an("array");
-                expect(game.players.length).to.equal(5);
+                secondGame = res.body;
+                players = secondGame.players;
+                expect(secondGame.players).to.be.an("array");
+                expect(secondGame.players.length).to.equal(5);
                 expect(players[0].name).to.equal("Doudou");
                 expect(players[0].team).to.equal("Bleue");
                 expect(players[1].name).to.equal("Juju");
@@ -88,9 +89,9 @@ describe("A - Game CRUD [Create / Read / Update / Delete]", () => {
                 expect(players[3].team).to.equal("Rouge");
                 expect(players[4].name).to.equal("Nana");
                 expect(players[4].team).to.equal("Bleue");
-                expect(game.cards).to.be.an("array");
-                expect(game.status).to.equal("preparing");
-                expect(game.history).to.not.exist;
+                expect(secondGame.cards).to.be.an("array");
+                expect(secondGame.status).to.equal("preparing");
+                expect(secondGame.history).to.not.exist;
                 done();
             });
     });
@@ -136,7 +137,27 @@ describe("A - Game CRUD [Create / Read / Update / Delete]", () => {
                 const games = res.body;
                 expect(games).to.be.an("array");
                 expect(games.length).to.equal(2);
-                expect(games.every(g => g.players && !g.cards && !g.options && !g.createdAt && !g.updatedAt)).to.be.true;
+                expect(games.every(game => game.players && !game.cards && !game.options && !game.createdAt && !game.updatedAt)).to.be.true;
+                done();
+            });
+    });
+    it(`🎲 Can't get an unknown game (GET /game/:id)`, done => {
+        chai.request(server)
+            // eslint-disable-next-line new-cap
+            .get(`/games/${mongoose.Types.ObjectId()}`)
+            .end((err, res) => {
+                expect(res).to.have.status(404);
+                expect(res.body.type).to.equal("NOT_FOUND");
+                done();
+            });
+    });
+    it(`🎲 Get the first game created (GET /games/:id)`, done => {
+        chai.request(server)
+            .get(`/games/${firstGame._id}`)
+            .end((err, res) => {
+                expect(res).to.have.status(200);
+                const game = res.body;
+                expect(game._id).to.be.equal(firstGame._id);
                 done();
             });
     });

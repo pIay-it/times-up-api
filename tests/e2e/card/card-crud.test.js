@@ -227,6 +227,16 @@ describe("A - Card CRUD [Create / Read / Update / Delete]", () => {
                 done();
             });
     });
+    it(`🃏 Can't get an unknown card (GET /cards/:id)`, done => {
+        chai.request(server)
+            // eslint-disable-next-line new-cap
+            .get(`/cards/${mongoose.Types.ObjectId()}`)
+            .end((err, res) => {
+                expect(res).to.have.status(404);
+                expect(res.body.type).to.equal("NOT_FOUND");
+                done();
+            });
+    });
     it(`🃏 Get the Pac-Man card (GET /cards/:id)`, done => {
         chai.request(server)
             .get(`/cards/${pacManCard._id}`)
@@ -235,16 +245,6 @@ describe("A - Card CRUD [Create / Read / Update / Delete]", () => {
                 const card = res.body;
                 expect(card._id).to.be.equal(pacManCard._id);
                 expect(card.label).to.equal(pacManCard.label);
-                done();
-            });
-    });
-    it(`🃏 Can't get an unknown card (GET /cards/:id)`, done => {
-        chai.request(server)
-            // eslint-disable-next-line new-cap
-            .get(`/cards/${mongoose.Types.ObjectId()}`)
-            .end((err, res) => {
-                expect(res).to.have.status(404);
-                expect(res.body.type).to.equal("NOT_FOUND");
                 done();
             });
     });
