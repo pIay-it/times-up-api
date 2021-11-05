@@ -55,6 +55,7 @@
 * Tests for route `POST /cards`.
 * Tests for route `PATCH /cards/:id`.
 * Tests for route `DELETE /cards/:id`.
+* Tests for route `GET /games`.
 * Tests for route `POST /games`.
 
 ### 📦 Packages
