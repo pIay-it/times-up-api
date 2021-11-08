@@ -4,23 +4,30 @@ jobs:
     build:
         runs-on: ubuntu-latest
         steps:
-            - name: Setup GitHub repository
+            - name: Setup GitHub repository 🔧
               uses: actions/checkout@v2
-            - name: Setup NodeJS v14
+            - name: Setup NodeJS v14 ✨
               uses: actions/setup-node@v2
               with:
                 node-version: '14'
-            - name: Setup MongoDB v5
+            - name: Setup MongoDB v5 🌿
               uses: supercharge/mongodb-github-action@1.6.0
               with:
                 mongodb-version: '5'
-            - name: Installing project dependencies
+            - name: Install project dependencies 📦
               run: npm install
-            - name: Checking and linting code
+            - name: Check and lint code 🔍
               run: npm run lint
-            - name: Running tests
+            - name: Run tests ☑️
               run: npm test
-            - name: Send Slack notification
+            - name: Generate documentation 📚
+              run: npm run doc
+            - name: Deploy to GitHub Pages 📖
+              uses: JamesIves/github-pages-deploy-action@4.1.5
+              with:
+                branch: gh-pages
+                folder: public/apidoc
+            - name: Send Slack notification ✉️
               uses: rtCamp/action-slack-notify@v2
               env:
                 SLACK_USERNAME: GitHub Actions

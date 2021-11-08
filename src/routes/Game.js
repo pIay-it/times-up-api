@@ -12,15 +12,16 @@ module.exports = app => {
     /**
      * @apiDefine GameResponse
      * @apiSuccess {ObjectID} _id Game's ID.
-     * @apiSuccess {Player[]} players Game's players. (_See: [Classes - Player](#player-class)_)
-     * @apiSuccess {Card[]} cards Game's cards. (_See: [Classes - Card](#card-class)_)
+     * @apiSuccess {Player[]} players Game's players. (_See: [Classes - Player](#player-structure)_)
+     * @apiSuccess {Card[]} cards Game's cards. (_See: [Classes - Card](#card-structure)_)
      * @apiSuccess {String} status Game's status. (_Possibilities: [Codes - Game Statuses](#game-statuses)_)
      * @apiSuccess {Number} round Game's current round. Final round can be either `3` or `4` depending on game's options.
      * @apiSuccess {Number} turn Game's current turn for the current round. Set back to `1` when changing round.
-     * @apiSuccess {Player} speaker Game's speaker for the current turn. The speaker is the one trying to make his team or partner guesses cards. (_See: [Classes - Player](#player-class)_)
-     * @apiSuccess {Player} [guesser] Game's guesser for the current turn, set only if `options.players.areTeamUp` is `false`. The guesser is the one trying to guess the card. (_See: [Classes - Player](#player-class)_)
-     * @apiSuccess {GameOptions} options Game's options to personalize the party. (_See: [Classes - Game Options](#game-options-class)_)
-     * @apiSuccess {GameHistory[]} [history] Game's history to keep track of all plays. (_See: [Classes - Game History](#game-history-class)_)
+     * @apiSuccess {Player} speaker Game's speaker for the current turn. The speaker is the one trying to make his team or partner guesses cards. (_See: [Classes - Player](#player-structure)_)
+     * @apiSuccess {Player} [guesser] Game's guesser for the current turn, set only if `options.players.areTeamUp` is `false`. The guesser is the one trying to guess the card. (_See: [Classes - Player](#player-structure)_)
+     * @apiSuccess {Game History[]} [history] Game's history to keep track of all plays. (_See: [Classes - Game History](#game-history-structure)_)
+     * @apiSuccess {Game Summary} [summary] Game's summary with scores of every teams for each round and winners. (_See: [Structures - Game Summary](#game-summary-structure)_)
+     * @apiSuccess {Game Options} options Game's options to personalize the party. (_See: [Classes - Game Options](#game-options-structure)_)
      * @apiSuccess {Date} createdAt When the game was created.
      * @apiSuccess {Date} updatedAt When the game was updated.
      */

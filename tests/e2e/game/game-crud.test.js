@@ -66,6 +66,7 @@ describe("A - Game CRUD [Create / Read / Update / Delete]", () => {
                 expect(firstGame.options.rounds.count).to.equal(3);
                 expect(firstGame.options.rounds.turns.timeLimit).to.equal(30);
                 expect(firstGame.history).to.not.exist;
+                expect(firstGame.summary).to.not.exist;
                 done();
             });
     });

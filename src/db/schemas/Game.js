@@ -50,9 +50,9 @@ const GameSchema = new Schema({
     versionKey: false,
 });
 
-GameSchema.post("save", doc => {
-    doc.speaker = doc.players[0];
-    doc.save();
+GameSchema.post("save", game => {
+    game.speaker = game.players[0];
+    game.save();
 });
 
 module.exports = GameSchema;
