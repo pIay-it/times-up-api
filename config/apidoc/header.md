@@ -10,11 +10,11 @@
 
 ---
 
-# Classes
+# Structures
 
-### Fields annotated with `*` are optional. Therefore, classes properties aren't always set.
+### Fields annotated with `*` are optional. Therefore, structures properties aren't always set.
 
-## <a id="player-class"></a>👤 Player
+## <a id="player-structure"></a>👤 Player
 
 | Field                | Type               | Description                                                                                                                           |
 |----------------------|:------------------:|---------------------------------------------------------------------------------------------------------------------------------------|
@@ -22,7 +22,7 @@
 | name                 | String             | Player's name. Must be unique among all players.                                                                                      |
 | **team***            | String             | Player's team. Set if `game.options.players.areTeamUp` is `true`. If set, at least `2` players must belong to a team.                 |
 
-## <a id="card-class"></a>🃏️ Card
+## <a id="card-structure"></a>🃏️ Card
 
 Games are made of cards to guess by players. Each card has a label, some categories and a difficulty to guess.
 
@@ -39,36 +39,25 @@ Games are made of cards to guess by players. Each card has a label, some categor
 | createdAt                                         | Date                       | When the card was created.                                                                                                                    |
 | updatedAt                                         | Date                       | When the card was updated.                                                                                                                    |
 
-## <a id="game-class"></a>🎲 Game
+## <a id="game-structure"></a>🎲 Game
 
-| Field<i style="margin-right: 125px"></i>            | Type                                    | Description                                                                                                                                                                                      |
-|----------------------------------------------------|:----------------------------------------:|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| _id                                                | ObjectId                                 | Game's ID.                                                                                                                                                                                        |
-| players                                            | [Player](#player-class)[]                | Game's players. (_See: [Classes - Player](#player-class)_)                                                                                                                                        |
-| cards                                              | [Card](#card-class)[]                    | Game's cards. (_See: [Classes - Card](#card-class)_)                                                                                                                                              |
-| status                                             | String                                   | Game's status. (_Possibilities: [Codes - Game Statuses](#game-statuses)_)                                                                                                                         |
-| round                                              | Number                                   | Game's current round. Final round can be either `3` or `4` depending on game's options.                                                                                                           |
-| turn                                               | Number                                   | Game's current turn for the current round. Set back to `1` when changing round.                                                                                                                   |
-| speaker                                            | [Player](#player-class)                  | Game's speaker for the current turn. The speaker is the one trying to make his team or partner guesses cards. (_See: [Classes - Player](#player-class)_)                                          |
-| **guesser***                                       | [Player](#player-class)                  | Game's guesser for the current turn, set only if `options.players.areTeamUp` is `false`. The guesser is the one trying to guess the card. (_See: [Classes - Player](#player-class)_)              |
-| options                                            | Object                                   | Game's options to personalize the party.                                                                                                                                                          |
-| <i style="margin-left: 15px"></i>⮑ players        | Object                                   | Game's options related to players.                                                                                                                                                                |
-| <i style="margin-left: 30px"></i>⮑ areTeamUp      | Boolean                                  | If set to `true`, teams are made among players. Else, players must win by themselves. Default is `true` based on official rules.                                                                  |
-| <i style="margin-left: 15px"></i>⮑ cards          | Object                                   | Game's options related to cards.                                                                                                                                                                  |
-| <i style="margin-left: 30px"></i>⮑ count          | Number                                   | Number of cards to guess during each rounds. Default is `40` based on official rules.                                                                                                             |
-| <i style="margin-left: 30px"></i>⮑ categories     | String[]                                 | Cards categories to include for cards to guess. Default are all categories. (_Possibilities: [Codes - Card Categories](#card-categories)_)                                                        |
-| <i style="margin-left: 30px"></i>⮑ difficulties   | Number[]                                 | Cards difficulties to include for cards to guess. Default are all difficulties. `[1, 2, 3]`                                                                                                       |
-| <i style="margin-left: 30px"></i>⮑ helpers        | Object                                   | Game's options related to cards helpers that help players to guess cards.                                                                                                                         |
-| <i style="margin-left: 45px"></i>⮑ areDisplayed   | Boolean                                  | If set to `true`, description and/or image can be displayed to guess the card more easily. Default is `true`.                                                                                     |
-| <i style="margin-left: 15px"></i>⮑ rounds         | Object                                   | Game's options related to rounds.                                                                                                                                                                 |
-| <i style="margin-left: 30px"></i>⮑ count          | Number                                   | Number of rounds for this game. Default is `3` based on official rules.                                                                                                                           |
-| <i style="margin-left: 30px"></i>⮑ turns          | Object                                   | Game's options related to rounds turns.                                                                                                                                                           |
-| <i style="margin-left: 45px"></i>⮑ timeLimit      | Number                                   | Time in seconds allowed for a player's turn. Default is `30` seconds based on official rules.                                                                                                     |
-| **history***                                       | [Game History](#game-history-class)[]    | Game's history to keep track of all plays. (_See: [Classes - Game History](#game-history-class)_)                                                                                                 |
-| createdAt                                          | Date                                     | When the game was created.                                                                                                                                                                        |
-| updatedAt                                          | Date                                     | When the game was updated.                                                                                                                                                                        |
+| Field<i style="margin-right: 125px"></i>           | Type                                         | Description                                                                                                                                                                                       |
+|----------------------------------------------------|:--------------------------------------------:|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| _id                                                | ObjectId                                     | Game's ID.                                                                                                                                                                                        |
+| players                                            | [Player](#player-structure)[]                | Game's players. (_See: [Structures - Player](#player-structure)_)                                                                                                                                 |
+| cards                                              | [Card](#card-structure)[]                    | Game's cards. (_See: [Structures - Card](#card-structure)_)                                                                                                                                       |
+| status                                             | String                                       | Game's status. (_Possibilities: [Codes - Game Statuses](#game-statuses)_)                                                                                                                         |
+| round                                              | Number                                       | Game's current round. Final round can be either `3` or `4` depending on game's options.                                                                                                           |
+| turn                                               | Number                                       | Game's current turn for the current round. Set back to `1` when changing round.                                                                                                                   |
+| speaker                                            | [Player](#player-structure)                  | Game's speaker for the current turn. The speaker is the one trying to make his team or partner guesses cards. (_See: [Structures - Player](#player-structure)_)                                   |
+| **guesser***                                       | [Player](#player-structure)                  | Game's guesser for the current turn, set only if `options.players.areTeamUp` is `false`. The guesser is the one trying to guess the card. (_See: [Structures - Player](#player-structure)_)       |
+| **history***                                       | [Game History](#game-history-structure)[]    | Game's history to keep track of all plays. (_See: [Structures - Game History](#game-history-structure)_)                                                                                          |
+| **summary***                                       | [Game Summary](#game-summary-structure)      | Game's summary with scores of every teams for each round and winners. (_See: [Structures - Game Summary](#game-summary-structure)_)                                                               |
+| options                                            | [Game Options](#game-options-structure)      | Game's options to personalize the party. (_See: [Structures - Game Options](#game-options-structure)_)                                                                                            |
+| createdAt                                          | Date                                         | When the game was created.                                                                                                                                                                        |
+| updatedAt                                          | Date                                         | When the game was updated.                                                                                                                                                                        |
 
-## <a id="game-history-class"></a>📜 Game History
+## <a id="game-history-structure"></a>📜 Game History
 
 A game's history is a past play. All history is sorted in reverse chronological order.
 
@@ -77,16 +66,68 @@ A game's history is a past play. All history is sorted in reverse chronological 
 | _id                                                | ObjectId                             | Game history's ID.                                                                                                                                   |
 | round                                              | Number                               | Game history's round.                                                                                                                                |
 | turn                                               | Number                               | Game history's turn.                                                                                                                                 |
-| speaker                                            | [Player](#player-class)              | Game's speaker for the turn. The speaker is the one trying to make his team or partner guesses cards.                                                |
-| **guesser***                                       | [Player](#player-class)              | Game's guesser for the turn, set only if `options.players.areTeamUp` is `false`. The guesser is the one trying to guess the card.                    |
-| **cards***                                         | [Card](#card-class)[]                | Game's cards which status changed to `discarded`, `skipped` or `guessed`.                                                                            |
+| speaker                                            | [Player](#player-structure)          | Game's speaker for the turn. The speaker is the one trying to make his team or partner guesses cards.                                                |
+| **guesser***                                       | [Player](#player-structure)          | Game's guesser for the turn, set only if `options.players.areTeamUp` is `false`. The guesser is the one trying to guess the card.                    |
+| **cards***                                         | [Card](#card-structure)[]            | Game's cards which status changed to `discarded`, `skipped` or `guessed`.                                                                            |
 | score                                              | Number                               | Total of points scored by the speaker for his team or himself.                                                                                       |
 | createdAt                                          | Date                                 | When the play was created.                                                                                                                           |
 | updatedAt                                          | Date                                 | When the play was updated.                                                                                                                           |
 
-## <a id="error-class"></a>⚠️ API Error
+## <a id="game-summary-structure"></a>🏆️ Game Summary
 
-Class returned from API HTTP requests when something went wrong.
+The game's summary generates itself as the rounds progress. It tells about the scores and the final winners when the game is `done`.
+
+| Field<i style="margin-right: 125px"></i>           | Type                                                     | Description                                                                                                                                                                                       |
+|----------------------------------------------------|:--------------------------------------------------------:|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **rounds***                                        | [Game Summary Round](#game-summary-round-structure)[]    | Summary of each of the 3 or 4 rounds of the game with the score of every team or player. (_See: [Structures - Game Summary Score](#game-summary-round-structure)_)                                |
+| **scores***                                        | [Game Summary Score](#game-summary-score-structure)[]    | Final scores for each team or player. Only set if game status is set to `done`. (_See: [Structures - Game Summary Score](#game-summary-score-structure)_)                                         |
+| **winners***                                       | Object                                                   | Winner(s) of the game. Only set if game status is set to `done`.                                                                                                                                  |
+| <i style="margin-left: 15px"></i>⮑ players        | [Player](#player-structure)[]                            | Player(s) who won the game. Length is `1` if `options.players.areTeamUp` is `false`. (_See: [Structures - Player](#player-structure)_)                                                            |
+| <i style="margin-left: 15px"></i>⮑ **team***      | String                                                   | Team who won the game. Set only if `options.players.areTeamUp` is `true`.                                                                                                                         |
+
+## <a id="game-summary-round-structure"></a>🏅️ Game Summary Round
+
+When a round is over, its summary is generated with the score for each team or players.
+
+| Field<i style="margin-right: 125px"></i>           | Type                                                     | Description                                                                                                                                                                                       |
+|----------------------------------------------------|:--------------------------------------------------------:|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| _id                                                | ObjectId                                                 | Game's summary round ID.                                                                                                                                                                          |
+| number                                             | Number                                                   | Game's round number from `1` to `3` with default game's options.                                                                                                                                  |
+| scores                                             | [Game Summary Score](#game-summary-score-structure)[]    | For each team or player if there's no team, the round's score. (_See: [Structures - Game Summary Score](#game-summary-score-structure)_)                                                          |
+
+## <a id="game-summary-score-structure"></a>💯 Game Summary Score
+
+A score is always attached with the player or team who did it.
+
+| Field<i style="margin-right: 125px"></i>           | Type                                                 | Description                                                                                                                                                                                       |
+|----------------------------------------------------|:----------------------------------------------------:|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| _id                                                | ObjectId                                             | Game's summary score ID.                                                                                                                                                                          |
+| **players***                                       | [Player](#player-structure)[]                        | Player(s) who scored who scored. Length is `1` if `options.players.areTeamUp` is `false`. (_See: [Structures - Player](#player-structure)_)                                                       |
+| **team***                                          | String                                               | Team who scored. Set only if `game.options.players.areTeamUp` is `true`.                                                                                                                          |
+| score                                              | Number                                               | Player or team score.                                                                                                                                                                             |
+
+## <a id="game-options-structure"></a>⚙️ Game Options
+
+In order to personalize the party, the game's options can be changed. By default, all options follow the official rules of the game.
+
+| Field<i style="margin-right: 125px"></i>           | Type                                     | Description                                                                                                                                                                                       |
+|----------------------------------------------------|:----------------------------------------:|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| players                                            | Object                                   | Game's options related to players.                                                                                                                                                                |
+| <i style="margin-left: 15px"></i>⮑ areTeamUp      | Boolean                                  | If set to `true`, teams are made among players. Else, players must win by themselves. Default is `true` based on official rules.                                                                  |
+| cards                                              | Object                                   | Game's options related to cards.                                                                                                                                                                  |
+| <i style="margin-left: 15px"></i>⮑ count          | Number                                   | Number of cards to guess during each rounds. Default is `40` based on official rules.                                                                                                             |
+| <i style="margin-left: 15px"></i>⮑ categories     | String[]                                 | Cards categories to include for cards to guess. Default are all categories. (_Possibilities: [Codes - Card Categories](#card-categories)_)                                                        |
+| <i style="margin-left: 15px"></i>⮑ difficulties   | Number[]                                 | Cards difficulties to include for cards to guess. Default are all difficulties. `[1, 2, 3]`                                                                                                       |
+| <i style="margin-left: 15px"></i>⮑ helpers        | Object                                   | Game's options related to cards helpers that help players to guess cards.                                                                                                                         |
+| <i style="margin-left: 30px"></i>⮑ areDisplayed   | Boolean                                  | If set to `true`, description and/or image can be displayed to guess the card more easily. Default is `true`.                                                                                     |
+| rounds                                             | Object                                   | Game's options related to rounds.                                                                                                                                                                 |
+| <i style="margin-left: 15px"></i>⮑ count          | Number                                   | Number of rounds for this game. Default is `3` based on official rules.                                                                                                                           |
+| <i style="margin-left: 15px"></i>⮑ turns          | Object                                   | Game's options related to rounds turns.                                                                                                                                                           |
+| <i style="margin-left: 30px"></i>⮑ timeLimit      | Number                                   | Time in seconds allowed for a player's turn. Default is `30` seconds based on official rules.                                                                                                     |
+
+## <a id="error-structure"></a>⚠️ API Error
+
+Structure returned from API HTTP requests when something went wrong.
 
 | Field                | Type     | Description                                                         |
 |----------------------|:--------:|---------------------------------------------------------------------|

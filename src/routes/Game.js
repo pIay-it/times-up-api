@@ -19,19 +19,7 @@ module.exports = app => {
      * @apiSuccess {Number} turn Game's current turn for the current round. Set back to `1` when changing round.
      * @apiSuccess {Player} speaker Game's speaker for the current turn. The speaker is the one trying to make his team or partner guesses cards. (_See: [Classes - Player](#player-class)_)
      * @apiSuccess {Player} [guesser] Game's guesser for the current turn, set only if `options.players.areTeamUp` is `false`. The guesser is the one trying to guess the card. (_See: [Classes - Player](#player-class)_)
-     * @apiSuccess {Object} options Game's options to personalize the party.
-     * @apiSuccess {Object} options.players Game's options related to players.
-     * @apiSuccess {Boolean} options.players.areTeamUp=true If set to `true`, teams are made among players. Else, players must win by themselves. Default is `true` based on official rules.
-     * @apiSuccess {Object} options.cards Game's options related to cards.
-     * @apiSuccess {Number} options.cards.count=40 Number of cards to guess during each rounds. Default is `40` based on official rules.
-     * @apiSuccess {String[]} options.cards.categories Cards categories to include for cards to guess. Default are all categories. (_Possibilities: [Codes - Card Categories](#card-categories)_)
-     * @apiSuccess {Number[]} options.cards.difficulties=[1, 2, 3] Cards difficulties to include for cards to guess. Default are all difficulties. `[1, 2, 3]`
-     * @apiSuccess {Object} options.cards.helpers Game's options related to cards helpers that help players to guess cards.
-     * @apiSuccess {Boolean} options.cards.helpers.areDisplayed=true If set to `true`, description and/or image can be displayed to guess the card more easily. Default is `true`.
-     * @apiSuccess {Object} options.rounds Game's options related to rounds.
-     * @apiSuccess {Number} options.rounds.count=3 Number of rounds for this game. Default is `3` based on official rules.
-     * @apiSuccess {Object} options.rounds.turns Game's options related to rounds turns.
-     * @apiSuccess {Number} options.rounds.turns.timeLimit=30 Time in seconds allowed for a player's turn. Default is `30` seconds based on official rules.
+     * @apiSuccess {GameOptions} options Game's options to personalize the party. (_See: [Classes - Game Options](#game-options-class)_)
      * @apiSuccess {GameHistory[]} [history] Game's history to keep track of all plays. (_See: [Classes - Game History](#game-history-class)_)
      * @apiSuccess {Date} createdAt When the game was created.
      * @apiSuccess {Date} updatedAt When the game was updated.

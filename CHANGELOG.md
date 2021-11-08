@@ -31,12 +31,16 @@
 
 * `README.md` file.
 * `CONTRIBUTING.md` file.
-* Header for classes structure and footer for codes and values in APIDoc.
+* Header for structures structure and footer for codes and values in APIDoc.
 * Route `GET /` in APIDoc.
-* `Card` class with possible category and status values in APIDoc.
-* `Player` class in APIDoc.
-* `Game` class with possible status values in APIDoc.
-* `GameHistory` class in APIDoc.
+* `Card` structure with possible category and status values in APIDoc.
+* `Player` structure in APIDoc.
+* `Game` structure with possible status values in APIDoc.
+* `Game History` structure in APIDoc.
+* `Game Options` structure in APIDoc.
+* `Game Summary` structure in APIDoc.
+* `Game Summary Round` structure in APIDoc.
+* `Game Summary Score` structure in APIDoc.
 * Route `GET /cards` in APIDoc.
 * Route `GET /cards/:id` in APIDoc.
 * Route `POST /cards` in APIDoc.

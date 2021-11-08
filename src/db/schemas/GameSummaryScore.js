@@ -1,9 +1,12 @@
 const { Schema } = require("mongoose");
 const PlayerSchema = require("./Player");
 
-const GameSummaryRoundScoreSchema = new Schema({
+const GameSummaryScoreSchema = new Schema({
+    players: {
+        type: [PlayerSchema],
+        default: undefined,
+    },
     team: { type: String },
-    player: { type: PlayerSchema },
     score: {
         type: Number,
         required: true,
@@ -14,4 +17,4 @@ const GameSummaryRoundScoreSchema = new Schema({
     versionKey: false,
 });
 
-module.exports = GameSummaryRoundScoreSchema;
+module.exports = GameSummaryScoreSchema;
