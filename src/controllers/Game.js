@@ -125,3 +125,23 @@ exports.deleteGame = async(req, res) => {
         sendError(res, e);
     }
 };
+
+exports.checkGamePlayData = (data, game) => {
+    if (!game) {
+        throw generateError("NOT_FOUND", `Game not found with ID "${data.gameId}".`);
+    } else if (game.status !== "playing") {
+        throw generateError("GAME_NOT_PLAYING", `Game with ID "${game._id}" doesn't have the "playing" status, plays are not allowed.`);
+    }
+};
+
+exports.postPlay = async(req, res) => {
+    try {
+        const { params, body } = checkRequestData(req);
+        body.gameId = params.id;
+        const game = await this.findOne({ _id: params.id });
+        this.checkGamePlayData(body, game);
+        return res.status(200).json(game);
+    } catch (e) {
+        sendError(res, e);
+    }
+};

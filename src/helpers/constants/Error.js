@@ -23,4 +23,8 @@ exports.errorMetadata = {
         code: 6,
         HTTPCode: 400,
     },
+    GAME_NOT_PLAYING: {
+        code: 7,
+        HTTPCode: 400,
+    },
 };

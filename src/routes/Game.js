@@ -169,4 +169,17 @@ module.exports = app => {
         param("id")
             .isMongoId().withMessage("Must be a valid ObjectId."),
     ], Game.deleteGame);
+
+    /**
+     * @api {POST} /games/:id/play F] Make a play
+     * @apiName MakeGamePlay
+     * @apiGroup Games 🎲
+     *
+     * @apiParam (Route Parameters) {ObjectId} id Game's ID.
+     * @apiUse GameResponse
+     */
+    app.post("/games/:id/play", defaultLimiter, [
+        param("id")
+            .isMongoId().withMessage("Must be a valid ObjectId."),
+    ], Game.postPlay);
 };

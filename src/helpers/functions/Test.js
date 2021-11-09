@@ -10,10 +10,10 @@ exports.resetDatabase = done => {
 };
 
 exports.createDummyCards = () => {
-    const server = app.listen(9999);
-    const requests = [];
-    const cards = getDummyCards();
     it(`🃏 Creates dummy cards (POST /cards)`, done => {
+        const server = app.listen(9999);
+        const requests = [];
+        const cards = getDummyCards();
         for (const card of cards) {
             requests.push(chai.request(server).post("/cards").auth(Config.app.basicAuth.username, Config.app.basicAuth.password).send(card));
         }
