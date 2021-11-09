@@ -1,11 +1,12 @@
 const { query, param, body } = require("express-validator");
 const Game = require("../controllers/Game");
-const { getGameDefaultOptions } = require("../helpers/functions/Game");
+const { getGameDefaultOptions, getGameStatuses } = require("../helpers/functions/Game");
 const { defaultLimiter, gameCreationLimiter } = require("../helpers/constants/Route");
 const { basicAuth } = require("../helpers/functions/Passport");
 const { filterOutHTMLTags, removeMultipleSpacesToSingle } = require("../helpers/functions/String");
 const { getCardCategories } = require("../helpers/functions/Card");
 const gameDefaultOptions = getGameDefaultOptions();
+const gameStatuses = getGameStatuses();
 const cardCategories = getCardCategories();
 
 module.exports = app => {
@@ -135,4 +136,23 @@ module.exports = app => {
             .isInt({ min: 10, max: 180 }).withMessage("Must be a valid number between 10 and 180.")
             .toInt(),
     ], Game.postGame);
+
+    /**
+     * @api {PATCH} /games D] Update a game
+     * @apiName UpdateGame
+     * @apiGroup Games 🎲
+     * @apiPermission Basic
+     *
+     * @apiParam (Route Parameters) {ObjectId} id Game's ID.
+     * @apiParam (Request Body Parameters) {String} [status] Game's status. (_See: [Codes - Game Statuses](#game-statuses)_)
+     * @apiUse GameResponse
+     */
+    app.patch("/games/:id", basicAuth, defaultLimiter, [
+        param("id")
+            .isMongoId().withMessage("Must be a valid ObjectId."),
+        body("status")
+            .optional()
+            .isString().withMessage("Must be a valid string.")
+            .isIn(gameStatuses).withMessage(`Must be one of the following values: ${gameStatuses}.`),
+    ], Game.patchGame);
 };

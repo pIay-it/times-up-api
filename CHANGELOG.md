@@ -26,6 +26,7 @@
 * Route `GET /games` for getting all available games. Limit results, specify fields.
 * Route `GET /games/:id` for getting a game with an ID.
 * Route `POST /games` for creating a new game.
+* Route `PATCH /games/:id` for updating a game protected with basic authentication.
 
 ### 📚 Documentation
 
@@ -49,6 +50,7 @@
 * Route `GET /games` in APIDoc.
 * Route `GET /games/:id` in APIDoc.
 * Route `POST /games` in APIDoc.
+* Route `PATCH /games/:id` in APIDoc.
 
 ### 🧪 Tests
 
@@ -62,6 +64,7 @@
 * Tests for route `GET /games`.
 * Tests for route `GET /games/:id`.
 * Tests for route `POST /games`.
+* Tests for route `PATCH /games/:id`.
 
 ### 📦 Packages
 

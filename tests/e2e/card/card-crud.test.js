@@ -227,7 +227,7 @@ describe("A - Card CRUD [Create / Read / Update / Delete]", () => {
                 done();
             });
     });
-    it(`🃏 Can't get an unknown card (GET /cards/:id)`, done => {
+    it(`❓  Can't get an unknown card (GET /cards/:id)`, done => {
         chai.request(server)
             // eslint-disable-next-line new-cap
             .get(`/cards/${mongoose.Types.ObjectId()}`)
@@ -286,7 +286,7 @@ describe("A - Card CRUD [Create / Read / Update / Delete]", () => {
                 done();
             });
     });
-    it(`🃏 Can't update a card with an unknown ID (PATCH /cards/:id)`, done => {
+    it(`❓  Can't update a card with an unknown ID (PATCH /cards/:id)`, done => {
         chai.request(server)
             // eslint-disable-next-line new-cap
             .patch(`/cards/${mongoose.Types.ObjectId()}`)
@@ -307,6 +307,17 @@ describe("A - Card CRUD [Create / Read / Update / Delete]", () => {
                 done();
             });
     });
+    it(`❓  Can't delete an unknown card (DELETE /cards/:id)`, done => {
+        chai.request(server)
+            // eslint-disable-next-line new-cap
+            .delete(`/cards/${mongoose.Types.ObjectId()}`)
+            .auth(Config.app.basicAuth.username, Config.app.basicAuth.password)
+            .end((err, res) => {
+                expect(res).to.have.status(404);
+                expect(res.body.type).to.equal("NOT_FOUND");
+                done();
+            });
+    });
     it(`🃏 Delete the Pac-Man card (DELETE /cards/:id)`, done => {
         chai.request(server)
             .delete(`/cards/${pacManCard._id}`)
@@ -321,17 +332,6 @@ describe("A - Card CRUD [Create / Read / Update / Delete]", () => {
     it(`🃏 Can't delete the Pac-Man card twice (DELETE /cards/:id)`, done => {
         chai.request(server)
             .delete(`/cards/${pacManCard._id}`)
-            .auth(Config.app.basicAuth.username, Config.app.basicAuth.password)
-            .end((err, res) => {
-                expect(res).to.have.status(404);
-                expect(res.body.type).to.equal("NOT_FOUND");
-                done();
-            });
-    });
-    it(`🃏 Can't delete a card with unknown ID (DELETE /cards/:id)`, done => {
-        chai.request(server)
-            // eslint-disable-next-line new-cap
-            .delete(`/cards/${mongoose.Types.ObjectId()}`)
             .auth(Config.app.basicAuth.username, Config.app.basicAuth.password)
             .end((err, res) => {
                 expect(res).to.have.status(404);

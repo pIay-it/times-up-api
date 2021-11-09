@@ -1,4 +1,5 @@
 const { sampleSize } = require("lodash");
+const { flatten } = require("mongo-dot-notation");
 const Game = require("../db/models/Game");
 const Card = require("./Card");
 const { checkRequestData } = require("../helpers/functions/Express");
@@ -7,6 +8,27 @@ const { sendError, generateError } = require("../helpers/functions/Error");
 exports.find = (search, projection, options = {}) => Game.find(search, projection, options);
 
 exports.findOne = (search, projection, options = {}) => Game.findOne(search, projection, options);
+
+exports.findOneAndUpdate = async(search, data, options = {}) => {
+    const { toJSON } = options;
+    delete options.toJSON;
+    options.new = options.new === undefined ? true : options.new;
+    const existingGame = await this.findOne(search);
+    if (!existingGame) {
+        throw generateError("NOT_FOUND", `Card not found.`);
+    }
+    const updatedGame = await Game.findOneAndUpdate(search, flatten(data), options);
+    return toJSON ? updatedGame.toJSON() : updatedGame;
+};
+
+exports.findOneAndDelete = async search => {
+    const game = await this.findOne(search);
+    if (!game) {
+        throw generateError("NOT_FOUND", `Card not found.`);
+    }
+    await Card.deleteOne(search);
+    return game;
+};
 
 exports.getRandomCards = async() => {
     const cards = await Card.find({}, "-createdAt -updatedAt");
@@ -78,6 +100,16 @@ exports.postGame = async(req, res) => {
     try {
         const { body } = checkRequestData(req);
         const game = await this.create(body);
+        return res.status(200).json(game);
+    } catch (e) {
+        sendError(res, e);
+    }
+};
+
+exports.patchGame = async(req, res) => {
+    try {
+        const { body, params } = checkRequestData(req);
+        const game = await this.findOneAndUpdate({ _id: params.id }, body);
         return res.status(200).json(game);
     } catch (e) {
         sendError(res, e);
