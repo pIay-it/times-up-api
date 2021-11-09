@@ -138,7 +138,7 @@ module.exports = app => {
     ], Game.postGame);
 
     /**
-     * @api {PATCH} /games D] Update a game
+     * @api {PATCH} /games/:id D] Update a game
      * @apiName UpdateGame
      * @apiGroup Games 🎲
      * @apiPermission Basic
@@ -155,4 +155,18 @@ module.exports = app => {
             .isString().withMessage("Must be a valid string.")
             .isIn(gameStatuses).withMessage(`Must be one of the following values: ${gameStatuses}.`),
     ], Game.patchGame);
+
+    /**
+     * @api {DELETE} /games E] Delete a game
+     * @apiName DeleteGame
+     * @apiGroup Games 🎲
+     * @apiPermission Basic
+     *
+     * @apiParam (Route Parameters) {ObjectId} id Game's ID.
+     * @apiUse GameResponse
+     */
+    app.delete("/games/:id", basicAuth, defaultLimiter, [
+        param("id")
+            .isMongoId().withMessage("Must be a valid ObjectId."),
+    ], Game.deleteGame);
 };

@@ -27,6 +27,7 @@
 * Route `GET /games/:id` for getting a game with an ID.
 * Route `POST /games` for creating a new game.
 * Route `PATCH /games/:id` for updating a game protected with basic authentication.
+* Route `DELETE /games/:id` for deleting a game protected with basic authentication.
 
 ### 📚 Documentation
 
@@ -51,6 +52,7 @@
 * Route `GET /games/:id` in APIDoc.
 * Route `POST /games` in APIDoc.
 * Route `PATCH /games/:id` in APIDoc.
+* Route `DELETE /games/:id` in APIDoc.
 
 ### 🧪 Tests
 
@@ -65,6 +67,7 @@
 * Tests for route `GET /games/:id`.
 * Tests for route `POST /games`.
 * Tests for route `PATCH /games/:id`.
+* Tests for route `DELETE /games/:id`.
 
 ### 📦 Packages
 

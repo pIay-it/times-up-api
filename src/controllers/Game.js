@@ -24,9 +24,9 @@ exports.findOneAndUpdate = async(search, data, options = {}) => {
 exports.findOneAndDelete = async search => {
     const game = await this.findOne(search);
     if (!game) {
-        throw generateError("NOT_FOUND", `Card not found.`);
+        throw generateError("NOT_FOUND", `Game not found.`);
     }
-    await Card.deleteOne(search);
+    await Game.deleteOne(search);
     return game;
 };
 
@@ -110,6 +110,16 @@ exports.patchGame = async(req, res) => {
     try {
         const { body, params } = checkRequestData(req);
         const game = await this.findOneAndUpdate({ _id: params.id }, body);
+        return res.status(200).json(game);
+    } catch (e) {
+        sendError(res, e);
+    }
+};
+
+exports.deleteGame = async(req, res) => {
+    try {
+        const { params } = checkRequestData(req);
+        const game = await this.findOneAndDelete({ _id: params.id });
         return res.status(200).json(game);
     } catch (e) {
         sendError(res, e);

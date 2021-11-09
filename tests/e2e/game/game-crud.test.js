@@ -184,7 +184,7 @@ describe("A - Game CRUD [Create / Read / Update / Delete]", () => {
                 done();
             });
     });
-    it(`🎲 Update the second game created (PATCH /games/:id)`, done => {
+    it(`🎲 Update the first game created (PATCH /games/:id)`, done => {
         chai.request(server)
             .patch(`/games/${firstGame._id}`)
             .auth(Config.app.basicAuth.username, Config.app.basicAuth.password)
@@ -195,6 +195,48 @@ describe("A - Game CRUD [Create / Read / Update / Delete]", () => {
                 expect(game._id).to.equal(firstGame._id);
                 firstGame = game;
                 expect(firstGame.status).to.equal("playing");
+                done();
+            });
+    });
+    it(`🔒 Can't delete a game without basic authentication (DELETE /games/:id)`, done => {
+        chai.request(server)
+            .delete(`/games/${firstGame._id}`)
+            .send({ status: "playing" })
+            .end((err, res) => {
+                expect(res).to.have.status(401);
+                expect(res.body.type).to.equal("UNAUTHORIZED");
+                done();
+            });
+    });
+    it(`❓  Can't delete an unknown game (DELETE /games/:id)`, done => {
+        chai.request(server)
+            // eslint-disable-next-line new-cap
+            .delete(`/games/${mongoose.Types.ObjectId()}`)
+            .auth(Config.app.basicAuth.username, Config.app.basicAuth.password)
+            .end((err, res) => {
+                expect(res).to.have.status(404);
+                expect(res.body.type).to.equal("NOT_FOUND");
+                done();
+            });
+    });
+    it(`🎲 Delete the first game created (DELETE /games/:id)`, done => {
+        chai.request(server)
+            .delete(`/games/${firstGame._id}`)
+            .auth(Config.app.basicAuth.username, Config.app.basicAuth.password)
+            .end((err, res) => {
+                expect(res).to.have.status(200);
+                const game = res.body;
+                expect(game._id).to.equal(firstGame._id);
+                done();
+            });
+    });
+    it(`🎲 Can't delete the first game twice (DELETE /games/:id)`, done => {
+        chai.request(server)
+            .delete(`/games/${firstGame._id}`)
+            .auth(Config.app.basicAuth.username, Config.app.basicAuth.password)
+            .end((err, res) => {
+                expect(res).to.have.status(404);
+                expect(res.body.type).to.equal("NOT_FOUND");
                 done();
             });
     });
