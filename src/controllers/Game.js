@@ -126,11 +126,31 @@ exports.deleteGame = async(req, res) => {
     }
 };
 
+exports.checkGamePlayCardsData = ({ cards }, game) => {
+    const cardsIdSet = [...new Set(cards.map(({ _id }) => _id))];
+    if (cardsIdSet.length !== cards.length) {
+        throw generateError("CANT_PLAY_CARD_TWICE", "One or more cards are played twice in the same play.");
+    }
+    for (const card of cards) {
+        const cardInGame = game.cards.find(({ _id }) => _id.toString() === card._id.toString());
+        if (!cardInGame) {
+            throw generateError("CARD_NOT_IN_GAME", `Card with ID "${card._id}" not found in game with ID "${game._id}".`);
+        } else if (cardInGame.status === "guessed") {
+            throw generateError("CARD_ALREADY_GUESSED", `Card with ID "${card._id}" was already guessed before.`);
+        } else if (card.status === "skipped" && game.round === 1) {
+            throw generateError("CANT_SKIP_CARD", `Card with ID "${card._id}" can't be skipped because game's round is 1.`);
+        }
+    }
+};
+
 exports.checkGamePlayData = (data, game) => {
     if (!game) {
         throw generateError("GAME_NOT_FOUND", `Game not found with ID "${data.gameId}".`);
     } else if (game.status !== "playing") {
         throw generateError("GAME_NOT_PLAYING", `Game with ID "${game._id}" doesn't have the "playing" status, plays are not allowed.`);
+    }
+    if (data.cards) {
+        this.checkGamePlayCardsData(data, game);
     }
 };
 

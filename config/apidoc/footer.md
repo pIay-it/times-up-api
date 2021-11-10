@@ -68,4 +68,8 @@ Description for each case below :
 | 4    | PLAYERS_NAME_NOT_UNIQUE                    |    400    | Players don't all have unique name when creating a game.                                                  |
 | 5    | GAME_NOT_PLAYING                           |    400    | Game doesn't have the `playing` status, plays are not allowed.                                            |
 | 6    | GAME_NOT_FOUND                             |    404    | Requested game was not found.                                                                             |
-| 6    | CARD_NOT_FOUND                             |    404    | Requested card was not found.                                                                             |
+| 7    | CARD_NOT_FOUND                             |    404    | Requested card was not found.                                                                             |
+| 8    | CARD_NOT_IN_GAME                           |    400    | Card not found in game.                                                                                   |
+| 9    | CARD_ALREADY_GUESSED                       |    400    | Card was already guessed before.                                                                          |
+| 10   | CANT_SKIP_CARD                             |    400    | Card with ID can't be skipped because game's round is `1`.                                                |
+| 11   | CANT_PLAY_CARD_TWICE                       |    400    | One or more cards are played twice in the same play.                                                      |

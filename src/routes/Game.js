@@ -4,10 +4,11 @@ const { getGameDefaultOptions, getGameStatuses } = require("../helpers/functions
 const { defaultLimiter, gameCreationLimiter } = require("../helpers/constants/Route");
 const { basicAuth } = require("../helpers/functions/Passport");
 const { filterOutHTMLTags, removeMultipleSpacesToSingle } = require("../helpers/functions/String");
-const { getCardCategories } = require("../helpers/functions/Card");
+const { getCardCategories, getCardStatuses } = require("../helpers/functions/Card");
 const gameDefaultOptions = getGameDefaultOptions();
 const gameStatuses = getGameStatuses();
 const cardCategories = getCardCategories();
+const cardStatuses = getCardStatuses();
 
 module.exports = app => {
     /**
@@ -144,7 +145,7 @@ module.exports = app => {
      * @apiPermission Basic
      *
      * @apiParam (Route Parameters) {ObjectId} id Game's ID.
-     * @apiParam (Request Body Parameters) {String} [status] Game's status. (_See: [Codes - Game Statuses](#game-statuses)_)
+     * @apiParam (Request Body Parameters) {String} [status] Game's status. (_Possibilities: [Codes - Game Statuses](#game-statuses)_)
      * @apiUse GameResponse
      */
     app.patch("/games/:id", basicAuth, defaultLimiter, [
@@ -174,12 +175,26 @@ module.exports = app => {
      * @api {POST} /games/:id/play F] Make a play
      * @apiName MakeGamePlay
      * @apiGroup Games 🎲
+     * @apiDescription At the end of each turn, this route is called to save the play. In that way, it will be saved in database, score will be calculated and game can proceed to the next turn.
      *
      * @apiParam (Route Parameters) {ObjectId} id Game's ID.
+     * @apiParam (Request Body Parameters) {Object[]} [cards] Cards which were guessed, discarded or skipped during the turn.
+     * @apiParam (Request Body Parameters) {ObjectId} cards._id Card's ID.
+     * @apiParam (Request Body Parameters) {ObjectId} cards.status Card's status during the turn. (_Possibilities: [Codes - Card Statuses](#card-statuses)_)
      * @apiUse GameResponse
      */
     app.post("/games/:id/play", defaultLimiter, [
         param("id")
             .isMongoId().withMessage("Must be a valid ObjectId."),
+        body("cards")
+            .optional()
+            .isArray().withMessage("Must be a valid array.")
+            .notEmpty().withMessage(`Can't be empty.`),
+        body("cards.*._id")
+            .isMongoId().withMessage("Must be a valid ObjectId."),
+        body("cards.*.status")
+            .isString().withMessage("Must be a valid string.")
+            .trim()
+            .isIn(cardStatuses).withMessage(`Must be one of the following values: ${cardStatuses}`),
     ], Game.postPlay);
 };

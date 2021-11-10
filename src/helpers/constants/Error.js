@@ -27,4 +27,20 @@ exports.errorMetadata = {
         code: 7,
         HTTPCode: 404,
     },
+    CARD_NOT_IN_GAME: {
+        code: 8,
+        HTTPCode: 400,
+    },
+    CARD_ALREADY_GUESSED: {
+        code: 9,
+        HTTPCode: 400,
+    },
+    CANT_SKIP_CARD: {
+        code: 10,
+        HTTPCode: 400,
+    },
+    CANT_PLAY_CARD_TWICE: {
+        code: 11,
+        HTTPCode: 400,
+    },
 };
