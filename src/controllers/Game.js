@@ -1,5 +1,5 @@
 const { sampleSize } = require("lodash");
-const { flatten } = require("mongo-dot-notation");
+const { flatten, $push } = require("mongo-dot-notation");
 const Game = require("../db/models/Game");
 const Card = require("./Card");
 const { checkRequestData } = require("../helpers/functions/Express");
@@ -31,8 +31,14 @@ exports.findOneAndDelete = async search => {
 };
 
 exports.getRandomCards = async() => {
-    const cards = await Card.find({}, "-createdAt -updatedAt");
-    return sampleSize(cards, 40);
+    const cards = await Card.find({}, "-createdAt -updatedAt", { toJSON: true });
+    const sample = sampleSize(cards, 40);
+    sample.forEach(card => {
+        card.status = "to-guess";
+        delete card.createdAt;
+        delete card.updatedAt;
+    });
+    return sample;
 };
 
 exports.fillPlayersTeam = players => players.forEach((player, index) => {
@@ -126,23 +132,41 @@ exports.deleteGame = async(req, res) => {
     }
 };
 
-exports.checkAndFillGamePlayCardsData = ({ cards }, game) => {
+exports.getGameHistoryEntryFromGamePlay = (play, game) => ({
+    round: game.round,
+    turn: game.turn,
+    speaker: game.speaker,
+    guesser: game.guesser,
+    cards: play.cards,
+    score: play.cards.reduce((acc, { status }) => status === "guessed" ? acc + 1 : acc, 0),
+});
+
+exports.checkGamePlayCardData = (cardInGame, card, game) => {
+    if (!cardInGame) {
+        throw generateError("CARD_NOT_IN_GAME", `Card with ID "${card._id}" not found in game with ID "${game._id}".`);
+    } else if (cardInGame.status === "guessed") {
+        throw generateError("CARD_ALREADY_GUESSED", `Card with ID "${card._id}" was already guessed before.`);
+    } else if (card.status === "skipped" && game.round === 1) {
+        throw generateError("CANT_SKIP_CARD", `Card with ID "${card._id}" can't be skipped because game's round is 1.`);
+    } else if (card.status === "guessed" && !card.timeToGuess) {
+        throw generateError("MISSING_TIME_TO_GUESS", `Card with ID "${card._id}" is set to "guessed" but is missing "timeToGuess" value.`);
+    } else if (card.status !== "guessed" && card.timeToGuess) {
+        throw generateError("FORBIDDEN_TIME_TO_GUESS", `Card with ID "${card._id}" has "timeToGuess" value but is not guessed yet.`);
+    }
+};
+
+exports.checkAndFillGamePlayCardsData = ({ cards }, game, gameDataToUpdate) => {
     const cardsIdSet = [...new Set(cards.map(({ _id }) => _id))];
     if (cardsIdSet.length !== cards.length) {
         throw generateError("CANT_PLAY_CARD_TWICE", "One or more cards are played twice in the same play.");
     }
     for (const [index, card] of cards.entries()) {
         const cardInGame = game.cards.find(({ _id }) => _id.toString() === card._id.toString());
-        if (!cardInGame) {
-            throw generateError("CARD_NOT_IN_GAME", `Card with ID "${card._id}" not found in game with ID "${game._id}".`);
-        } else if (cardInGame.status === "guessed") {
-            throw generateError("CARD_ALREADY_GUESSED", `Card with ID "${card._id}" was already guessed before.`);
-        } else if (card.status === "skipped" && game.round === 1) {
-            throw generateError("CANT_SKIP_CARD", `Card with ID "${card._id}" can't be skipped because game's round is 1.`);
-        } else if (card.status === "guessed" && !card.timeToGuess) {
-            throw generateError("MISSING_TIME_TO_GUESS", `Card with ID "${card._id}" is set to "guessed" but is missing "timeToGuess" value.`);
-        } else if (card.status !== "guessed" && card.timeToGuess) {
-            throw generateError("FORBIDDEN_TIME_TO_GUESS", `Card with ID "${card._id}" has "timeToGuess" value but is not guessed yet.`);
+        this.checkGamePlayCardData(cardInGame, card, game);
+        if (card.status === "guessed") {
+            const cardInGameIdx = game.cards.findIndex(({ _id }) => _id.toString() === card._id.toString());
+            gameDataToUpdate[`cards.${cardInGameIdx}.status`] = "guessed";
+            gameDataToUpdate[`cards.${cardInGameIdx}.timeToGuess`] = card.timeToGuess;
         }
         cards[index] = { ...cardInGame.toJSON(), ...card };
         delete cards[index].createdAt;
@@ -150,23 +174,28 @@ exports.checkAndFillGamePlayCardsData = ({ cards }, game) => {
     }
 };
 
-exports.checkGamePlayData = (play, game) => {
+exports.checkAndFillGamePlayData = (play, game, gameDataToUpdate) => {
     if (!game) {
         throw generateError("GAME_NOT_FOUND", `Game not found with ID "${play.gameId}".`);
     } else if (game.status !== "playing") {
         throw generateError("GAME_NOT_PLAYING", `Game with ID "${game._id}" doesn't have the "playing" status, plays are not allowed.`);
     }
     if (play.cards) {
-        this.checkAndFillGamePlayCardsData(play, game);
+        this.checkAndFillGamePlayCardsData(play, game, gameDataToUpdate);
     }
 };
 
 exports.play = async play => {
     const game = await this.findOne({ _id: play.gameId });
-    this.checkGamePlayData(play, game);
-    const dataToUpdate = {};
-    console.log(play);
-    return this.findOneAndUpdate({ _id: play.gameId }, dataToUpdate);
+    const gameDataToUpdate = {};
+    this.checkAndFillGamePlayData(play, game, gameDataToUpdate);
+    gameDataToUpdate.history = $push(this.getGameHistoryEntryFromGamePlay(play, game));
+    /*
+     * -> Check if round and/or game is over
+     * -> If game is not over, define next speaker
+     */
+    console.log(gameDataToUpdate);
+    return this.findOneAndUpdate({ _id: play.gameId }, gameDataToUpdate);
 };
 
 exports.postPlay = async(req, res) => {

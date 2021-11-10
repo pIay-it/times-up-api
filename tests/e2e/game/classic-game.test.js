@@ -128,6 +128,31 @@ describe("B - Classic game with 4 players", () => {
             })
             .end((err, res) => {
                 expect(res).to.have.status(200);
+                game = res.body;
+                expect(game.cards[0].status).to.equal("guessed");
+                expect(game.cards[0].timeToGuess).to.equal(2);
+                expect(game.cards[1].status).to.equal("guessed");
+                expect(game.cards[1].timeToGuess).to.equal(10);
+                expect(game.cards[2].status).to.equal("to-guess");
+                expect(game.cards[2].timeToGuess).to.not.exist;
+                expect(game.history).to.be.an("array");
+                expect(game.history.length).to.equal(1);
+                expect(game.history[0].round).to.equal(1);
+                expect(game.history[0].turn).to.equal(1);
+                expect(game.history[0].speaker._id).to.equal(game.players[0]._id);
+                expect(game.history[0].guesser).to.not.exist;
+                expect(game.history[0].cards).to.be.an("array");
+                expect(game.history[0].cards.length).to.equal(3);
+                expect(game.history[0].cards[0]._id).to.equal(cards[0]._id);
+                expect(game.history[0].cards[0].status).to.equal("guessed");
+                expect(game.history[0].cards[0].timeToGuess).to.equal(2);
+                expect(game.history[0].cards[1]._id).to.equal(cards[1]._id);
+                expect(game.history[0].cards[1].status).to.equal("guessed");
+                expect(game.history[0].cards[1].timeToGuess).to.equal(10);
+                expect(game.history[0].cards[2]._id).to.equal(cards[2]._id);
+                expect(game.history[0].cards[2].status).to.equal("discarded");
+                expect(game.history[0].cards[2].timeToGuess).to.not.exist;
+                expect(game.history[0].score).to.equal(2);
                 done();
             });
     });

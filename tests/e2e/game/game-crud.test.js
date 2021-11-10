@@ -53,6 +53,7 @@ describe("A - Game CRUD [Create / Read / Update / Delete]", () => {
                 expect(players[3].team).to.equal("Rouge");
                 expect(firstGame.cards).to.be.an("array");
                 expect(firstGame.cards.length).to.equal(40);
+                expect(firstGame.cards.every(({ status }) => status === "to-guess")).to.be.true;
                 expect(firstGame.status).to.equal("playing");
                 expect(firstGame.round).to.equal(1);
                 expect(firstGame.turn).to.equal(1);
