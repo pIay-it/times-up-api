@@ -46,7 +46,6 @@ describe("B - Classic game with 4 players", () => {
     });
     it(`🎲 Can't make a game play into a game not "playing" (POST /games/:id/play)`, done => {
         chai.request(server)
-            // eslint-disable-next-line new-cap
             .post(`/games/${game._id}/play`)
             .end((err, res) => {
                 expect(res).to.have.status(400);
@@ -68,7 +67,6 @@ describe("B - Classic game with 4 players", () => {
     });
     it(`🎲 Can't make a game play with one card not belonging to the game (POST /games/:id/play)`, done => {
         chai.request(server)
-            // eslint-disable-next-line new-cap
             .post(`/games/${game._id}/play`)
             // eslint-disable-next-line new-cap
             .send({ cards: [{ _id: mongoose.Types.ObjectId(), status: "discarded" }] })
@@ -80,9 +78,7 @@ describe("B - Classic game with 4 players", () => {
     });
     it(`🎲 Can't make a game play with one skipped card during first game's round (POST /games/:id/play)`, done => {
         chai.request(server)
-            // eslint-disable-next-line new-cap
             .post(`/games/${game._id}/play`)
-            // eslint-disable-next-line new-cap
             .send({ cards: [{ _id: cards[0]._id, status: "skipped" }] })
             .end((err, res) => {
                 expect(res).to.have.status(400);
@@ -92,13 +88,46 @@ describe("B - Classic game with 4 players", () => {
     });
     it(`🎲 Can't make a game play with twice the same card (POST /games/:id/play)`, done => {
         chai.request(server)
-            // eslint-disable-next-line new-cap
             .post(`/games/${game._id}/play`)
-            // eslint-disable-next-line new-cap
             .send({ cards: [{ _id: cards[0]._id, status: "skipped" }, { _id: cards[0]._id, status: "guessed" }] })
             .end((err, res) => {
                 expect(res).to.have.status(400);
                 expect(res.body.type).to.equal("CANT_PLAY_CARD_TWICE");
+                done();
+            });
+    });
+    it(`🎲 Can't make a game play with a card containing a "timeToGuess" and status not set to "guessed" (POST /games/:id/play)`, done => {
+        chai.request(server)
+            .post(`/games/${game._id}/play`)
+            .send({ cards: [{ _id: cards[0]._id, status: "discarded", timeToGuess: 10 }] })
+            .end((err, res) => {
+                expect(res).to.have.status(400);
+                expect(res.body.type).to.equal("FORBIDDEN_TIME_TO_GUESS");
+                done();
+            });
+    });
+    it(`🎲 Can't make a game play with a card with status set to "guessed" and missing "timeToPlay" value (POST /games/:id/play)`, done => {
+        chai.request(server)
+            .post(`/games/${game._id}/play`)
+            .send({ cards: [{ _id: cards[0]._id, status: "guessed" }] })
+            .end((err, res) => {
+                expect(res).to.have.status(400);
+                expect(res.body.type).to.equal("MISSING_TIME_TO_GUESS");
+                done();
+            });
+    });
+    it(`🎲 First speaker made his team guess two cards and discarded the third (POST /games/:id/play)`, done => {
+        chai.request(server)
+            .post(`/games/${game._id}/play`)
+            .send({
+                cards: [
+                    { _id: cards[0]._id, status: "guessed", timeToGuess: 2 },
+                    { _id: cards[1]._id, status: "guessed", timeToGuess: 10 },
+                    { _id: cards[2]._id, status: "discarded" },
+                ],
+            })
+            .end((err, res) => {
+                expect(res).to.have.status(200);
                 done();
             });
     });

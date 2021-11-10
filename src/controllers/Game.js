@@ -126,12 +126,12 @@ exports.deleteGame = async(req, res) => {
     }
 };
 
-exports.checkGamePlayCardsData = ({ cards }, game) => {
+exports.checkAndFillGamePlayCardsData = ({ cards }, game) => {
     const cardsIdSet = [...new Set(cards.map(({ _id }) => _id))];
     if (cardsIdSet.length !== cards.length) {
         throw generateError("CANT_PLAY_CARD_TWICE", "One or more cards are played twice in the same play.");
     }
-    for (const card of cards) {
+    for (const [index, card] of cards.entries()) {
         const cardInGame = game.cards.find(({ _id }) => _id.toString() === card._id.toString());
         if (!cardInGame) {
             throw generateError("CARD_NOT_IN_GAME", `Card with ID "${card._id}" not found in game with ID "${game._id}".`);
@@ -139,27 +139,40 @@ exports.checkGamePlayCardsData = ({ cards }, game) => {
             throw generateError("CARD_ALREADY_GUESSED", `Card with ID "${card._id}" was already guessed before.`);
         } else if (card.status === "skipped" && game.round === 1) {
             throw generateError("CANT_SKIP_CARD", `Card with ID "${card._id}" can't be skipped because game's round is 1.`);
+        } else if (card.status === "guessed" && !card.timeToGuess) {
+            throw generateError("MISSING_TIME_TO_GUESS", `Card with ID "${card._id}" is set to "guessed" but is missing "timeToGuess" value.`);
+        } else if (card.status !== "guessed" && card.timeToGuess) {
+            throw generateError("FORBIDDEN_TIME_TO_GUESS", `Card with ID "${card._id}" has "timeToGuess" value but is not guessed yet.`);
         }
+        cards[index] = { ...cardInGame.toJSON(), ...card };
+        delete cards[index].createdAt;
+        delete cards[index].updatedAt;
     }
 };
 
-exports.checkGamePlayData = (data, game) => {
+exports.checkGamePlayData = (play, game) => {
     if (!game) {
-        throw generateError("GAME_NOT_FOUND", `Game not found with ID "${data.gameId}".`);
+        throw generateError("GAME_NOT_FOUND", `Game not found with ID "${play.gameId}".`);
     } else if (game.status !== "playing") {
         throw generateError("GAME_NOT_PLAYING", `Game with ID "${game._id}" doesn't have the "playing" status, plays are not allowed.`);
     }
-    if (data.cards) {
-        this.checkGamePlayCardsData(data, game);
+    if (play.cards) {
+        this.checkAndFillGamePlayCardsData(play, game);
     }
+};
+
+exports.play = async play => {
+    const game = await this.findOne({ _id: play.gameId });
+    this.checkGamePlayData(play, game);
+    const dataToUpdate = {};
+    console.log(play);
+    return this.findOneAndUpdate({ _id: play.gameId }, dataToUpdate);
 };
 
 exports.postPlay = async(req, res) => {
     try {
         const { params, body } = checkRequestData(req);
-        body.gameId = params.id;
-        const game = await this.findOne({ _id: params.id });
-        this.checkGamePlayData(body, game);
+        const game = await this.play({ ...body, gameId: params.id });
         return res.status(200).json(game);
     } catch (e) {
         sendError(res, e);

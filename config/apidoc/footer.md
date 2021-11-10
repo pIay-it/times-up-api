@@ -62,7 +62,7 @@ Description for each case below :
 
 | Code | Type                                       | HTTP Code |                 Description                                                                               |
 |:----:|:------------------------------------------:|:---------:|-----------------------------------------------------------------------------------------------------------|
-| 1    | BAD_REQUEST                                |    400    | You provided incorrect params.                                                                            |
+| 1    | BAD_REQUEST                                |    400    | You provided incorrect params and/or your request is malformed.                                           |
 | 2    | UNAUTHORIZED                               |    401    | You're not authorized.                                                                                    |
 | 3    | INTERNAL_SERVER_ERROR                      |    500    | The server got an error, this is not your fault.                                                          |
 | 4    | PLAYERS_NAME_NOT_UNIQUE                    |    400    | Players don't all have unique name when creating a game.                                                  |
@@ -73,3 +73,5 @@ Description for each case below :
 | 9    | CARD_ALREADY_GUESSED                       |    400    | Card was already guessed before.                                                                          |
 | 10   | CANT_SKIP_CARD                             |    400    | Card with ID can't be skipped because game's round is `1`.                                                |
 | 11   | CANT_PLAY_CARD_TWICE                       |    400    | One or more cards are played twice in the same play.                                                      |
+| 12   | MISSING_TIME_TO_GUESS                      |    400    | Card is set to `guessed` but is missing `timeToGuess` value.                                              |
+| 13   | FORBIDDEN_TIME_TO_GUESS                    |    400    | Card has `timeToGuess` value but is not guessed yet.                                                      |
