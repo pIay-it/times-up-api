@@ -34,13 +34,7 @@ exports.fillCategories = data => {
     }, data.categories);
 };
 
-exports.checkAndFillDataBeforeCreate = async data => {
-    const sameLabelCard = await this.findOne({ label: { $regex: new RegExp(data.label, "iu") } });
-    if (sameLabelCard) {
-        throw generateError("CARD_ALREADY_EXISTS", `There is already an existing card with label "${data.label}".`);
-    }
-    this.fillCategories(data);
-};
+exports.checkAndFillDataBeforeCreate = data => this.fillCategories(data);
 
 exports.create = async(data, options = {}) => {
     await this.checkAndFillDataBeforeCreate(data);
@@ -53,15 +47,9 @@ exports.create = async(data, options = {}) => {
     return toJSON ? card.toJSON() : card;
 };
 
-exports.checkAndFillDataBeforeUpdate = async(data, existingCard) => {
+exports.checkAndFillDataBeforeUpdate = (data, existingCard) => {
     if (!existingCard) {
         throw generateError("NOT_FOUND", `Card not found.`);
-    }
-    if (data.label) {
-        const sameLabelCard = await this.findOne({ _id: { $ne: existingCard._id }, label: { $regex: new RegExp(data.label, "iu") } });
-        if (sameLabelCard) {
-            throw generateError("CARD_ALREADY_EXISTS", `There is already an existing card with label "${data.label}".`);
-        }
     }
     if (data.categories) {
         this.fillCategories(data);

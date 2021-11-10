@@ -52,17 +52,6 @@ describe("A - Card CRUD [Create / Read / Update / Delete]", () => {
                 done();
             });
     });
-    it(`🃏 Can't create a second card labeled "Doudou" (POST /cards)`, done => {
-        chai.request(server)
-            .post("/cards")
-            .auth(Config.app.basicAuth.username, Config.app.basicAuth.password)
-            .send({ label: " douDou ", categories: [" personality"], difficulty: 2 })
-            .end((err, res) => {
-                expect(res).to.have.status(400);
-                expect(res.body.type).to.equal("CARD_ALREADY_EXISTS");
-                done();
-            });
-    });
     it(`🃏 Can't create a card with a label only with HTML tags (POST /cards)`, done => {
         chai.request(server)
             .post("/cards")
@@ -272,17 +261,6 @@ describe("A - Card CRUD [Create / Read / Update / Delete]", () => {
                 expect(pacManCard.categories[0]).to.equal("video-game");
                 expect(pacManCard.categories[1]).to.equal("character");
                 expect(pacManCard.categories[2]).to.equal("art");
-                done();
-            });
-    });
-    it(`🃏 Can't update a card with an already existing label (PATCH /cards/:id)`, done => {
-        chai.request(server)
-            .patch(`/cards/${pacManCard._id}`)
-            .auth(Config.app.basicAuth.username, Config.app.basicAuth.password)
-            .send({ label: "doudou", difficulty: 1 })
-            .end((err, res) => {
-                expect(res).to.have.status(400);
-                expect(res.body.type).to.equal("CARD_ALREADY_EXISTS");
                 done();
             });
     });

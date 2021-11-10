@@ -15,16 +15,12 @@ exports.errorMetadata = {
         code: 4,
         HTTPCode: 500,
     },
-    CARD_ALREADY_EXISTS: {
+    PLAYERS_NAME_NOT_UNIQUE: {
         code: 5,
         HTTPCode: 400,
     },
-    PLAYERS_NAME_NOT_UNIQUE: {
-        code: 6,
-        HTTPCode: 400,
-    },
     GAME_NOT_PLAYING: {
-        code: 7,
+        code: 6,
         HTTPCode: 400,
     },
 };
