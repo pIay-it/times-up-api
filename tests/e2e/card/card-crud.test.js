@@ -222,7 +222,7 @@ describe("A - Card CRUD [Create / Read / Update / Delete]", () => {
             .get(`/cards/${mongoose.Types.ObjectId()}`)
             .end((err, res) => {
                 expect(res).to.have.status(404);
-                expect(res.body.type).to.equal("NOT_FOUND");
+                expect(res.body.type).to.equal("CARD_NOT_FOUND");
                 done();
             });
     });
@@ -272,7 +272,7 @@ describe("A - Card CRUD [Create / Read / Update / Delete]", () => {
             .send({ label: "doudou", difficulty: 1 })
             .end((err, res) => {
                 expect(res).to.have.status(404);
-                expect(res.body.type).to.equal("NOT_FOUND");
+                expect(res.body.type).to.equal("CARD_NOT_FOUND");
                 done();
             });
     });
@@ -292,7 +292,7 @@ describe("A - Card CRUD [Create / Read / Update / Delete]", () => {
             .auth(Config.app.basicAuth.username, Config.app.basicAuth.password)
             .end((err, res) => {
                 expect(res).to.have.status(404);
-                expect(res.body.type).to.equal("NOT_FOUND");
+                expect(res.body.type).to.equal("CARD_NOT_FOUND");
                 done();
             });
     });
@@ -313,7 +313,7 @@ describe("A - Card CRUD [Create / Read / Update / Delete]", () => {
             .auth(Config.app.basicAuth.username, Config.app.basicAuth.password)
             .end((err, res) => {
                 expect(res).to.have.status(404);
-                expect(res.body.type).to.equal("NOT_FOUND");
+                expect(res.body.type).to.equal("CARD_NOT_FOUND");
                 done();
             });
     });

@@ -38,7 +38,7 @@ describe("B - Classic game with 4 players", () => {
             .post(`/games/${mongoose.Types.ObjectId()}/play`)
             .end((err, res) => {
                 expect(res).to.have.status(404);
-                expect(res.body.type).to.equal("NOT_FOUND");
+                expect(res.body.type).to.equal("GAME_NOT_FOUND");
                 done();
             });
     });

@@ -49,7 +49,7 @@ exports.create = async(data, options = {}) => {
 
 exports.checkAndFillDataBeforeUpdate = (data, existingCard) => {
     if (!existingCard) {
-        throw generateError("NOT_FOUND", `Card not found.`);
+        throw generateError("CARD_NOT_FOUND", `Card not found.`);
     }
     if (data.categories) {
         this.fillCategories(data);
@@ -69,7 +69,7 @@ exports.findOneAndUpdate = async(search, data, options = {}) => {
 exports.findOneAndDelete = async search => {
     const card = await this.findOne(search);
     if (!card) {
-        throw generateError("NOT_FOUND", `Card not found.`);
+        throw generateError("CARD_NOT_FOUND", `Card not found.`);
     }
     await Card.deleteOne(search);
     return card;
@@ -108,7 +108,7 @@ exports.getCard = async(req, res) => {
         const { params } = checkRequestData(req);
         const card = await this.findOne({ _id: params.id });
         if (!card) {
-            throw generateError("NOT_FOUND", `Card not found with ID "${params.id}".`);
+            throw generateError("CARD_NOT_FOUND", `Card not found with ID "${params.id}".`);
         }
         return res.status(200).json(card);
     } catch (e) {

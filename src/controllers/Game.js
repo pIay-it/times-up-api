@@ -15,7 +15,7 @@ exports.findOneAndUpdate = async(search, data, options = {}) => {
     options.new = options.new === undefined ? true : options.new;
     const existingGame = await this.findOne(search);
     if (!existingGame) {
-        throw generateError("NOT_FOUND", `Card not found.`);
+        throw generateError("GAME_NOT_FOUND", `Game not found.`);
     }
     const updatedGame = await Game.findOneAndUpdate(search, flatten(data), options);
     return toJSON ? updatedGame.toJSON() : updatedGame;
@@ -24,7 +24,7 @@ exports.findOneAndUpdate = async(search, data, options = {}) => {
 exports.findOneAndDelete = async search => {
     const game = await this.findOne(search);
     if (!game) {
-        throw generateError("NOT_FOUND", `Game not found.`);
+        throw generateError("GAME_NOT_FOUND", `Game not found.`);
     }
     await Game.deleteOne(search);
     return game;
@@ -88,7 +88,7 @@ exports.getGame = async(req, res) => {
         const { params } = checkRequestData(req);
         const game = await this.findOne({ _id: params.id });
         if (!game) {
-            throw generateError("NOT_FOUND", `Game not found with ID "${params.id}".`);
+            throw generateError("GAME_NOT_FOUND", `Game not found with ID "${params.id}".`);
         }
         return res.status(200).json(game);
     } catch (e) {
@@ -128,7 +128,7 @@ exports.deleteGame = async(req, res) => {
 
 exports.checkGamePlayData = (data, game) => {
     if (!game) {
-        throw generateError("NOT_FOUND", `Game not found with ID "${data.gameId}".`);
+        throw generateError("GAME_NOT_FOUND", `Game not found with ID "${data.gameId}".`);
     } else if (game.status !== "playing") {
         throw generateError("GAME_NOT_PLAYING", `Game with ID "${game._id}" doesn't have the "playing" status, plays are not allowed.`);
     }

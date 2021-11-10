@@ -64,7 +64,8 @@ Description for each case below :
 |:----:|:------------------------------------------:|:---------:|-----------------------------------------------------------------------------------------------------------|
 | 1    | BAD_REQUEST                                |    400    | You provided incorrect params.                                                                            |
 | 2    | UNAUTHORIZED                               |    401    | You're not authorized.                                                                                    |
-| 3    | NOT_FOUND                                  |    404    | The requested resource is not found.                                                                      |
-| 4    | INTERNAL_SERVER_ERROR                      |    500    | The server got an error, this is not your fault.                                                          |
-| 5    | PLAYERS_NAME_NOT_UNIQUE                    |    400    | Players don't all have unique name when creating a game.                                                  |
-| 6    | GAME_NOT_PLAYING                           |    400    | Game doesn't have the `playing` status, plays are not allowed.                                            |
+| 3    | INTERNAL_SERVER_ERROR                      |    500    | The server got an error, this is not your fault.                                                          |
+| 4    | PLAYERS_NAME_NOT_UNIQUE                    |    400    | Players don't all have unique name when creating a game.                                                  |
+| 5    | GAME_NOT_PLAYING                           |    400    | Game doesn't have the `playing` status, plays are not allowed.                                            |
+| 6    | GAME_NOT_FOUND                             |    404    | Requested game was not found.                                                                             |
+| 6    | CARD_NOT_FOUND                             |    404    | Requested card was not found.                                                                             |

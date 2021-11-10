@@ -148,7 +148,7 @@ describe("A - Game CRUD [Create / Read / Update / Delete]", () => {
             .get(`/games/${mongoose.Types.ObjectId()}`)
             .end((err, res) => {
                 expect(res).to.have.status(404);
-                expect(res.body.type).to.equal("NOT_FOUND");
+                expect(res.body.type).to.equal("GAME_NOT_FOUND");
                 done();
             });
     });
@@ -180,7 +180,7 @@ describe("A - Game CRUD [Create / Read / Update / Delete]", () => {
             .send({ status: "playing" })
             .end((err, res) => {
                 expect(res).to.have.status(404);
-                expect(res.body.type).to.equal("NOT_FOUND");
+                expect(res.body.type).to.equal("GAME_NOT_FOUND");
                 done();
             });
     });
@@ -215,7 +215,7 @@ describe("A - Game CRUD [Create / Read / Update / Delete]", () => {
             .auth(Config.app.basicAuth.username, Config.app.basicAuth.password)
             .end((err, res) => {
                 expect(res).to.have.status(404);
-                expect(res.body.type).to.equal("NOT_FOUND");
+                expect(res.body.type).to.equal("GAME_NOT_FOUND");
                 done();
             });
     });
@@ -236,7 +236,7 @@ describe("A - Game CRUD [Create / Read / Update / Delete]", () => {
             .auth(Config.app.basicAuth.username, Config.app.basicAuth.password)
             .end((err, res) => {
                 expect(res).to.have.status(404);
-                expect(res.body.type).to.equal("NOT_FOUND");
+                expect(res.body.type).to.equal("GAME_NOT_FOUND");
                 done();
             });
     });
