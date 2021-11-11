@@ -153,6 +153,7 @@ describe("B - Classic game with 4 players", () => {
                 expect(game.history[0].cards[2].status).to.equal("discarded");
                 expect(game.history[0].cards[2].timeToGuess).to.not.exist;
                 expect(game.history[0].score).to.equal(2);
+                expect(game.turn).to.equal(2);
                 done();
             });
     });

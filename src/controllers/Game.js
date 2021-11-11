@@ -1,5 +1,5 @@
 const { sampleSize } = require("lodash");
-const { flatten, $push } = require("mongo-dot-notation");
+const { flatten, $push, $inc } = require("mongo-dot-notation");
 const Game = require("../db/models/Game");
 const Card = require("./Card");
 const { checkRequestData } = require("../helpers/functions/Express");
@@ -161,7 +161,7 @@ exports.checkAndFillGamePlayCardsData = ({ cards }, game, gameDataToUpdate) => {
         throw generateError("CANT_PLAY_CARD_TWICE", "One or more cards are played twice in the same play.");
     }
     for (const [index, card] of cards.entries()) {
-        const cardInGame = game.cards.find(({ _id }) => _id.toString() === card._id.toString());
+        const cardInGame = game.getCardById(card._id);
         this.checkGamePlayCardData(cardInGame, card, game);
         if (card.status === "guessed") {
             const cardInGameIdx = game.cards.findIndex(({ _id }) => _id.toString() === card._id.toString());
@@ -194,7 +194,11 @@ exports.play = async play => {
      * -> Check if round and/or game is over
      * -> If game is not over, define next speaker
      */
-    console.log(gameDataToUpdate);
+    if (game.isRoundOverAfterGamePlay(play)) {
+        console.log("OVER");
+    } else {
+        gameDataToUpdate.turn = $inc(1);
+    }
     return this.findOneAndUpdate({ _id: play.gameId }, gameDataToUpdate);
 };
 

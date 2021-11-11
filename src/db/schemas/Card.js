@@ -28,4 +28,10 @@ const CardSchema = new Schema({
     versionKey: false,
 });
 
+function isGuessed() {
+    return this.status === "guessed";
+}
+
+CardSchema.virtual("isGuessed").get(isGuessed);
+
 module.exports = CardSchema;

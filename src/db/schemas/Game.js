@@ -55,4 +55,23 @@ GameSchema.post("save", game => {
     game.save();
 });
 
+function getCardById(id) {
+    return this.cards.find(({ _id }) => _id.toString() === id.toString());
+}
+
+function isRoundOverAfterGamePlay(play) {
+    return this.cards.every(card => {
+        const playedCard = play.cards?.find(({ _id }) => _id.toString() === card._id.toString());
+        return card.isGuessed || playedCard.status === "guessed";
+    });
+}
+
+function isGameOverAfterGamePlay(play) {
+    return this.isRoundOverAfterGamePlay(play) && this.round === this.options.rounds.count;
+}
+
+GameSchema.methods.getCardById = getCardById;
+GameSchema.methods.isRoundOverAfterGamePlay = isRoundOverAfterGamePlay;
+GameSchema.methods.isGameOverAfterGamePlay = isGameOverAfterGamePlay;
+
 module.exports = GameSchema;
