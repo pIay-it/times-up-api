@@ -1,8 +1,9 @@
 const { sampleSize } = require("lodash");
-const { flatten, $push, $inc } = require("mongo-dot-notation");
+const { flatten } = require("mongo-dot-notation");
 const Game = require("../db/models/Game");
 const Card = require("./Card");
 const { checkRequestData } = require("../helpers/functions/Express");
+const { deleteProperties } = require("../helpers/functions/Object");
 const { sendError, generateError } = require("../helpers/functions/Error");
 
 exports.find = (search, projection, options = {}) => Game.find(search, projection, options);
@@ -31,12 +32,10 @@ exports.findOneAndDelete = async search => {
 };
 
 exports.getRandomCards = async() => {
-    const cards = await Card.find({}, "-createdAt -updatedAt", { toJSON: true });
+    const cards = await Card.find({}, "-createdAt -updatedAt");
     const sample = sampleSize(cards, 40);
     sample.forEach(card => {
-        card.status = "to-guess";
-        delete card.createdAt;
-        delete card.updatedAt;
+        card.set("status", "to-guess");
     });
     return sample;
 };
@@ -141,6 +140,11 @@ exports.getGameHistoryEntryFromGamePlay = (play, game) => ({
     score: play.cards.reduce((acc, { status }) => status === "guessed" ? acc + 1 : acc, 0),
 });
 
+exports.pushGameHistoryEntry = (play, game) => {
+    const newGameHistoryEntry = this.getGameHistoryEntryFromGamePlay(play, game);
+    game.history = game.history ? game.history.push(newGameHistoryEntry) : [newGameHistoryEntry];
+};
+
 exports.checkGamePlayCardData = (cardInGame, card, game) => {
     if (!cardInGame) {
         throw generateError("CARD_NOT_IN_GAME", `Card with ID "${card._id}" not found in game with ID "${game._id}".`);
@@ -155,7 +159,7 @@ exports.checkGamePlayCardData = (cardInGame, card, game) => {
     }
 };
 
-exports.checkAndFillGamePlayCardsData = ({ cards }, game, gameDataToUpdate) => {
+exports.checkAndFillGamePlayCardsData = ({ cards }, game) => {
     const cardsIdSet = [...new Set(cards.map(({ _id }) => _id))];
     if (cardsIdSet.length !== cards.length) {
         throw generateError("CANT_PLAY_CARD_TWICE", "One or more cards are played twice in the same play.");
@@ -164,42 +168,43 @@ exports.checkAndFillGamePlayCardsData = ({ cards }, game, gameDataToUpdate) => {
         const cardInGame = game.getCardById(card._id);
         this.checkGamePlayCardData(cardInGame, card, game);
         if (card.status === "guessed") {
-            const cardInGameIdx = game.cards.findIndex(({ _id }) => _id.toString() === card._id.toString());
-            gameDataToUpdate[`cards.${cardInGameIdx}.status`] = "guessed";
-            gameDataToUpdate[`cards.${cardInGameIdx}.timeToGuess`] = card.timeToGuess;
+            cardInGame.set("status", "guessed");
+            cardInGame.set("timeToGuess", card.timeToGuess);
         }
         cards[index] = { ...cardInGame.toJSON(), ...card };
-        delete cards[index].createdAt;
-        delete cards[index].updatedAt;
+        deleteProperties(cards[index], ["createdAt", "updatedAt"]);
     }
 };
 
-exports.checkAndFillGamePlayData = (play, game, gameDataToUpdate) => {
+exports.checkAndFillGamePlayData = (play, game) => {
     if (!game) {
         throw generateError("GAME_NOT_FOUND", `Game not found with ID "${play.gameId}".`);
     } else if (game.status !== "playing") {
         throw generateError("GAME_NOT_PLAYING", `Game with ID "${game._id}" doesn't have the "playing" status, plays are not allowed.`);
     }
     if (play.cards) {
-        this.checkAndFillGamePlayCardsData(play, game, gameDataToUpdate);
+        this.checkAndFillGamePlayCardsData(play, game);
     }
 };
 
 exports.play = async play => {
     const game = await this.findOne({ _id: play.gameId });
-    const gameDataToUpdate = {};
-    this.checkAndFillGamePlayData(play, game, gameDataToUpdate);
-    gameDataToUpdate.history = $push(this.getGameHistoryEntryFromGamePlay(play, game));
-    /*
-     * -> Check if round and/or game is over
-     * -> If game is not over, define next speaker
-     */
-    if (game.isRoundOverAfterGamePlay(play)) {
-        console.log("OVER");
+    this.checkAndFillGamePlayData(play, game);
+    await this.pushGameHistoryEntry(play, game);
+    if (game.isRoundOver) {
+        if (game.isOver) {
+            game.set("status", "over");
+        } else {
+            game.set("round", game.round + 1);
+            game.resetCardsForNewRound();
+        }
     } else {
-        gameDataToUpdate.turn = $inc(1);
+        game.set("turn", game.turn + 1);
     }
-    return this.findOneAndUpdate({ _id: play.gameId }, gameDataToUpdate);
+    if (game.status !== "over") {
+        game.setNextSpeakerAndRollQueue();
+    }
+    return game.save();
 };
 
 exports.postPlay = async(req, res) => {

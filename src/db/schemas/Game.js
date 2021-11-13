@@ -1,6 +1,7 @@
 const { Schema } = require("mongoose");
 const CardSchema = require("./Card");
 const PlayerSchema = require("./Player");
+const GameQueueSchema = require("./GameQueue");
 const GameSummarySchema = require("./GameSummary");
 const GameOptionsSchema = require("./GameOptions");
 const GameHistorySchema = require("./GameHistory");
@@ -36,6 +37,7 @@ const GameSchema = new Schema({
     },
     speaker: { type: PlayerSchema },
     guesser: { type: PlayerSchema },
+    queue: { type: [GameQueueSchema] },
     summary: { type: GameSummarySchema },
     options: {
         type: GameOptionsSchema,
@@ -51,27 +53,65 @@ const GameSchema = new Schema({
 });
 
 GameSchema.post("save", game => {
-    game.speaker = game.players[0];
+    game.set("queue", game.firstQueue);
+    game.setNextSpeakerAndRollQueue();
     game.save();
 });
+
+function isRoundOver() {
+    return this.cards.every(card => card.isGuessed);
+}
+
+function isOver() {
+    return this.isRoundOver && this.round === this.options.rounds.count;
+}
+
+function getFirstQueue() {
+    const queue = [];
+    for (const player of this.players) {
+        const existingTeam = queue.find(({ team }) => team === player.team);
+        if (!existingTeam) {
+            queue.push({ team: player.team, players: [player] });
+        } else {
+            existingTeam.players.push(player);
+        }
+    }
+    return queue;
+}
+
+function getNextSpeaker() {
+    return this.queue[0].players[0];
+}
+
+GameSchema.virtual("isRoundOver").get(isRoundOver);
+GameSchema.virtual("isOver").get(isOver);
+GameSchema.virtual("firstQueue").get(getFirstQueue);
+GameSchema.virtual("nextSpeaker").get(getNextSpeaker);
 
 function getCardById(id) {
     return this.cards.find(({ _id }) => _id.toString() === id.toString());
 }
 
-function isRoundOverAfterGamePlay(play) {
-    return this.cards.every(card => {
-        const playedCard = play.cards?.find(({ _id }) => _id.toString() === card._id.toString());
-        return card.isGuessed || playedCard.status === "guessed";
+function rollQueue() {
+    this.queue[0].players.push(this.queue[0].players.shift());
+    this.queue.push(this.queue.shift());
+}
+
+function setNextSpeakerAndRollQueue() {
+    this.set("speaker", this.nextSpeaker);
+    this.rollQueue();
+}
+
+function resetCardsForNewRound() {
+    this.cards.forEach(card => {
+        card.set("status", "to-guess");
+        card.set("timeToGuess", undefined);
     });
 }
 
-function isGameOverAfterGamePlay(play) {
-    return this.isRoundOverAfterGamePlay(play) && this.round === this.options.rounds.count;
-}
-
 GameSchema.methods.getCardById = getCardById;
-GameSchema.methods.isRoundOverAfterGamePlay = isRoundOverAfterGamePlay;
-GameSchema.methods.isGameOverAfterGamePlay = isGameOverAfterGamePlay;
+GameSchema.methods.rollQueue = rollQueue;
+GameSchema.methods.setNextSpeakerAndRollQueue = setNextSpeakerAndRollQueue;
+GameSchema.methods.resetCardsForNewRound = resetCardsForNewRound;
 
 module.exports = GameSchema;

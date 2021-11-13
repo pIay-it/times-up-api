@@ -59,6 +59,14 @@ describe("A - Game CRUD [Create / Read / Update / Delete]", () => {
                 expect(firstGame.turn).to.equal(1);
                 expect(firstGame.speaker).to.deep.equal(players[0]);
                 expect(firstGame.guesser).to.not.exist;
+                expect(firstGame.queue).to.be.an("array");
+                expect(firstGame.queue.length).to.equal(2);
+                expect(firstGame.queue[0].team).to.equal("Rouge");
+                expect(firstGame.queue[0].players[0]._id).to.equal(players[1]._id);
+                expect(firstGame.queue[0].players[1]._id).to.equal(players[3]._id);
+                expect(firstGame.queue[1].team).to.equal("Bleue");
+                expect(firstGame.queue[1].players[0]._id).to.equal(players[2]._id);
+                expect(firstGame.queue[1].players[1]._id).to.equal(players[0]._id);
                 expect(firstGame.options.players.areTeamUp).to.be.true;
                 expect(firstGame.options.cards.count).to.equal(40);
                 expect(firstGame.options.cards.categories).to.deep.equal(getCardCategories());

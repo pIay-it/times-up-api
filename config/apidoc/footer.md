@@ -51,7 +51,7 @@ The game's status is updated through all its lifecycle.
 |:----------------:|:---------------------------------------------------------------------------------------------------------------:|
 | 👥 preparing     | First status when the game is created. During this phase, most of the game's parameters can be redefined.       | 
 | 🎲 playing       | Game is currently playing, it can be canceled at anytime.                                                       | 
-| 🏆 done          | Game is finished because the final round is over. Results are available.                                        | 
+| 🏆 over          | Game is finished because the final round is over. Results are available.                                        | 
 | ❌ canceled      | Game is canceled and thus can't be updated anymore.                                                             |
 
 ## <a id="errors"></a>⚠️ Errors
