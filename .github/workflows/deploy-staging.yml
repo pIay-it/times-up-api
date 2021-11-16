@@ -26,7 +26,7 @@ jobs:
                 key: ${{ secrets.TIMES_UP_STAGING_SERVER_SSH_PRIVATE_KEY }}
                 known_hosts: ${{ secrets.TIMES_UP_KNOWN_HOSTS }}
             - name: Deploy to staging server 🚀️
-              run: ./deploy/deploy-sandbox.sh staging ${{ secrets.TIMES_UP_STAGING_SERVER_SSH_USER }} ${{ secrets.STAGING_SERVER_SSH_URL }}
+              run: ./deploy/deploy.sh staging ${{ secrets.TIMES_UP_STAGING_SERVER_SSH_USER }} ${{ secrets.STAGING_SERVER_SSH_URL }}
             - name: Send Slack notification ✉️
               uses: rtCamp/action-slack-notify@v2
               env:
