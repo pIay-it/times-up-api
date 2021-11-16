@@ -7,6 +7,7 @@ exports.connect = () => {
         mongooseOptions.auth = { authSource: "admin" };
         mongooseOptions.user = Config.db.auth.user;
         mongooseOptions.pass = Config.db.auth.pass;
+        console.log(mongooseOptions);
     }
     return mongoose.connect(`mongodb://localhost/${Config.db.name}`, mongooseOptions);
 };
