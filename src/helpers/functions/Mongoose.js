@@ -6,7 +6,7 @@ exports.connect = () => {
     let URI = `mongodb://`;
     if (Config.db.auth.user && Config.db.auth.pass) {
         mongooseOptions.auth = { authSource: "admin" };
-        URI += `${Config.db.auth.user}:${Config.db.auth.pass}@`;
+        URI += `${Config.db.auth.user}:${encodeURIComponent(Config.db.auth.pass)}@`;
     }
     URI += `localhost/${Config.db.name}`;
     return mongoose.connect(URI, mongooseOptions);
