@@ -1,5 +1,13 @@
-name: Time's Up by Play-IT API Default Workflow
-on: [push, pull_request]
+name: Time's Up by Play-IT API Build Workflow
+on:
+    pull_request:
+        branches:
+            - 'staging'
+            - 'master'
+    push:
+        branches-ignore:
+            - 'staging'
+            - 'master'
 jobs:
     build:
         runs-on: ubuntu-latest
