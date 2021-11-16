@@ -11,6 +11,8 @@ const Config = {
     },
     db: {
         name: process.env.DB_NAME || "times-up",
+        host: process.env.DB_HOST || "localhost",
+        port: process.env.DB_PORT || "27017",
         auth: {
             user: process.env.DB_USER,
             pass: process.env.DB_PASSWORD,
