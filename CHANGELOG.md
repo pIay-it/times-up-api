@@ -13,7 +13,7 @@
 * Main config file with `.env` variables.
 * Script `update-version` to update project version on `package.json`, `apidoc` config and API main route.
 * MIT license. 
-* GitHub Actions configuration for testing, integrating commits and deploying documentation. 
+* GitHub Actions configuration for testing, integrating commits and deploying staging branch. 
 
 ### 🛣 Routes
 
