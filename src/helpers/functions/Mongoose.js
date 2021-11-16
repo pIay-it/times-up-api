@@ -3,12 +3,11 @@ const Config = require("../../../config");
 
 exports.connect = () => {
     const mongooseOptions = { useUnifiedTopology: true };
+    let URI = `mongodb://`;
     if (Config.db.auth.user && Config.db.auth.pass) {
         mongooseOptions.auth = { authSource: "admin" };
-        mongooseOptions.username = Config.db.auth.user;
-        mongooseOptions.password = Config.db.auth.pass;
-        console.log(mongooseOptions);
+        URI += `${Config.db.auth.user}:${Config.db.auth.pass}@`;
     }
-    const URI = `mongodb://localhost/${Config.db.name}`;
+    URI += `localhost/${Config.db.name}`;
     return mongoose.connect(URI, mongooseOptions);
 };
