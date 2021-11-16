@@ -5,9 +5,10 @@ exports.connect = () => {
     const mongooseOptions = { useUnifiedTopology: true };
     if (Config.db.auth.user && Config.db.auth.pass) {
         mongooseOptions.auth = { authSource: "admin" };
-        mongooseOptions.user = Config.db.auth.user;
-        mongooseOptions.pass = Config.db.auth.pass;
+        mongooseOptions.username = Config.db.auth.user;
+        mongooseOptions.password = Config.db.auth.pass;
         console.log(mongooseOptions);
     }
-    return mongoose.connect(`mongodb://localhost/${Config.db.name}`, mongooseOptions);
+    const URI = `mongodb://localhost/${Config.db.name}`;
+    return mongoose.connect(URI, mongooseOptions);
 };
