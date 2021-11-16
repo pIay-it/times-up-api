@@ -1,5 +1,8 @@
 name: Time's Up by Play-IT API Deployment on Staging Server Workflow
-on: push
+on:
+    push:
+        branches:
+            - staging
 jobs:
     deployment:
         runs-on: ubuntu-latest
