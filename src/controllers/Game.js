@@ -69,6 +69,10 @@ exports.create = async(data, options = {}) => {
         options = null;
     }
     const game = await Game.create(data, options);
+    game.set("queue", game.firstQueue);
+    game.set("speaker", game.nextSpeaker);
+    game.rollQueue();
+    await game.save();
     return toJSON ? game.toJSON() : game;
 };
 
@@ -131,20 +135,6 @@ exports.deleteGame = async(req, res) => {
     }
 };
 
-exports.getGameHistoryEntryFromGamePlay = (play, game) => ({
-    round: game.round,
-    turn: game.turn,
-    speaker: game.speaker,
-    guesser: game.guesser,
-    cards: play.cards,
-    score: play.cards.reduce((acc, { status }) => status === "guessed" ? acc + 1 : acc, 0),
-});
-
-exports.pushGameHistoryEntry = (play, game) => {
-    const newGameHistoryEntry = this.getGameHistoryEntryFromGamePlay(play, game);
-    game.history = game.history ? game.history.push(newGameHistoryEntry) : [newGameHistoryEntry];
-};
-
 exports.checkGamePlayCardData = (cardInGame, card, game) => {
     if (!cardInGame) {
         throw generateError("CARD_NOT_IN_GAME", `Card with ID "${card._id}" not found in game with ID "${game._id}".`);
@@ -190,12 +180,15 @@ exports.checkAndFillGamePlayData = (play, game) => {
 exports.play = async play => {
     const game = await this.findOne({ _id: play.gameId });
     this.checkAndFillGamePlayData(play, game);
-    await this.pushGameHistoryEntry(play, game);
+    game.unshiftHistoryEntry(play);
     if (game.isRoundOver) {
+        game.pushSummaryRound();
         if (game.isOver) {
             game.set("status", "over");
+            game.setFinalSummary();
         } else {
             game.set("round", game.round + 1);
+            game.set("turn", 1);
             game.resetCardsForNewRound();
         }
     } else {

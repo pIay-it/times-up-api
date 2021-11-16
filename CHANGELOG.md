@@ -28,6 +28,7 @@
 * Route `POST /games` for creating a new game.
 * Route `PATCH /games/:id` for updating a game protected with basic authentication.
 * Route `DELETE /games/:id` for deleting a game protected with basic authentication.
+* Route `POST /games/:id/play` for making a play into a game.
 
 ### 📚 Documentation
 
@@ -53,6 +54,7 @@
 * Route `POST /games` in APIDoc.
 * Route `PATCH /games/:id` in APIDoc.
 * Route `DELETE /games/:id` in APIDoc.
+* Route `POST /games/:id/play` in APIDoc.
 
 ### 🧪 Tests
 
@@ -68,7 +70,8 @@
 * Tests for route `POST /games`.
 * Tests for route `PATCH /games/:id`.
 * Tests for route `DELETE /games/:id`.
+* Tests for route `POST /games/:id/play`.
 
 ### 📦 Packages
 
-* Set of required packages installed for Express, mongoDB, route-validation, and more.
+* Set of required packages installed for Express, mongoDB, routes validation, and more.

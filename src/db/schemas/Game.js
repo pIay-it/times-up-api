@@ -52,12 +52,6 @@ const GameSchema = new Schema({
     versionKey: false,
 });
 
-GameSchema.post("save", game => {
-    game.set("queue", game.firstQueue);
-    game.setNextSpeakerAndRollQueue();
-    game.save();
-});
-
 function isRoundOver() {
     return this.cards.every(card => card.isGuessed);
 }
@@ -92,6 +86,10 @@ function getCardById(id) {
     return this.cards.find(({ _id }) => _id.toString() === id.toString());
 }
 
+function getPlayersByTeam(team) {
+    return this.players.filter(player => player.team === team);
+}
+
 function rollQueue() {
     this.queue[0].players.push(this.queue[0].players.shift());
     this.queue.push(this.queue.shift());
@@ -102,6 +100,40 @@ function setNextSpeakerAndRollQueue() {
     this.rollQueue();
 }
 
+function unshiftHistoryEntry(play) {
+    const newGameHistoryEntry = {
+        round: this.round,
+        turn: this.turn,
+        speaker: this.speaker,
+        guesser: this.guesser,
+        cards: play.cards,
+        score: play.cards.reduce((acc, { status }) => status === "guessed" ? acc + 1 : acc, 0),
+    };
+    const gameHistory = this.history ? [newGameHistoryEntry, ...this.history] : [newGameHistoryEntry];
+    this.set("history", gameHistory);
+}
+
+function pushSummaryRound() {
+    const roundPlays = this.history.filter(({ round }) => round === this.round);
+    const gameSummaryRound = {
+        number: this.round,
+        scores: roundPlays.reduce((acc, play) => {
+            const existingTeamScore = acc.find(({ team }) => team === play.speaker.team);
+            if (existingTeamScore) {
+                existingTeamScore.score += play.score;
+            } else {
+                acc.push({ team: play.speaker.team, players: this.getPlayersByTeam(play.speaker.team), score: play.score });
+            }
+            return acc;
+        }, []),
+    };
+    if (!this.summary) {
+        this.set("summary", { rounds: [gameSummaryRound] });
+    } else {
+        this.set("summary.rounds", [...this.summary.rounds, gameSummaryRound]);
+    }
+}
+
 function resetCardsForNewRound() {
     this.cards.forEach(card => {
         card.set("status", "to-guess");
@@ -109,9 +141,35 @@ function resetCardsForNewRound() {
     });
 }
 
+function setFinalSummary() {
+    const finalScores = this.summary.rounds.reduce((acc, round) => {
+        round.scores.forEach(roundScore => {
+            const existingTeamFinalScore = acc.find(({ team }) => team === roundScore.team);
+            if (existingTeamFinalScore) {
+                existingTeamFinalScore.score += roundScore.score;
+            } else {
+                acc.push({ team: roundScore.team, players: roundScore.players, score: roundScore.score });
+            }
+        });
+        return acc;
+    }, []);
+    this.set("summary.finalScores", finalScores);
+    const highestFinalScore = Math.max(...finalScores.map(({ score }) => score));
+    const winningTeams = finalScores.reduce((acc, { score, team }) => score === highestFinalScore ? [...acc, team] : acc, []);
+    const winners = {
+        teams: winningTeams,
+        players: this.players.filter(({ team }) => winningTeams.includes(team)),
+    };
+    this.set("summary.winners", winners);
+}
+
 GameSchema.methods.getCardById = getCardById;
+GameSchema.methods.getPlayersByTeam = getPlayersByTeam;
 GameSchema.methods.rollQueue = rollQueue;
 GameSchema.methods.setNextSpeakerAndRollQueue = setNextSpeakerAndRollQueue;
+GameSchema.methods.unshiftHistoryEntry = unshiftHistoryEntry;
+GameSchema.methods.pushSummaryRound = pushSummaryRound;
 GameSchema.methods.resetCardsForNewRound = resetCardsForNewRound;
+GameSchema.methods.setFinalSummary = setFinalSummary;
 
 module.exports = GameSchema;

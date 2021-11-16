@@ -98,7 +98,7 @@ module.exports = {
         "max-depth": "off",
         "max-lines": "off",
         "max-lines-per-function": ["error", { max: 30, skipComments: true }],
-        "max-nested-callbacks": ["error", 2],
+        "max-nested-callbacks": ["error", 5],
         "max-params": ["error", 6],
         "max-statements": "off",
         "multiline-comment-style": "error",

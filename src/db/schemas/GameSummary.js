@@ -1,14 +1,14 @@
 const { Schema } = require("mongoose");
 const PlayerSchema = require("./Player");
-const GameRoundSummarySchema = require("./GameSummaryRound");
+const GameSummaryRoundSchema = require("./GameSummaryRound");
 const GameSummaryScoreSchema = require("./GameSummaryScore");
 
 const GameSummarySchema = new Schema({
     rounds: {
-        type: [GameRoundSummarySchema],
+        type: [GameSummaryRoundSchema],
         default: undefined,
     },
-    scores: {
+    finalScores: {
         type: [GameSummaryScoreSchema],
         default: undefined,
     },
@@ -17,7 +17,10 @@ const GameSummarySchema = new Schema({
             type: [PlayerSchema],
             default: undefined,
         },
-        team: { type: String },
+        teams: {
+            type: [String],
+            default: undefined,
+        },
     },
 }, {
     id: false,
