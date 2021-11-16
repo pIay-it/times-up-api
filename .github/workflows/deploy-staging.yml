@@ -1,7 +1,11 @@
-name: Time's Up by Play-IT API Default Workflow
-on: push
+name: Time's Up by Play-IT API Deploy on Staging Server Workflow
+on:
+    push:
+        branches:
+            - staging
+
 jobs:
-    build:
+    deployment:
         runs-on: ubuntu-latest
         steps:
             - name: Setup GitHub repository 🔧
@@ -20,17 +24,11 @@ jobs:
               run: npm run lint
             - name: Run tests ☑️
               run: npm test
-            - name: Generate documentation 📚
-              run: npm run doc
-            - name: Deploy to GitHub Pages 📖
-              uses: JamesIves/github-pages-deploy-action@4.1.5
-              with:
-                branch: gh-pages
-                folder: public/apidoc
+
             - name: Send Slack notification ✉️
               uses: rtCamp/action-slack-notify@v2
               env:
                 SLACK_USERNAME: GitHub Actions
                 SLACK_ICON: 'https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png?size=48'
-                SLACK_WEBHOOK: ${{ secrets.TIMES_UP_SLACK_WEBHOOK }}
+                SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
                 SLACK_TITLE: 'Commit message'
