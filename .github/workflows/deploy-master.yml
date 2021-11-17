@@ -1,8 +1,8 @@
-name: Time's Up by Play-IT API Deployment on Staging Server Workflow
+name: Time's Up by Play-IT API Deployment on Production Server Workflow
 on:
     push:
         branches:
-            - staging
+            - master
 jobs:
     deployment:
         runs-on: ubuntu-latest
@@ -26,14 +26,14 @@ jobs:
             - name: Install SSH Key 🔑
               uses: shimataro/ssh-key-action@v2
               with:
-                key: ${{ secrets.TIMES_UP_STAGING_SERVER_SSH_PRIVATE_KEY }}
+                key: ${{ secrets.TIMES_UP_PRODUCTION_SERVER_SSH_PRIVATE_KEY }}
                 known_hosts: ${{ secrets.TIMES_UP_KNOWN_HOSTS }}
-            - name: Deploy to staging server 🚀️
-              run: ./deploy/deploy.sh staging ${{ secrets.TIMES_UP_STAGING_SERVER_SSH_USER }} ${{ secrets.STAGING_SERVER_SSH_URL }}
+            - name: Deploy to production server 🚀️
+              run: ./deploy/deploy.sh master ${{ secrets.TIMES_UP_PRODUCTION_SERVER_SSH_USER }} ${{ secrets.PRODUCTION_SERVER_SSH_URL }}
             - name: Send Slack notification ✉️
               uses: rtCamp/action-slack-notify@v2
               env:
                 SLACK_USERNAME: GitHub Actions
                 SLACK_ICON: 'https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png?size=48'
                 SLACK_WEBHOOK: ${{ secrets.TIMES_UP_SLACK_WEBHOOK }}
-                SLACK_TITLE: ':rocket: Deployed to staging server :tada:'
+                SLACK_TITLE: ':rocket: Deployed to production server :tada:'
