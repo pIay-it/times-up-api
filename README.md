@@ -2,8 +2,8 @@
 
 [![GitHub release](https://img.shields.io/github/release/pIay-it/times-up-api.svg)](https://GitHub.com/pIay-it/times-up-api/releases/)
 [![GitHub license](https://img.shields.io/github/license/pIay-it/times-up-api.svg)](https://github.com/antoinezanardi/https://img.shields.io/github/license/werewolves-assistant-api.svg/blob/master/LICENSE)
-[![Build Status](https://travis-ci.org/pIay-it/times-up-api.svg?branch=master)](https://travis-ci.org/pIay-it/times-up-api)
-[![Known Vulnerabilities](https://snyk.io/test/github/pIay-it/times-up-api/badge.svg?targetFile=package.json)](https://snyk.io/test/github/pIay-it/times-up-api?targetFile=package.json)
+[![GitHub Actions Build](https://github.com/pIay-it/times-up-api/actions/workflows/build.yml/badge.svg)](https://github.com/pIay-it/times-up-api/actions/workflows/build.yml)
+[![GitHub Actions Deploy](https://github.com/pIay-it/times-up-api/actions/workflows/deploy-master.yml/badge.svg)](https://github.com/pIay-it/times-up-api/actions/workflows/deploy-master.yml)
 [![Contributions are welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/pIay-it/times-up-api/issues)
 
 [![ForTheBadge open-source](https://forthebadge.com/images/badges/open-source.svg)](https://forthebadge.com)
@@ -13,16 +13,68 @@
 ## 📋 Table of Contents
 
 1. ⏳ [What is this API ?](#what-is-this-api)
-2. 🔨 [Installation](#installation)
-2. 🔌 [Let's go](#lets-go)
-3. ⚙️ [Other useful commands](#other-useful-commands)
-4. ©️ [License](#license)
-5. ❤️ [Contributors](#contributors)
+2. 🔍 [Let's try !](#lets-try)
+3. 📚 [API Documentation](#api-documentation)
+4. 📈 [Versions & changelog](#versions)
+5. ☑️ [Code analysis and consistency](#code-analysis-and-consistency)
+6. 🔨 [Installation](#installation)
+7. 🔌 [Let's go](#lets-go)
+8. ⚙️ [Other useful commands](#other-useful-commands)
+9. ©️ [License](#license)
+10. ❤️ [Contributors](#contributors)
 
 ## <a name="what-is-this-api">⏳ What is this API ?</a>
 This API provides various data through HTTP requests to manage Time's Up parties.
 
 This is the project's API used by [**Time's Up Web**](https://github.com/pIay-it/times-up-web), the main web **VueJS** client.  
+
+## <a name="lets-try">🔍 Let's try !</a>
+Two versions are available for testing this API:
+
+✨ <a href="https://times-up-api.play-it.io" target="_blank">**Main API**</a> _(Base URL: https://times-up-api.play-it.io)_
+
+🔧 <a href="https://sandbox.times-up-api.play-it.io" target="_blank">**Sandbox API**</a> _(Base URL: https://sandbox.times-up-api.play-it.io)_
+
+**Sandbox API** may contain some bugs and unexpected behaviors as its purpose is to test new features before deploying on **main API**.
+
+Both APIs are running on a server with the following configuration:
+- **OS**: `Debian GNU/Linux 10 (buster)`
+- **NodeJS**: `v14.18.1`
+- **NPM**: `v6.14.15`
+- **MongoDB shell version**: `v4.4.10`
+
+The MongoDB database is protected under username and password authentication.
+
+## <a name="api-documentation">📚 API Documentation</a>
+
+Documentation is available for both versions:
+
+* **✨ [Main API Documentation](https://times-up-api.play-it.io/apidoc)**
+* **🔧 [Sandbox API Documentation](https://sandbox.times-up-api.play-it.io/apidoc)**
+
+Note that contributors try their best to maintain documentations up to date. If you find any typos or oversights, please open an issue, or a pull request.
+
+## <a name="versions">📈 Versions & changelog</a>
+
+Each change when a new version comes up is listed in the <a href="https://github.com/antoinezanardi/werewolves-assistant-api/blob/master/CHANGELOG.md" target="_blank">CHANGELOG.md file</a> placed at project's root.
+
+Also, you can keep up with changes by watching releases with the **Watch GitHub button** at the top of this page.
+
+Current release on **main API** is [![GitHub release](https://img.shields.io/github/release/pIay-it/times-up-api.svg)](https://GitHub.com/pIay-it/times-up-api/releases/).
+
+✨ <a href="https://times-up-api.play-it.io" target="_blank">**Main API**</a> is updated when commits are merged into the `master` branch.
+
+🔧 <a href="https://sandbox.times-up-api.play-it.io" target="_blank">**Sandbox API**</a> is updated when commits are merged into the `staging` branch.
+
+**[GitHub Actions](https://github.com/pIay-it/times-up-api/actions)** helps the project to be automatically updated by deploying new versions for both **Sandbox** and **Main** APIs. Please refer to the **[workflows](https://github.com/pIay-it/times-up-api/tree/master/.github/workflows)** for more details.
+
+#### 🏷️ <a href="https://github.com/pIay-it/times-up-api/releases" target="_blank">All releases for this project are available here</a>.
+
+## <a name="code-analysis-and-consistency">☑️ Code analysis and consistency</a>
+
+In order to keep the code clean, consistent and free of bad JS practises, **[ESLint](https://eslint.org/)** is installed with more than **225 rules activated** !
+
+Complete list of all enabled rules is available in the **[.eslintrc.js file](https://github.com/pIay-it/times-up-api/blob/master/.eslintrc.js)**.
 
 ## <a name="installation">🔨 Installation</a>
 
