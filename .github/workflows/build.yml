@@ -1,0 +1,39 @@
+name: Time's Up by Play-IT API Build Workflow
+on:
+    pull_request:
+        branches:
+            - 'staging'
+            - 'master'
+    push:
+        branches-ignore:
+            - 'staging'
+            - 'master'
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Setup GitHub repository 🔧
+              uses: actions/checkout@v2
+            - name: Setup NodeJS v14 ✨
+              uses: actions/setup-node@v2
+              with:
+                node-version: '14'
+            - name: Setup MongoDB v5 🌿
+              uses: supercharge/mongodb-github-action@1.6.0
+              with:
+                mongodb-version: '5'
+            - name: Install project dependencies 📦
+              run: npm install
+            - name: Check and lint code 🔍
+              run: npm run lint
+            - name: Run tests ☑️
+              run: npm test
+            - name: Generate documentation 📚
+              run: npm run doc
+            - name: Send Slack notification ✉️
+              uses: rtCamp/action-slack-notify@v2
+              env:
+                SLACK_USERNAME: GitHub Actions
+                SLACK_ICON: 'https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png?size=48'
+                SLACK_WEBHOOK: ${{ secrets.TIMES_UP_SLACK_WEBHOOK }}
+                SLACK_TITLE: 'Commit message'

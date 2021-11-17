@@ -1,0 +1,19 @@
+{
+    "name": "⏳ Time's Up API by Play-IT",
+    "version": "0.1.0",
+    "description": "This API provides various data through HTTP requests to manage Time's Up by Play-IT games.",
+    "header": {
+        "title": "Structures",
+        "filename": "./config/apidoc/header.md"
+    },
+    "footer": {
+        "title": "Codes",
+        "filename": "./config/apidoc/footer.md"
+    },
+
+    "template": {
+        "forceLanguage": "en",
+        "withCompare": true,
+        "withGenerator": true
+    }
+}
