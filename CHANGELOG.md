@@ -4,7 +4,7 @@
 
 ### 📚 Documentation
 
-* [#9](https://github.com/pIay-it/times-up-api/issues/9) - `createdAt` and `updatedAt` fields added for `Player` structure.
+* [#9](https://github.com/pIay-it/times-up-api/issues/9) - `createdAt` and `updatedAt` fields added for `Player` structure. 
 
 ### 📦 Packages
 
