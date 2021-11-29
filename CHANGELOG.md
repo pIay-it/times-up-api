@@ -1,5 +1,18 @@
 # ⏳ LIST OF CHANGES FOR TIME'S UP API
 
+## 0.1.1 (2021-??-??)
+
+### 📚 Documentation
+
+* [#9](https://github.com/pIay-it/times-up-api/issues/9) - `createdAt` and `updatedAt` fields added for `Player` structure.
+
+### 📦 Packages
+
+* `apidoc` updated to version `0.50.2`
+* `eslint` updated to version `8.3.0`
+
+---
+
 ## 0.1.0 (2021-11-17)
 
 ### 🚀 New features
