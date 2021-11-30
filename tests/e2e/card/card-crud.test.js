@@ -6,7 +6,7 @@ const app = require("../../../app");
 const { resetDatabase } = require("../../../src/helpers/functions/Test");
 const Config = require("../../../config");
 const { expect } = chai;
-let server, doudouCard, catCard, peterPanCard, pacManCard;
+let server, doudouCard, epervierCard, peterPanCard, pacManCard;
 
 chai.use(chaiHttp);
 describe("A - Card CRUD [Create / Read / Update / Delete]", () => {
@@ -63,20 +63,20 @@ describe("A - Card CRUD [Create / Read / Update / Delete]", () => {
                 done();
             });
     });
-    it(`🃏 Creates a card "Cat" with "animal" category and 1 difficulty ("nature" category should be implicitly added) (POST /cards)`, done => {
+    it(`🃏 Creates a card "Épervier" with "animal" category and 1 difficulty ("nature" category should be implicitly added) (POST /cards)`, done => {
         chai.request(server)
             .post("/cards")
             .auth(Config.app.basicAuth.username, Config.app.basicAuth.password)
-            .send({ label: "        cat ", categories: [" animal"], difficulty: 1 })
+            .send({ label: "        épervier ", categories: [" animal"], difficulty: 1 })
             .end((err, res) => {
                 expect(res).to.have.status(200);
-                catCard = res.body;
-                expect(catCard.label).to.equal("Cat");
-                expect(catCard.categories).to.be.an("array");
-                expect(catCard.categories.length).to.equal(2);
-                expect(catCard.categories[0]).to.equal("animal");
-                expect(catCard.categories[1]).to.equal("nature");
-                expect(catCard.difficulty).to.equal(1);
+                epervierCard = res.body;
+                expect(epervierCard.label).to.equal("Épervier");
+                expect(epervierCard.categories).to.be.an("array");
+                expect(epervierCard.categories.length).to.equal(2);
+                expect(epervierCard.categories[0]).to.equal("animal");
+                expect(epervierCard.categories[1]).to.equal("nature");
+                expect(epervierCard.difficulty).to.equal(1);
                 done();
             });
     });

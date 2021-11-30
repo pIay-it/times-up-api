@@ -7,6 +7,10 @@
 * [#10](https://github.com/pIay-it/times-up-api/issues/10) - Shuffle cards after each turn.
 * [#11](https://github.com/pIay-it/times-up-api/issues/11) - Record `0` score in game summary.
 
+### 🐛 Bug fixes
+
+* [#13](https://github.com/pIay-it/times-up-api/issues/13) - Incompatibility between Label uppercase and accent during cards creations.
+
 ### ♻️ Refactoring
 
 * [#12](https://github.com/pIay-it/times-up-api/issues/12) - Change `SENTRY_ENABLED` to `IS_SENTRY_ENABLED` in env.
