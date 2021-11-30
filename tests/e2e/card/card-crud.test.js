@@ -40,7 +40,7 @@ describe("A - Card CRUD [Create / Read / Update / Delete]", () => {
         chai.request(server)
             .post("/cards")
             .auth(Config.app.basicAuth.username, Config.app.basicAuth.password)
-            .send({ label: "Doudou ", categories: [" personality"], difficulty: 2 })
+            .send({ label: "Doudou ", categories: [" personality"], difficulty: 2, description: "   ", imageURL: "      " })
             .end((err, res) => {
                 expect(res).to.have.status(200);
                 doudouCard = res.body;
@@ -49,6 +49,8 @@ describe("A - Card CRUD [Create / Read / Update / Delete]", () => {
                 expect(doudouCard.categories.length).to.equal(1);
                 expect(doudouCard.categories[0]).to.equal("personality");
                 expect(doudouCard.difficulty).to.equal(2);
+                expect(doudouCard.description).to.not.exist;
+                expect(doudouCard.imageURL).to.not.exist;
                 done();
             });
     });
@@ -251,7 +253,7 @@ describe("A - Card CRUD [Create / Read / Update / Delete]", () => {
         chai.request(server)
             .patch(`/cards/${pacManCard._id}`)
             .auth(Config.app.basicAuth.username, Config.app.basicAuth.password)
-            .send({ label: "pac-man", categories: ["video-game", "character"], difficulty: 3 })
+            .send({ label: "pac-man", categories: ["video-game", "character"], difficulty: 3, description: "    ", imageURL: "" })
             .end((err, res) => {
                 expect(res).to.have.status(200);
                 pacManCard = res.body;
@@ -261,6 +263,8 @@ describe("A - Card CRUD [Create / Read / Update / Delete]", () => {
                 expect(pacManCard.categories[0]).to.equal("video-game");
                 expect(pacManCard.categories[1]).to.equal("character");
                 expect(pacManCard.categories[2]).to.equal("art");
+                expect(pacManCard.description).to.equal("");
+                expect(pacManCard.imageURL).to.equal("");
                 done();
             });
     });

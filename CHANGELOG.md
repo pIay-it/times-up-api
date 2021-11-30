@@ -1,11 +1,12 @@
 # ⏳ LIST OF CHANGES FOR TIME'S UP API
 
-## 0.1.1 (2021-??-??)
+## 0.1.1 (2021-11-30)
 
 ### 🚀 New features
 
 * [#10](https://github.com/pIay-it/times-up-api/issues/10) - Shuffle cards after each turn.
 * [#11](https://github.com/pIay-it/times-up-api/issues/11) - Record `0` score in game summary.
+* [#14](https://github.com/pIay-it/times-up-api/issues/14) - Allow empty strings for optional request body parameters.
 
 ### 🐛 Bug fixes
 
