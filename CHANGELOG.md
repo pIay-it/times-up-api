@@ -2,6 +2,10 @@
 
 ## 0.1.1 (2021-??-??)
 
+### 🚀 New features
+
+* [#10](https://github.com/pIay-it/times-up-api/issues/10) - Shuffle cards after each turn.
+
 ### 📚 Documentation
 
 * [#9](https://github.com/pIay-it/times-up-api/issues/9) - `createdAt` and `updatedAt` fields added for `Player` structure. 
@@ -10,6 +14,7 @@
 
 * `apidoc` updated to version `0.50.2`
 * `eslint` updated to version `8.3.0`
+* `mongoose` updated to version `6.0.14`
 
 ---
 

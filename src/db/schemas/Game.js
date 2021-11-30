@@ -1,11 +1,12 @@
 const { Schema } = require("mongoose");
+const { shuffle: shuffleArray } = require("lodash");
 const CardSchema = require("./Card");
 const PlayerSchema = require("./Player");
 const GameQueueSchema = require("./GameQueue");
 const GameSummarySchema = require("./GameSummary");
 const GameOptionsSchema = require("./GameOptions");
 const GameHistorySchema = require("./GameHistory");
-const { getGameStatuses, getGameDefaultOptions } = require("../../helpers/functions/Game");
+const { getGameStatuses, getGameDefaultOptions, getGameCardById } = require("../../helpers/functions/Game");
 
 const GameSchema = new Schema({
     players: {
@@ -83,7 +84,7 @@ GameSchema.virtual("firstQueue").get(getFirstQueue);
 GameSchema.virtual("nextSpeaker").get(getNextSpeaker);
 
 function getCardById(id) {
-    return this.cards.find(({ _id }) => _id.toString() === id.toString());
+    return getGameCardById(this, id);
 }
 
 function getPlayersByTeam(team) {
@@ -141,6 +142,28 @@ function resetCardsForNewRound() {
     });
 }
 
+function turnNotToGuessCardReducer(acc, card) {
+    return card.status !== "to-guess" ? [...acc, card._id.toString()] : acc;
+}
+
+function shuffleCards(isFirstCardLocked) {
+    const oldDeck = [...this.cards];
+    let newDeck;
+    if (!isFirstCardLocked) {
+        newDeck = shuffleArray(oldDeck);
+    } else {
+        let firstToGuessCard;
+        const turnNotToGuessCardIds = this.history?.length ? this.history[0].cards.reduce(turnNotToGuessCardReducer, []) : [];
+        const firstToGuessCardIdx = oldDeck.findIndex(card => card.status === "to-guess" && !turnNotToGuessCardIds.includes(card._id.toString()));
+        if (firstToGuessCardIdx !== -1) {
+            firstToGuessCard = oldDeck[firstToGuessCardIdx];
+            oldDeck.splice(firstToGuessCardIdx, 1);
+        }
+        newDeck = firstToGuessCard ? [firstToGuessCard, ...shuffleArray(oldDeck)] : shuffleArray(oldDeck);
+    }
+    this.set("cards", newDeck);
+}
+
 function setFinalSummary() {
     const finalScores = this.summary.rounds.reduce((acc, round) => {
         round.scores.forEach(roundScore => {
@@ -170,6 +193,7 @@ GameSchema.methods.setNextSpeakerAndRollQueue = setNextSpeakerAndRollQueue;
 GameSchema.methods.unshiftHistoryEntry = unshiftHistoryEntry;
 GameSchema.methods.pushSummaryRound = pushSummaryRound;
 GameSchema.methods.resetCardsForNewRound = resetCardsForNewRound;
+GameSchema.methods.shuffleCards = shuffleCards;
 GameSchema.methods.setFinalSummary = setFinalSummary;
 
 module.exports = GameSchema;
