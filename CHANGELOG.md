@@ -1,5 +1,33 @@
 # ⏳ LIST OF CHANGES FOR TIME'S UP API
 
+## 0.1.1 (2021-11-30)
+
+### 🚀 New features
+
+* [#10](https://github.com/pIay-it/times-up-api/issues/10) - Shuffle cards after each turn.
+* [#11](https://github.com/pIay-it/times-up-api/issues/11) - Record `0` score in game summary.
+* [#14](https://github.com/pIay-it/times-up-api/issues/14) - Allow empty strings for optional request body parameters.
+
+### 🐛 Bug fixes
+
+* [#13](https://github.com/pIay-it/times-up-api/issues/13) - Incompatibility between Label uppercase and accent during cards creations.
+
+### ♻️ Refactoring
+
+* [#12](https://github.com/pIay-it/times-up-api/issues/12) - Change `SENTRY_ENABLED` to `IS_SENTRY_ENABLED` in env.
+
+### 📚 Documentation
+
+* [#9](https://github.com/pIay-it/times-up-api/issues/9) - `createdAt` and `updatedAt` fields added for `Player` structure.
+
+### 📦 Packages
+
+* `apidoc` updated to version `0.50.2`
+* `eslint` updated to version `8.3.0`
+* `mongoose` updated to version `6.0.14`
+
+---
+
 ## 0.1.0 (2021-11-17)
 
 ### 🚀 New features

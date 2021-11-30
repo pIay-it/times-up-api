@@ -6,7 +6,7 @@ const app = require("../../../app");
 const { resetDatabase } = require("../../../src/helpers/functions/Test");
 const Config = require("../../../config");
 const { expect } = chai;
-let server, doudouCard, catCard, peterPanCard, pacManCard;
+let server, doudouCard, epervierCard, peterPanCard, pacManCard;
 
 chai.use(chaiHttp);
 describe("A - Card CRUD [Create / Read / Update / Delete]", () => {
@@ -40,7 +40,7 @@ describe("A - Card CRUD [Create / Read / Update / Delete]", () => {
         chai.request(server)
             .post("/cards")
             .auth(Config.app.basicAuth.username, Config.app.basicAuth.password)
-            .send({ label: "Doudou ", categories: [" personality"], difficulty: 2 })
+            .send({ label: "Doudou ", categories: [" personality"], difficulty: 2, description: "   ", imageURL: "      " })
             .end((err, res) => {
                 expect(res).to.have.status(200);
                 doudouCard = res.body;
@@ -49,6 +49,8 @@ describe("A - Card CRUD [Create / Read / Update / Delete]", () => {
                 expect(doudouCard.categories.length).to.equal(1);
                 expect(doudouCard.categories[0]).to.equal("personality");
                 expect(doudouCard.difficulty).to.equal(2);
+                expect(doudouCard.description).to.not.exist;
+                expect(doudouCard.imageURL).to.not.exist;
                 done();
             });
     });
@@ -63,20 +65,20 @@ describe("A - Card CRUD [Create / Read / Update / Delete]", () => {
                 done();
             });
     });
-    it(`🃏 Creates a card "Cat" with "animal" category and 1 difficulty ("nature" category should be implicitly added) (POST /cards)`, done => {
+    it(`🃏 Creates a card "Épervier" with "animal" category and 1 difficulty ("nature" category should be implicitly added) (POST /cards)`, done => {
         chai.request(server)
             .post("/cards")
             .auth(Config.app.basicAuth.username, Config.app.basicAuth.password)
-            .send({ label: "        cat ", categories: [" animal"], difficulty: 1 })
+            .send({ label: "        épervier ", categories: [" animal"], difficulty: 1 })
             .end((err, res) => {
                 expect(res).to.have.status(200);
-                catCard = res.body;
-                expect(catCard.label).to.equal("Cat");
-                expect(catCard.categories).to.be.an("array");
-                expect(catCard.categories.length).to.equal(2);
-                expect(catCard.categories[0]).to.equal("animal");
-                expect(catCard.categories[1]).to.equal("nature");
-                expect(catCard.difficulty).to.equal(1);
+                epervierCard = res.body;
+                expect(epervierCard.label).to.equal("Épervier");
+                expect(epervierCard.categories).to.be.an("array");
+                expect(epervierCard.categories.length).to.equal(2);
+                expect(epervierCard.categories[0]).to.equal("animal");
+                expect(epervierCard.categories[1]).to.equal("nature");
+                expect(epervierCard.difficulty).to.equal(1);
                 done();
             });
     });
@@ -251,7 +253,7 @@ describe("A - Card CRUD [Create / Read / Update / Delete]", () => {
         chai.request(server)
             .patch(`/cards/${pacManCard._id}`)
             .auth(Config.app.basicAuth.username, Config.app.basicAuth.password)
-            .send({ label: "pac-man", categories: ["video-game", "character"], difficulty: 3 })
+            .send({ label: "pac-man", categories: ["video-game", "character"], difficulty: 3, description: "    ", imageURL: "" })
             .end((err, res) => {
                 expect(res).to.have.status(200);
                 pacManCard = res.body;
@@ -261,6 +263,8 @@ describe("A - Card CRUD [Create / Read / Update / Delete]", () => {
                 expect(pacManCard.categories[0]).to.equal("video-game");
                 expect(pacManCard.categories[1]).to.equal("character");
                 expect(pacManCard.categories[2]).to.equal("art");
+                expect(pacManCard.description).to.equal("");
+                expect(pacManCard.imageURL).to.equal("");
                 done();
             });
     });

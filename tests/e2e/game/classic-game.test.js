@@ -3,6 +3,7 @@ const { describe, it, before, after } = require("mocha");
 const chai = require("chai");
 const chaiHttp = require("chai-http");
 const app = require("../../../app");
+const { getGameCardById } = require("../../../src/helpers/functions/Game");
 const { resetDatabase, createDummyCards } = require("../../../src/helpers/functions/Test");
 const Config = require("../../../config");
 const { expect } = chai;
@@ -129,12 +130,13 @@ describe("B - Classic game with 4 players", () => {
             .end((err, res) => {
                 expect(res).to.have.status(200);
                 game = res.body;
-                expect(game.cards[0].status).to.equal("guessed");
-                expect(game.cards[0].timeToGuess).to.equal(2);
-                expect(game.cards[1].status).to.equal("guessed");
-                expect(game.cards[1].timeToGuess).to.equal(10);
-                expect(game.cards[2].status).to.equal("to-guess");
-                expect(game.cards[2].timeToGuess).to.not.exist;
+                expect(getGameCardById(game, cards[0]._id).status).to.equal("guessed");
+                expect(getGameCardById(game, cards[0]._id).timeToGuess).to.equal(2);
+                expect(getGameCardById(game, cards[1]._id).status).to.equal("guessed");
+                expect(getGameCardById(game, cards[1]._id).timeToGuess).to.equal(10);
+                expect(getGameCardById(game, cards[2]._id).status).to.equal("to-guess");
+                expect(getGameCardById(game, cards[2]._id).timeToGuess).to.not.exist;
+                expect(cards[3]._id).to.equal(game.cards[0]._id);
                 expect(game.round).to.equal(1);
                 expect(game.turn).to.equal(2);
                 expect(game.speaker._id).to.equal(game.players[1]._id);
@@ -326,6 +328,7 @@ describe("B - Classic game with 4 players", () => {
             .end((err, res) => {
                 expect(res).to.have.status(200);
                 game = res.body;
+                cards = game.cards;
                 expect(game.cards.every(({ status }) => status === "to-guess")).to.be.true;
                 expect(game.round).to.equal(2);
                 expect(game.turn).to.equal(1);
@@ -381,6 +384,7 @@ describe("B - Classic game with 4 players", () => {
             .end((err, res) => {
                 expect(res).to.have.status(200);
                 game = res.body;
+                expect(cards[12]._id).to.equal(game.cards[0]._id);
                 expect(game.round).to.equal(2);
                 expect(game.turn).to.equal(2);
                 expect(game.speaker._id).to.equal(game.players[2]._id);
@@ -460,10 +464,10 @@ describe("B - Classic game with 4 players", () => {
                 expect(game.summary.rounds[1].number).to.equal(2);
                 expect(game.summary.rounds[1].scores).to.be.an("array");
                 expect(game.summary.rounds[1].scores.length).to.equal(2);
-                expect(game.summary.rounds[1].scores[0].team).to.equal("Rouge");
-                expect(game.summary.rounds[1].scores[0].score).to.equal(28);
-                expect(game.summary.rounds[1].scores[1].team).to.equal("Bleue");
-                expect(game.summary.rounds[1].scores[1].score).to.equal(12);
+                expect(game.summary.rounds[1].scores[0].team).to.equal("Bleue");
+                expect(game.summary.rounds[1].scores[0].score).to.equal(12);
+                expect(game.summary.rounds[1].scores[1].team).to.equal("Rouge");
+                expect(game.summary.rounds[1].scores[1].score).to.equal(28);
                 expect(game.history.length).to.equal(8);
                 expect(game.history[0].round).to.equal(2);
                 expect(game.history[0].turn).to.equal(3);
@@ -529,9 +533,11 @@ describe("B - Classic game with 4 players", () => {
                 expect(game.summary.rounds.length).to.equal(3);
                 expect(game.summary.rounds[2].number).to.equal(3);
                 expect(game.summary.rounds[2].scores).to.be.an("array");
-                expect(game.summary.rounds[2].scores.length).to.equal(1);
+                expect(game.summary.rounds[2].scores.length).to.equal(2);
                 expect(game.summary.rounds[2].scores[0].team).to.equal("Bleue");
                 expect(game.summary.rounds[2].scores[0].score).to.equal(40);
+                expect(game.summary.rounds[2].scores[1].team).to.equal("Rouge");
+                expect(game.summary.rounds[2].scores[1].score).to.equal(0);
                 expect(game.summary.finalScores).to.exist;
                 expect(game.summary.finalScores).to.be.an("array");
                 expect(game.summary.finalScores.length).to.equal(2);

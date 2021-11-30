@@ -1,11 +1,12 @@
 const { Schema } = require("mongoose");
+const { shuffle: shuffleArray } = require("lodash");
 const CardSchema = require("./Card");
 const PlayerSchema = require("./Player");
 const GameQueueSchema = require("./GameQueue");
 const GameSummarySchema = require("./GameSummary");
 const GameOptionsSchema = require("./GameOptions");
 const GameHistorySchema = require("./GameHistory");
-const { getGameStatuses, getGameDefaultOptions } = require("../../helpers/functions/Game");
+const { getGameStatuses, getGameDefaultOptions, getGameCardById } = require("../../helpers/functions/Game");
 
 const GameSchema = new Schema({
     players: {
@@ -52,6 +53,10 @@ const GameSchema = new Schema({
     versionKey: false,
 });
 
+function getPlayerTeams() {
+    return [...new Set(this.players.map(player => player.team))];
+}
+
 function isRoundOver() {
     return this.cards.every(card => card.isGuessed);
 }
@@ -77,13 +82,14 @@ function getNextSpeaker() {
     return this.queue[0].players[0];
 }
 
+GameSchema.virtual("getPlayerTeams").get(getPlayerTeams);
 GameSchema.virtual("isRoundOver").get(isRoundOver);
 GameSchema.virtual("isOver").get(isOver);
 GameSchema.virtual("firstQueue").get(getFirstQueue);
 GameSchema.virtual("nextSpeaker").get(getNextSpeaker);
 
 function getCardById(id) {
-    return this.cards.find(({ _id }) => _id.toString() === id.toString());
+    return getGameCardById(this, id);
 }
 
 function getPlayersByTeam(team) {
@@ -115,17 +121,17 @@ function unshiftHistoryEntry(play) {
 
 function pushSummaryRound() {
     const roundPlays = this.history.filter(({ round }) => round === this.round);
+    const teams = this.getPlayerTeams;
+    const roundScores = teams.reduce((acc, team) => [...acc, { team, players: this.getPlayersByTeam(team), score: 0 }], []);
     const gameSummaryRound = {
         number: this.round,
         scores: roundPlays.reduce((acc, play) => {
             const existingTeamScore = acc.find(({ team }) => team === play.speaker.team);
             if (existingTeamScore) {
                 existingTeamScore.score += play.score;
-            } else {
-                acc.push({ team: play.speaker.team, players: this.getPlayersByTeam(play.speaker.team), score: play.score });
             }
             return acc;
-        }, []),
+        }, roundScores),
     };
     if (!this.summary) {
         this.set("summary", { rounds: [gameSummaryRound] });
@@ -139,6 +145,28 @@ function resetCardsForNewRound() {
         card.set("status", "to-guess");
         card.set("timeToGuess", undefined);
     });
+}
+
+function turnNotToGuessCardReducer(acc, card) {
+    return card.status !== "to-guess" ? [...acc, card._id.toString()] : acc;
+}
+
+function shuffleCards(isFirstCardLocked) {
+    const oldDeck = [...this.cards];
+    let newDeck;
+    if (!isFirstCardLocked) {
+        newDeck = shuffleArray(oldDeck);
+    } else {
+        let firstToGuessCard;
+        const turnNotToGuessCardIds = this.history?.length ? this.history[0].cards.reduce(turnNotToGuessCardReducer, []) : [];
+        const firstToGuessCardIdx = oldDeck.findIndex(card => card.status === "to-guess" && !turnNotToGuessCardIds.includes(card._id.toString()));
+        if (firstToGuessCardIdx !== -1) {
+            firstToGuessCard = oldDeck[firstToGuessCardIdx];
+            oldDeck.splice(firstToGuessCardIdx, 1);
+        }
+        newDeck = firstToGuessCard ? [firstToGuessCard, ...shuffleArray(oldDeck)] : shuffleArray(oldDeck);
+    }
+    this.set("cards", newDeck);
 }
 
 function setFinalSummary() {
@@ -170,6 +198,7 @@ GameSchema.methods.setNextSpeakerAndRollQueue = setNextSpeakerAndRollQueue;
 GameSchema.methods.unshiftHistoryEntry = unshiftHistoryEntry;
 GameSchema.methods.pushSummaryRound = pushSummaryRound;
 GameSchema.methods.resetCardsForNewRound = resetCardsForNewRound;
+GameSchema.methods.shuffleCards = shuffleCards;
 GameSchema.methods.setFinalSummary = setFinalSummary;
 
 module.exports = GameSchema;

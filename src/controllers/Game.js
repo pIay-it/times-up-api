@@ -190,9 +190,11 @@ exports.play = async play => {
             game.set("round", game.round + 1);
             game.set("turn", 1);
             game.resetCardsForNewRound();
+            game.shuffleCards(false);
         }
     } else {
         game.set("turn", game.turn + 1);
+        game.shuffleCards(true);
     }
     if (game.status !== "over") {
         game.setNextSpeakerAndRollQueue();

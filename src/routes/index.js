@@ -16,7 +16,7 @@ module.exports = app => {
              * @apiSuccess {String} version API's version
              */
             app.route("/").get((req, res) => {
-                res.status(200).json({ name: "⏳ Time's Up API by Play-IT", version: "0.1.0" });
+                res.status(200).json({ name: "⏳ Time's Up API by Play-IT", version: "0.1.1" });
             });
             return;
         }
