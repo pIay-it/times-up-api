@@ -464,10 +464,10 @@ describe("B - Classic game with 4 players", () => {
                 expect(game.summary.rounds[1].number).to.equal(2);
                 expect(game.summary.rounds[1].scores).to.be.an("array");
                 expect(game.summary.rounds[1].scores.length).to.equal(2);
-                expect(game.summary.rounds[1].scores[0].team).to.equal("Rouge");
-                expect(game.summary.rounds[1].scores[0].score).to.equal(28);
-                expect(game.summary.rounds[1].scores[1].team).to.equal("Bleue");
-                expect(game.summary.rounds[1].scores[1].score).to.equal(12);
+                expect(game.summary.rounds[1].scores[0].team).to.equal("Bleue");
+                expect(game.summary.rounds[1].scores[0].score).to.equal(12);
+                expect(game.summary.rounds[1].scores[1].team).to.equal("Rouge");
+                expect(game.summary.rounds[1].scores[1].score).to.equal(28);
                 expect(game.history.length).to.equal(8);
                 expect(game.history[0].round).to.equal(2);
                 expect(game.history[0].turn).to.equal(3);
@@ -533,9 +533,11 @@ describe("B - Classic game with 4 players", () => {
                 expect(game.summary.rounds.length).to.equal(3);
                 expect(game.summary.rounds[2].number).to.equal(3);
                 expect(game.summary.rounds[2].scores).to.be.an("array");
-                expect(game.summary.rounds[2].scores.length).to.equal(1);
+                expect(game.summary.rounds[2].scores.length).to.equal(2);
                 expect(game.summary.rounds[2].scores[0].team).to.equal("Bleue");
                 expect(game.summary.rounds[2].scores[0].score).to.equal(40);
+                expect(game.summary.rounds[2].scores[1].team).to.equal("Rouge");
+                expect(game.summary.rounds[2].scores[1].score).to.equal(0);
                 expect(game.summary.finalScores).to.exist;
                 expect(game.summary.finalScores).to.be.an("array");
                 expect(game.summary.finalScores.length).to.equal(2);

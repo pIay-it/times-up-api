@@ -5,6 +5,7 @@
 ### 🚀 New features
 
 * [#10](https://github.com/pIay-it/times-up-api/issues/10) - Shuffle cards after each turn.
+* [#11](https://github.com/pIay-it/times-up-api/issues/11) - Record `0` score in game summary.
 
 ### 📚 Documentation
 

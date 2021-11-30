@@ -53,6 +53,10 @@ const GameSchema = new Schema({
     versionKey: false,
 });
 
+function getPlayerTeams() {
+    return [...new Set(this.players.map(player => player.team))];
+}
+
 function isRoundOver() {
     return this.cards.every(card => card.isGuessed);
 }
@@ -78,6 +82,7 @@ function getNextSpeaker() {
     return this.queue[0].players[0];
 }
 
+GameSchema.virtual("getPlayerTeams").get(getPlayerTeams);
 GameSchema.virtual("isRoundOver").get(isRoundOver);
 GameSchema.virtual("isOver").get(isOver);
 GameSchema.virtual("firstQueue").get(getFirstQueue);
@@ -116,17 +121,17 @@ function unshiftHistoryEntry(play) {
 
 function pushSummaryRound() {
     const roundPlays = this.history.filter(({ round }) => round === this.round);
+    const teams = this.getPlayerTeams;
+    const roundScores = teams.reduce((acc, team) => [...acc, { team, players: this.getPlayersByTeam(team), score: 0 }], []);
     const gameSummaryRound = {
         number: this.round,
         scores: roundPlays.reduce((acc, play) => {
             const existingTeamScore = acc.find(({ team }) => team === play.speaker.team);
             if (existingTeamScore) {
                 existingTeamScore.score += play.score;
-            } else {
-                acc.push({ team: play.speaker.team, players: this.getPlayersByTeam(play.speaker.team), score: play.score });
             }
             return acc;
-        }, []),
+        }, roundScores),
     };
     if (!this.summary) {
         this.set("summary", { rounds: [gameSummaryRound] });
