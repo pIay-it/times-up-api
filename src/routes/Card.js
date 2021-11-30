@@ -115,12 +115,13 @@ module.exports = app => {
             .customSanitizer(label => filterOutHTMLTags(label))
             .trim()
             .customSanitizer(label => removeMultipleSpacesToSingle(label))
-            .notEmpty().withMessage("Can't be empty."),
+            .default(undefined),
         body("imageURL")
             .optional()
             .isString().withMessage("Must be a valid string.")
             .trim()
-            .isURL({ protocols: ["https"] }).withMessage("Must be a valid HTTPS URL."),
+            .default(undefined)
+            .isURL({ protocols: ["http", "https"] }).withMessage("Must be a valid HTTP(S) URL."),
     ], Card.postCard);
 
     /**
@@ -165,13 +166,13 @@ module.exports = app => {
             .isString().withMessage("Must be a valid string.")
             .customSanitizer(label => filterOutHTMLTags(label))
             .trim()
-            .customSanitizer(label => removeMultipleSpacesToSingle(label))
-            .notEmpty().withMessage("Can't be empty."),
+            .customSanitizer(label => removeMultipleSpacesToSingle(label)),
         body("imageURL")
             .optional()
             .isString().withMessage("Must be a valid string.")
             .trim()
-            .isURL({ protocols: ["https"] }).withMessage("Must be a valid HTTPS URL."),
+            .if(imageURL => !!imageURL)
+            .isURL({ protocols: ["http", "https"] }).withMessage("Must be a valid HTTP(S) URL."),
     ], Card.patchCard);
 
     /**

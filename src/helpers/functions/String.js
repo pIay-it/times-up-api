@@ -1,6 +1,10 @@
 const XSS = require("xss");
 
-exports.toTitleCase = str => str.toString().toLowerCase().replace(/^\w|\s\w|[-_]\w/gu, m => m.toUpperCase());
+exports.toTitleCase = str => {
+    const wordLetter = "[a-zA-Z\u00C0-\u024F\u1E00-\u1EFF]";
+    const firstLetterRegexp = new RegExp(`^${wordLetter}|\\s${wordLetter}|[-_]${wordLetter}`, "gu");
+    return str.toString().toLowerCase().replace(firstLetterRegexp, m => m.toUpperCase());
+};
 
 exports.removeMultipleSpacesToSingle = str => str.replace(/\s\s+/gu, " ");
 
