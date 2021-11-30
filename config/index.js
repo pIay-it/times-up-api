@@ -19,7 +19,7 @@ const Config = {
         },
     },
     sentry: {
-        enabled: process.env.SENTRY_ENABLED === "true",
+        enabled: process.env.IS_SENTRY_ENABLED === "true",
         projectID: process.env.SENTRY_PROJECT_ID,
         key: process.env.SENTRY_KEY,
     },

@@ -93,7 +93,7 @@ Complete list of all enabled rules is available in the **[.eslintrc.js file](htt
         - _**Not required - Default value**: `secret`_
     * **PORT**: Which port the API must run.
         - _**Not required - Default value**: `4242`_
-    * **SENTRY_ENABLED**: Set to `true` if you want errors to be caught and sent to Sentry.
+    * **IS_SENTRY_ENABLED**: Set to `true` if you want errors to be caught and sent to Sentry.
         - _**Not required**_
     * **SENTRY_PROJECT_ID**: Sentry project's ID. 
         - _**⚠️ Required if Sentry is enabled**_
