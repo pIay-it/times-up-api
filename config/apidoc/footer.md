@@ -73,5 +73,3 @@ Description for each case below :
 |  9   |  CARD_ALREADY_GUESSED   |    400    | Card was already guessed before.                                |
 |  10  |     CANT_SKIP_CARD      |    400    | Card with ID can't be skipped because game's round is `1`.      |
 |  11  |  CANT_PLAY_CARD_TWICE   |    400    | One or more cards are played twice in the same play.            |
-|  12  |  MISSING_TIME_TO_GUESS  |    400    | Card is set to `guessed` but is missing `playingTime` value.    |
-|  13  | FORBIDDEN_TIME_TO_GUESS |    400    | Card has `playingTime` value but is not guessed yet.            |

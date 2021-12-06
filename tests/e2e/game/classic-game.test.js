@@ -70,7 +70,7 @@ describe("B - Classic game with 4 players", () => {
         chai.request(server)
             .post(`/games/${game._id}/play`)
             // eslint-disable-next-line new-cap
-            .send({ cards: [{ _id: mongoose.Types.ObjectId(), status: "discarded" }] })
+            .send({ cards: [{ _id: mongoose.Types.ObjectId(), status: "discarded", playingTime: 2 }] })
             .end((err, res) => {
                 expect(res).to.have.status(400);
                 expect(res.body.type).to.equal("CARD_NOT_IN_GAME");
@@ -80,7 +80,7 @@ describe("B - Classic game with 4 players", () => {
     it(`🎲 Can't make a game play with one skipped card during first game's round (POST /games/:id/play)`, done => {
         chai.request(server)
             .post(`/games/${game._id}/play`)
-            .send({ cards: [{ _id: cards[0]._id, status: "skipped" }] })
+            .send({ cards: [{ _id: cards[0]._id, status: "skipped", playingTime: 2 }] })
             .end((err, res) => {
                 expect(res).to.have.status(400);
                 expect(res.body.type).to.equal("CANT_SKIP_CARD");
@@ -90,30 +90,10 @@ describe("B - Classic game with 4 players", () => {
     it(`🎲 Can't make a game play with twice the same card (POST /games/:id/play)`, done => {
         chai.request(server)
             .post(`/games/${game._id}/play`)
-            .send({ cards: [{ _id: cards[0]._id, status: "skipped" }, { _id: cards[0]._id, status: "guessed" }] })
+            .send({ cards: [{ _id: cards[0]._id, status: "skipped", playingTime: 2 }, { _id: cards[0]._id, status: "guessed", playingTime: 2 }] })
             .end((err, res) => {
                 expect(res).to.have.status(400);
                 expect(res.body.type).to.equal("CANT_PLAY_CARD_TWICE");
-                done();
-            });
-    });
-    it(`🎲 Can't make a game play with a card containing a "playingTime" and status not set to "guessed" (POST /games/:id/play)`, done => {
-        chai.request(server)
-            .post(`/games/${game._id}/play`)
-            .send({ cards: [{ _id: cards[0]._id, status: "discarded", playingTime: 10 }] })
-            .end((err, res) => {
-                expect(res).to.have.status(400);
-                expect(res.body.type).to.equal("FORBIDDEN_TIME_TO_GUESS");
-                done();
-            });
-    });
-    it(`🎲 Can't make a game play with a card with status set to "guessed" and missing "timeToPlay" value (POST /games/:id/play)`, done => {
-        chai.request(server)
-            .post(`/games/${game._id}/play`)
-            .send({ cards: [{ _id: cards[0]._id, status: "guessed" }] })
-            .end((err, res) => {
-                expect(res).to.have.status(400);
-                expect(res.body.type).to.equal("MISSING_TIME_TO_GUESS");
                 done();
             });
     });
@@ -124,7 +104,7 @@ describe("B - Classic game with 4 players", () => {
                 cards: [
                     { _id: cards[0]._id, status: "guessed", playingTime: 2 },
                     { _id: cards[1]._id, status: "guessed", playingTime: 10 },
-                    { _id: cards[2]._id, status: "discarded" },
+                    { _id: cards[2]._id, status: "discarded", playingTime: 2 },
                 ],
             })
             .end((err, res) => {
@@ -169,7 +149,7 @@ describe("B - Classic game with 4 players", () => {
                 expect(game.history[0].cards[1].playingTime).to.equal(10);
                 expect(game.history[0].cards[2]._id).to.equal(cards[2]._id);
                 expect(game.history[0].cards[2].status).to.equal("discarded");
-                expect(game.history[0].cards[2].playingTime).to.not.exist;
+                expect(game.history[0].cards[2].playingTime).to.equal(2);
                 expect(game.history[0].score).to.equal(2);
                 done();
             });
@@ -367,13 +347,13 @@ describe("B - Classic game with 4 players", () => {
             .post(`/games/${game._id}/play`)
             .send({
                 cards: [
-                    { _id: cards[0]._id, status: "skipped" },
+                    { _id: cards[0]._id, status: "skipped", playingTime: 2 },
                     { _id: cards[1]._id, status: "guessed", playingTime: 4 },
                     { _id: cards[2]._id, status: "guessed", playingTime: 5 },
                     { _id: cards[3]._id, status: "guessed", playingTime: 6 },
                     { _id: cards[4]._id, status: "guessed", playingTime: 7 },
                     { _id: cards[5]._id, status: "guessed", playingTime: 6 },
-                    { _id: cards[6]._id, status: "skipped" },
+                    { _id: cards[6]._id, status: "skipped", playingTime: 2 },
                     { _id: cards[7]._id, status: "guessed", playingTime: 4 },
                     { _id: cards[8]._id, status: "guessed", playingTime: 2 },
                     { _id: cards[9]._id, status: "guessed", playingTime: 2 },
@@ -446,12 +426,12 @@ describe("B - Classic game with 4 players", () => {
                     { _id: cards[31]._id, status: "guessed", playingTime: 2 },
                     { _id: cards[32]._id, status: "guessed", playingTime: 4 },
                     { _id: cards[33]._id, status: "guessed", playingTime: 2 },
-                    { _id: cards[34]._id, status: "guessed", timeToGuess: 2 },
-                    { _id: cards[35]._id, status: "guessed", timeToGuess: 2 },
-                    { _id: cards[36]._id, status: "guessed", timeToGuess: 2 },
-                    { _id: cards[37]._id, status: "guessed", timeToGuess: 2 },
-                    { _id: cards[38]._id, status: "guessed", timeToGuess: 2 },
-                    { _id: cards[39]._id, status: "guessed", timeToGuess: 2 },
+                    { _id: cards[34]._id, status: "guessed", playingTime: 2 },
+                    { _id: cards[35]._id, status: "guessed", playingTime: 2 },
+                    { _id: cards[36]._id, status: "guessed", playingTime: 2 },
+                    { _id: cards[37]._id, status: "guessed", playingTime: 2 },
+                    { _id: cards[38]._id, status: "guessed", playingTime: 2 },
+                    { _id: cards[39]._id, status: "guessed", playingTime: 2 },
                 ],
             })
             .end((err, res) => {
@@ -481,46 +461,46 @@ describe("B - Classic game with 4 players", () => {
             .post(`/games/${game._id}/play`)
             .send({
                 cards: [
-                    { _id: cards[0]._id, status: "guessed", timeToGuess: 2 },
-                    { _id: cards[1]._id, status: "guessed", timeToGuess: 2 },
-                    { _id: cards[2]._id, status: "guessed", timeToGuess: 2 },
-                    { _id: cards[3]._id, status: "guessed", timeToGuess: 2 },
-                    { _id: cards[4]._id, status: "guessed", timeToGuess: 2 },
-                    { _id: cards[5]._id, status: "guessed", timeToGuess: 2 },
-                    { _id: cards[6]._id, status: "guessed", timeToGuess: 2 },
-                    { _id: cards[7]._id, status: "guessed", timeToGuess: 2 },
-                    { _id: cards[8]._id, status: "guessed", timeToGuess: 2 },
-                    { _id: cards[9]._id, status: "guessed", timeToGuess: 2 },
-                    { _id: cards[10]._id, status: "guessed", timeToGuess: 2 },
-                    { _id: cards[11]._id, status: "guessed", timeToGuess: 2 },
-                    { _id: cards[12]._id, status: "guessed", timeToGuess: 2 },
-                    { _id: cards[13]._id, status: "guessed", timeToGuess: 2 },
-                    { _id: cards[14]._id, status: "guessed", timeToGuess: 2 },
-                    { _id: cards[15]._id, status: "guessed", timeToGuess: 2 },
-                    { _id: cards[16]._id, status: "guessed", timeToGuess: 2 },
-                    { _id: cards[17]._id, status: "guessed", timeToGuess: 2 },
-                    { _id: cards[18]._id, status: "guessed", timeToGuess: 2 },
-                    { _id: cards[19]._id, status: "guessed", timeToGuess: 2 },
-                    { _id: cards[20]._id, status: "guessed", timeToGuess: 2 },
-                    { _id: cards[21]._id, status: "guessed", timeToGuess: 2 },
-                    { _id: cards[22]._id, status: "guessed", timeToGuess: 2 },
-                    { _id: cards[23]._id, status: "guessed", timeToGuess: 2 },
-                    { _id: cards[24]._id, status: "guessed", timeToGuess: 2 },
-                    { _id: cards[25]._id, status: "guessed", timeToGuess: 2 },
-                    { _id: cards[26]._id, status: "guessed", timeToGuess: 2 },
-                    { _id: cards[27]._id, status: "guessed", timeToGuess: 2 },
-                    { _id: cards[28]._id, status: "guessed", timeToGuess: 2 },
-                    { _id: cards[29]._id, status: "guessed", timeToGuess: 2 },
-                    { _id: cards[30]._id, status: "guessed", timeToGuess: 2 },
-                    { _id: cards[31]._id, status: "guessed", timeToGuess: 2 },
-                    { _id: cards[32]._id, status: "guessed", timeToGuess: 4 },
-                    { _id: cards[33]._id, status: "guessed", timeToGuess: 2 },
-                    { _id: cards[34]._id, status: "guessed", timeToGuess: 2 },
-                    { _id: cards[35]._id, status: "guessed", timeToGuess: 2 },
-                    { _id: cards[36]._id, status: "guessed", timeToGuess: 2 },
-                    { _id: cards[37]._id, status: "guessed", timeToGuess: 2 },
-                    { _id: cards[38]._id, status: "guessed", timeToGuess: 2 },
-                    { _id: cards[39]._id, status: "guessed", timeToGuess: 2 },
+                    { _id: cards[0]._id, status: "guessed", playingTime: 2 },
+                    { _id: cards[1]._id, status: "guessed", playingTime: 2 },
+                    { _id: cards[2]._id, status: "guessed", playingTime: 2 },
+                    { _id: cards[3]._id, status: "guessed", playingTime: 2 },
+                    { _id: cards[4]._id, status: "guessed", playingTime: 2 },
+                    { _id: cards[5]._id, status: "guessed", playingTime: 2 },
+                    { _id: cards[6]._id, status: "guessed", playingTime: 2 },
+                    { _id: cards[7]._id, status: "guessed", playingTime: 2 },
+                    { _id: cards[8]._id, status: "guessed", playingTime: 2 },
+                    { _id: cards[9]._id, status: "guessed", playingTime: 2 },
+                    { _id: cards[10]._id, status: "guessed", playingTime: 2 },
+                    { _id: cards[11]._id, status: "guessed", playingTime: 2 },
+                    { _id: cards[12]._id, status: "guessed", playingTime: 2 },
+                    { _id: cards[13]._id, status: "guessed", playingTime: 2 },
+                    { _id: cards[14]._id, status: "guessed", playingTime: 2 },
+                    { _id: cards[15]._id, status: "guessed", playingTime: 2 },
+                    { _id: cards[16]._id, status: "guessed", playingTime: 2 },
+                    { _id: cards[17]._id, status: "guessed", playingTime: 2 },
+                    { _id: cards[18]._id, status: "guessed", playingTime: 2 },
+                    { _id: cards[19]._id, status: "guessed", playingTime: 2 },
+                    { _id: cards[20]._id, status: "guessed", playingTime: 2 },
+                    { _id: cards[21]._id, status: "guessed", playingTime: 2 },
+                    { _id: cards[22]._id, status: "guessed", playingTime: 2 },
+                    { _id: cards[23]._id, status: "guessed", playingTime: 2 },
+                    { _id: cards[24]._id, status: "guessed", playingTime: 2 },
+                    { _id: cards[25]._id, status: "guessed", playingTime: 2 },
+                    { _id: cards[26]._id, status: "guessed", playingTime: 2 },
+                    { _id: cards[27]._id, status: "guessed", playingTime: 2 },
+                    { _id: cards[28]._id, status: "guessed", playingTime: 2 },
+                    { _id: cards[29]._id, status: "guessed", playingTime: 2 },
+                    { _id: cards[30]._id, status: "guessed", playingTime: 2 },
+                    { _id: cards[31]._id, status: "guessed", playingTime: 2 },
+                    { _id: cards[32]._id, status: "guessed", playingTime: 4 },
+                    { _id: cards[33]._id, status: "guessed", playingTime: 2 },
+                    { _id: cards[34]._id, status: "guessed", playingTime: 2 },
+                    { _id: cards[35]._id, status: "guessed", playingTime: 2 },
+                    { _id: cards[36]._id, status: "guessed", playingTime: 2 },
+                    { _id: cards[37]._id, status: "guessed", playingTime: 2 },
+                    { _id: cards[38]._id, status: "guessed", playingTime: 2 },
+                    { _id: cards[39]._id, status: "guessed", playingTime: 2 },
                 ],
             })
             .end((err, res) => {
@@ -563,13 +543,13 @@ describe("B - Classic game with 4 players", () => {
             .post(`/games/${game._id}/play`)
             .send({
                 cards: [
-                    { _id: cards[22]._id, status: "guessed", timeToGuess: 2 },
-                    { _id: cards[23]._id, status: "guessed", timeToGuess: 2 },
-                    { _id: cards[24]._id, status: "guessed", timeToGuess: 2 },
-                    { _id: cards[25]._id, status: "guessed", timeToGuess: 2 },
-                    { _id: cards[26]._id, status: "guessed", timeToGuess: 2 },
-                    { _id: cards[27]._id, status: "guessed", timeToGuess: 2 },
-                    { _id: cards[28]._id, status: "guessed", timeToGuess: 2 },
+                    { _id: cards[22]._id, status: "guessed", playingTime: 2 },
+                    { _id: cards[23]._id, status: "guessed", playingTime: 2 },
+                    { _id: cards[24]._id, status: "guessed", playingTime: 2 },
+                    { _id: cards[25]._id, status: "guessed", playingTime: 2 },
+                    { _id: cards[26]._id, status: "guessed", playingTime: 2 },
+                    { _id: cards[27]._id, status: "guessed", playingTime: 2 },
+                    { _id: cards[28]._id, status: "guessed", playingTime: 2 },
                 ],
             })
             .end((err, res) => {

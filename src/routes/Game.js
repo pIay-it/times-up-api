@@ -4,11 +4,11 @@ const { getGameDefaultOptions, getGameStatuses } = require("../helpers/functions
 const { defaultLimiter, gameCreationLimiter } = require("../helpers/constants/Route");
 const { basicAuth } = require("../helpers/functions/Passport");
 const { filterOutHTMLTags, removeMultipleSpacesToSingle } = require("../helpers/functions/String");
-const { getCardCategories, getCardStatuses } = require("../helpers/functions/Card");
+const { getCardCategories, getCardPlayableStatuses } = require("../helpers/functions/Card");
 const gameDefaultOptions = getGameDefaultOptions();
 const gameStatuses = getGameStatuses();
 const cardCategories = getCardCategories();
-const cardStatuses = getCardStatuses();
+const cardPlayableStatuses = getCardPlayableStatuses();
 
 module.exports = app => {
     /**
@@ -180,8 +180,8 @@ module.exports = app => {
      * @apiParam (Route Parameters) {ObjectId} id Game's ID.
      * @apiParam (Request Body Parameters) {Object[]} [cards] Cards which were guessed, discarded or skipped during the turn.
      * @apiParam (Request Body Parameters) {ObjectId} cards._id Card's ID.
-     * @apiParam (Request Body Parameters) {String} cards.status Card's status during the turn. (_Possibilities: [Codes - Card Statuses](#card-statuses)_)
-     * @apiParam (Request Body Parameters) {Number} [cards.playingTime] Mandatory when `status` is `guessed`, `discarded` or `skipped`. Time in seconds taken by the speaker to play this card.
+     * @apiParam (Request Body Parameters) {String} cards.status Card's status during the turn. (_Possibilities: [Codes - Card Statuses](#card-statuses) **Except `to-guess`**_)
+     * @apiParam (Request Body Parameters) {Number} cards.playingTime Time in seconds taken by the speaker to play this card.
      * @apiUse GameResponse
      */
     app.post("/games/:id/play", defaultLimiter, [
@@ -196,9 +196,8 @@ module.exports = app => {
         body("cards.*.status")
             .isString().withMessage("Must be a valid string.")
             .trim()
-            .isIn(cardStatuses).withMessage(`Must be one of the following values: ${cardStatuses}`),
+            .isIn(cardPlayableStatuses).withMessage(`Must be one of the following values: ${cardPlayableStatuses}`),
         body("cards.*.playingTime")
-            .optional()
             .isInt({ min: 1 }).withMessage("Must be a valid integer equal or greater than 1.")
             .toInt(),
     ], Game.postPlay);

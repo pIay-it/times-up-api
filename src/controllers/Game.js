@@ -153,7 +153,7 @@ exports.checkAndFillGamePlayCardsData = ({ cards }, game) => {
     for (const [index, card] of cards.entries()) {
         const cardInGame = game.getCardById(card._id);
         this.checkGamePlayCardData(cardInGame, card, game);
-        if (card.status !== "to-guess") {
+        if (card.status === "guessed") {
             cardInGame.set("status", "guessed");
             cardInGame.set("playingTime", card.playingTime);
         }

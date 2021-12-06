@@ -1,10 +1,11 @@
 # ⏳ LIST OF CHANGES FOR TIME'S UP API
 
-## 0.1.1 (2021-12-??)
+## 0.1.2 (2021-12-??)
 
 ### 🚀 New features
 
 * [#19](https://github.com/pIay-it/times-up-api/issues/19) - Change `timeToGuess` for `playingTime` for game's cards.
+* [#20](https://github.com/pIay-it/times-up-api/issues/20) - Prevent to play card with `to-guess` status.
 
 ### 📦 Packages
 

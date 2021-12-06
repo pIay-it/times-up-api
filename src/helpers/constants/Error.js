@@ -43,12 +43,4 @@ exports.errorMetadata = {
         code: 11,
         HTTPCode: 400,
     },
-    MISSING_TIME_TO_GUESS: {
-        code: 12,
-        HTTPCode: 400,
-    },
-    FORBIDDEN_TIME_TO_GUESS: {
-        code: 13,
-        HTTPCode: 400,
-    },
 };
