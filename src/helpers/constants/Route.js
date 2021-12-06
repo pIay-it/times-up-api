@@ -17,3 +17,9 @@ exports.gameCreationLimiter = rateLimit({
     max: Config.app.nodeEnv !== "test" ? 1 : 0,
     handler: (req, res) => rateLimitHandler(req, res, "Too many requests for creating a game. Please try later."),
 });
+
+exports.anonymousRegistrationLimiter = rateLimit({
+    windowMs: 60 * 60 * 1000,
+    max: Config.app.nodeEnv !== "test" ? 1 : 0,
+    handler: (req, res) => rateLimitHandler(req, res, "Too many requests for anonymous registration. Please try later."),
+});

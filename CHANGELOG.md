@@ -10,7 +10,11 @@
 
 ### 📦 Packages
 
-* `eslint` updated to version `8.4.0`
+* `jsonwebtoken` installed with version `8.5.1`.
+* `passport-jwt` installed with version `4.0.0`.
+* `passport-local` installed with version `1.0.0`.
+* `uniqid` installed with version `5.4.0`.
+* `eslint` updated to version `8.4.0`.
 
 ---
 
@@ -36,9 +40,9 @@
 
 ### 📦 Packages
 
-* `apidoc` updated to version `0.50.2`
-* `eslint` updated to version `8.3.0`
-* `mongoose` updated to version `6.0.14`
+* `apidoc` updated to version `0.50.2`.
+* `eslint` updated to version `8.3.0`.
+* `mongoose` updated to version `6.0.14`.
 
 ---
 
