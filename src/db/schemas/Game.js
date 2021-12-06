@@ -143,7 +143,7 @@ function pushSummaryRound() {
 function resetCardsForNewRound() {
     this.cards.forEach(card => {
         card.set("status", "to-guess");
-        card.set("timeToGuess", undefined);
+        card.set("playingTime", undefined);
     });
 }
 

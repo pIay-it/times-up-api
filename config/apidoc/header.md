@@ -28,18 +28,18 @@
 
 Games are made of cards to guess by players. Each card has a label, some categories and a difficulty to guess.
 
-| Field                                             |            Type            | Description                                                                                                      |
-|---------------------------------------------------|:--------------------------:|------------------------------------------------------------------------------------------------------------------|
-| _id                                               |          ObjectId          | Card's ID.                                                                                                       |
-| **label***                                        |           String           | Card's label to be guessed.                                                                                      |
-| **status***                                       |           String           | Card's status for the current game's round and turn. (_Possibilities: [Codes - Card Statuses](#card-statuses)_)  |
-| **categories***                                   |          String[]          | Card's categories. (_Possibilities: [Codes - Card Categories](#card-categories)_)                                |
-| **difficulty***                                   |           Number           | Card's difficulty to guess. Set from 1 (easiest) to 3 (hardest).                                                 |
-| **timeToGuess***                                  |           Number           | Set when `status` is `guessed`. Time in seconds taken by the speaker to make his team guess the card.            |
-| **description***                                  |           String           | Card's description which can help to guess it.                                                                   |
-| **imageURL***                                     |           String           | Card's image URL which can help to guess it.                                                                     |
-| createdAt                                         |            Date            | When the card was created.                                                                                       |
-| updatedAt                                         |            Date            | When the card was updated.                                                                                       |
+| Field                                             |            Type            | Description                                                                                                     |
+|---------------------------------------------------|:--------------------------:|-----------------------------------------------------------------------------------------------------------------|
+| _id                                               |          ObjectId          | Card's ID.                                                                                                      |
+| **label***                                        |           String           | Card's label to be guessed.                                                                                     |
+| **status***                                       |           String           | Card's status for the current game's round and turn. (_Possibilities: [Codes - Card Statuses](#card-statuses)_) |
+| **categories***                                   |          String[]          | Card's categories. (_Possibilities: [Codes - Card Categories](#card-categories)_)                               |
+| **difficulty***                                   |           Number           | Card's difficulty to guess. Set from 1 (easiest) to 3 (hardest).                                                |
+| **playingTime***                                  |           Number           | Time in seconds taken by the speaker to play this card. Only set when its status is not `to-guess`.             |
+| **description***                                  |           String           | Card's description which can help to guess it.                                                                  |
+| **imageURL***                                     |           String           | Card's image URL which can help to guess it.                                                                    |
+| createdAt                                         |            Date            | When the card was created.                                                                                      |
+| updatedAt                                         |            Date            | When the card was updated.                                                                                      |
 
 ## <a id="game-structure"></a>🎲 Game
 

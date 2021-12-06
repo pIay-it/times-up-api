@@ -1,5 +1,17 @@
 # ⏳ LIST OF CHANGES FOR TIME'S UP API
 
+## 0.1.1 (2021-12-??)
+
+### 🚀 New features
+
+* [#19](https://github.com/pIay-it/times-up-api/issues/19) - Change `timeToGuess` for `playingTime` for game's cards.
+
+### 📦 Packages
+
+* `eslint` updated to version `8.4.0`
+
+---
+
 ## 0.1.1 (2021-11-30)
 
 ### 🚀 New features

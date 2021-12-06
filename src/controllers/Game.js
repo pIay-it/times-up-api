@@ -142,10 +142,6 @@ exports.checkGamePlayCardData = (cardInGame, card, game) => {
         throw generateError("CARD_ALREADY_GUESSED", `Card with ID "${card._id}" was already guessed before.`);
     } else if (card.status === "skipped" && game.round === 1) {
         throw generateError("CANT_SKIP_CARD", `Card with ID "${card._id}" can't be skipped because game's round is 1.`);
-    } else if (card.status === "guessed" && !card.timeToGuess) {
-        throw generateError("MISSING_TIME_TO_GUESS", `Card with ID "${card._id}" is set to "guessed" but is missing "timeToGuess" value.`);
-    } else if (card.status !== "guessed" && card.timeToGuess) {
-        throw generateError("FORBIDDEN_TIME_TO_GUESS", `Card with ID "${card._id}" has "timeToGuess" value but is not guessed yet.`);
     }
 };
 
@@ -157,9 +153,9 @@ exports.checkAndFillGamePlayCardsData = ({ cards }, game) => {
     for (const [index, card] of cards.entries()) {
         const cardInGame = game.getCardById(card._id);
         this.checkGamePlayCardData(cardInGame, card, game);
-        if (card.status === "guessed") {
+        if (card.status !== "to-guess") {
             cardInGame.set("status", "guessed");
-            cardInGame.set("timeToGuess", card.timeToGuess);
+            cardInGame.set("playingTime", card.playingTime);
         }
         cards[index] = { ...cardInGame.toJSON(), ...card };
         deleteProperties(cards[index], ["createdAt", "updatedAt"]);

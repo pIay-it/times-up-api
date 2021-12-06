@@ -17,7 +17,7 @@ const CardSchema = new Schema({
         min: 1,
         max: 3,
     },
-    timeToGuess: {
+    playingTime: {
         type: Number,
         min: 1,
     },
