@@ -181,7 +181,7 @@ module.exports = app => {
      * @apiParam (Request Body Parameters) {Object[]} [cards] Cards which were guessed, discarded or skipped during the turn.
      * @apiParam (Request Body Parameters) {ObjectId} cards._id Card's ID.
      * @apiParam (Request Body Parameters) {String} cards.status Card's status during the turn. (_Possibilities: [Codes - Card Statuses](#card-statuses) **Except `to-guess`**_)
-     * @apiParam (Request Body Parameters) {Number} cards.playingTime Time in seconds taken by the speaker to play this card.
+     * @apiParam (Request Body Parameters) {Number{> 0}} cards.playingTime Time in seconds taken by the speaker to play this card. Floats are allowed.
      * @apiUse GameResponse
      */
     app.post("/games/:id/play", defaultLimiter, [
@@ -198,7 +198,7 @@ module.exports = app => {
             .trim()
             .isIn(cardPlayableStatuses).withMessage(`Must be one of the following values: ${cardPlayableStatuses}`),
         body("cards.*.playingTime")
-            .isInt({ min: 1 }).withMessage("Must be a valid integer equal or greater than 1.")
-            .toInt(),
+            .isFloat({ gt: 0 }).withMessage("Must be a valid number greater than 0. Floats are allowed.")
+            .toFloat(),
     ], Game.postPlay);
 };

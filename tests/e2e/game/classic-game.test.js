@@ -102,16 +102,16 @@ describe("B - Classic game with 4 players", () => {
             .post(`/games/${game._id}/play`)
             .send({
                 cards: [
-                    { _id: cards[0]._id, status: "guessed", playingTime: 2 },
+                    { _id: cards[0]._id, status: "guessed", playingTime: 0.2 },
                     { _id: cards[1]._id, status: "guessed", playingTime: 10 },
-                    { _id: cards[2]._id, status: "discarded", playingTime: 2 },
+                    { _id: cards[2]._id, status: "discarded", playingTime: 4.5 },
                 ],
             })
             .end((err, res) => {
                 expect(res).to.have.status(200);
                 game = res.body;
                 expect(getGameCardById(game, cards[0]._id).status).to.equal("guessed");
-                expect(getGameCardById(game, cards[0]._id).playingTime).to.equal(2);
+                expect(getGameCardById(game, cards[0]._id).playingTime).to.equal(0.2);
                 expect(getGameCardById(game, cards[1]._id).status).to.equal("guessed");
                 expect(getGameCardById(game, cards[1]._id).playingTime).to.equal(10);
                 expect(getGameCardById(game, cards[2]._id).status).to.equal("to-guess");
@@ -143,13 +143,13 @@ describe("B - Classic game with 4 players", () => {
                 expect(game.history[0].cards.length).to.equal(3);
                 expect(game.history[0].cards[0]._id).to.equal(cards[0]._id);
                 expect(game.history[0].cards[0].status).to.equal("guessed");
-                expect(game.history[0].cards[0].playingTime).to.equal(2);
+                expect(game.history[0].cards[0].playingTime).to.equal(0.2);
                 expect(game.history[0].cards[1]._id).to.equal(cards[1]._id);
                 expect(game.history[0].cards[1].status).to.equal("guessed");
                 expect(game.history[0].cards[1].playingTime).to.equal(10);
                 expect(game.history[0].cards[2]._id).to.equal(cards[2]._id);
                 expect(game.history[0].cards[2].status).to.equal("discarded");
-                expect(game.history[0].cards[2].playingTime).to.equal(2);
+                expect(game.history[0].cards[2].playingTime).to.equal(4.5);
                 expect(game.history[0].score).to.equal(2);
                 done();
             });

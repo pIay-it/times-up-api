@@ -4,6 +4,7 @@
 
 ### 🚀 New features
 
+* [#18](https://github.com/pIay-it/times-up-api/issues/18) - Decimal seconds for `playingTime` card's field.
 * [#19](https://github.com/pIay-it/times-up-api/issues/19) - Change `timeToGuess` for `playingTime` for game's cards.
 * [#20](https://github.com/pIay-it/times-up-api/issues/20) - Prevent to play card with `to-guess` status.
 

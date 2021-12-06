@@ -19,7 +19,7 @@ const CardSchema = new Schema({
     },
     playingTime: {
         type: Number,
-        min: 1,
+        min: 0,
     },
     description: { type: String },
     imageURL: { type: String },
