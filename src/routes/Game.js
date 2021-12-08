@@ -2,7 +2,7 @@ const { query, param, body } = require("express-validator");
 const Game = require("../controllers/Game");
 const { getGameDefaultOptions, getGameStatuses } = require("../helpers/functions/Game");
 const { defaultLimiter, gameCreationLimiter } = require("../helpers/constants/Route");
-const { basicAuth } = require("../helpers/functions/Passport");
+const { basicAuth, basicAndJWTAuth } = require("../helpers/functions/Passport");
 const { filterOutHTMLTags, removeMultipleSpacesToSingle } = require("../helpers/functions/String");
 const { getCardCategories, getCardPlayableStatuses } = require("../helpers/functions/Card");
 const gameDefaultOptions = getGameDefaultOptions();
@@ -16,13 +16,15 @@ module.exports = app => {
      * @apiSuccess {ObjectID} _id Game's ID.
      * @apiSuccess {Player[]} players Game's players. (_See: [Classes - Player](#player-structure)_)
      * @apiSuccess {Card[]} cards Game's cards. (_See: [Classes - Card](#card-structure)_)
+     * @apiSuccess {Object} [anonymousUser] Game's anonymous creator data. Set only if game was created by an anonymous user.
+     * @apiSuccess {String} anonymousUser._id Game's anonymous creator ID. Prefixed by `anonymous-`.
      * @apiSuccess {String} status Game's status. (_Possibilities: [Codes - Game Statuses](#game-statuses)_)
      * @apiSuccess {Number} round Game's current round. Final round can be either `3` or `4` depending on game's options.
      * @apiSuccess {Number} turn Game's current turn for the current round. Set back to `1` when changing round.
      * @apiSuccess {Player} speaker Game's speaker for the current turn. The speaker is the one trying to make his team or partner guesses cards. (_See: [Classes - Player](#player-structure)_)
      * @apiSuccess {Player} [guesser] Game's guesser for the current turn, set only if `options.players.areTeamUp` is `false`. The guesser is the one trying to guess the card. (_See: [Classes - Player](#player-structure)_)
      * @apiSuccess {GameHistory[]} [history] Game's history to keep track of all plays. (_See: [Classes - Game History](#game-history-structure)_)
-     * @apiSuccess {GameSummary} [summary] Game's summary with scores of every teams for each round and winners. (_See: [Structures - Game Summary](#game-summary-structure)_)
+     * @apiSuccess {GameSummary} [summary] Game's summary with scores of every team for each round and winners. (_See: [Structures - Game Summary](#game-summary-structure)_)
      * @apiSuccess {GameOptions} options Game's options to personalize the party. (_See: [Classes - Game Options](#game-options-structure)_)
      * @apiSuccess {Date} createdAt When the game was created.
      * @apiSuccess {Date} updatedAt When the game was updated.
@@ -32,13 +34,17 @@ module.exports = app => {
      * @api {GET} /games A] Get games
      * @apiName GetGames
      * @apiGroup Games 🎲
+     * @apiPermission JWT
      * @apiPermission Basic
+     * @apiDescription Get games filtered by query string parameters if specified.
+     * - `JWT auth`: Only games created by the user attached to token can be retrieved from this route. Works for both `anonymous` and `registered` users.
+     * - `Basic auth`: All games can be retrieved.
      *
      * @apiParam (Query String Parameters) {String} [fields] Specifies which fields to include. Each value must be separated by a `,` without space. (e.g: `label,createdAt`)
      * @apiParam (Query String Parameters) {Number{>= 1}} [limit] Limit the number of games returned.
      * @apiUse GameResponse
      */
-    app.get("/games", basicAuth, defaultLimiter, [
+    app.get("/games", basicAndJWTAuth, defaultLimiter, [
         query("fields")
             .optional()
             .isString().withMessage("Must be a valid string.")
@@ -54,11 +60,13 @@ module.exports = app => {
      * @api {GET} /games/:id B] Get a game
      * @apiName GetGame
      * @apiGroup Games 🎲
+     * @apiPermission JWT
+     * @apiPermission Basic
      *
      * @apiParam (Route Parameters) {ObjectId} id Game's ID.
      * @apiUse GameResponse
      */
-    app.get("/games/:id", defaultLimiter, [
+    app.get("/games/:id", basicAndJWTAuth, defaultLimiter, [
         param("id")
             .isMongoId().withMessage("Must be a valid ObjectId."),
     ], Game.getGame);
@@ -67,6 +75,11 @@ module.exports = app => {
      * @api {POST} /games C] Create a game
      * @apiName CreateGame
      * @apiGroup Games 🎲
+     * @apiPermission JWT
+     * @apiPermission Basic
+     * @apiDescription Create a game. Behaviour is different among auths.
+     * - `JWT auth from anonymous user`: Created game will have the `anonymousUser` set. This user can only have one game with status `preparing` or `playing` at a time.
+     * - `Basic auth`: Created game won't have any user fields set. There is no limit for creation with this auth.
      *
      * @apiParam (Request Body Parameters) {Object[]} players Game's players. Must contain between 4 and 20 players.
      * @apiParam (Request Body Parameters) {String{>= 1 && <= 30}} players.name Player's name. Must be unique in the array and between 1 and 30 characters long.
@@ -75,7 +88,7 @@ module.exports = app => {
      * @apiParam (Request Body Parameters) {Object} [options.players] Game's options related to players.
      * @apiParam (Request Body Parameters) {Boolean} [options.players.areTeamUp=true]  If set to `true`, teams are made among players. Else, players must win by themselves. Default is `true` based on official rules.
      * @apiParam (Request Body Parameters) {Object} [options.cards] Game's options related to cards.
-     * @apiParam (Request Body Parameters) {Number{>= 5 && <= 100}} [options.cards.count=40] Number of cards to guess during each rounds. Default is `40` based on official rules.
+     * @apiParam (Request Body Parameters) {Number{>= 5 && <= 100}} [options.cards.count=40] Number of cards to guess during each round. Default is `40` based on official rules.
      * @apiParam (Request Body Parameters) {String[]} [options.cards.categories] Cards categories to include for cards to guess. Default are all categories. (_Possibilities: [Codes - Card Categories](#card-categories)_)
      * @apiParam (Request Body Parameters) {Number[]{>= 1 && <= 3}} [options.cards.difficulties=[1,2,3]] Cards difficulties to include for cards to guess. Default are all difficulties. Each value must be between 1 and 3.
      * @apiParam (Request Body Parameters) {Object} [options.cards.helpers] Game's options related to cards helpers that help players to guess cards.
@@ -86,7 +99,7 @@ module.exports = app => {
      * @apiParam (Request Body Parameters) {Number{>= 10 && <= 180}} [options.rounds.turns.timeLimit=30] Time in seconds allowed for a player's turn. Default is `30` seconds based on official rules.
      * @apiUse GameResponse
      */
-    app.post("/games", gameCreationLimiter, [
+    app.post("/games", basicAndJWTAuth, gameCreationLimiter, [
         body("players")
             .isArray().withMessage("Must be a valid array.")
             .custom(value => value.length >= 4 && value.length <= 20 ? Promise.resolve() : Promise.reject(new Error()))
@@ -142,13 +155,14 @@ module.exports = app => {
      * @api {PATCH} /games/:id D] Update a game
      * @apiName UpdateGame
      * @apiGroup Games 🎲
+     * @apiPermission JWT
      * @apiPermission Basic
      *
      * @apiParam (Route Parameters) {ObjectId} id Game's ID.
      * @apiParam (Request Body Parameters) {String} [status] Game's status. (_Possibilities: [Codes - Game Statuses](#game-statuses)_)
      * @apiUse GameResponse
      */
-    app.patch("/games/:id", basicAuth, defaultLimiter, [
+    app.patch("/games/:id", basicAndJWTAuth, defaultLimiter, [
         param("id")
             .isMongoId().withMessage("Must be a valid ObjectId."),
         body("status")
@@ -176,6 +190,8 @@ module.exports = app => {
      * @apiName MakeGamePlay
      * @apiGroup Games 🎲
      * @apiDescription At the end of each turn, this route is called to save the play. In that way, it will be saved in database, score will be calculated and game can proceed to the next turn.
+     * @apiPermission JWT
+     * @apiPermission Basic
      *
      * @apiParam (Route Parameters) {ObjectId} id Game's ID.
      * @apiParam (Request Body Parameters) {Object[]} [cards] Cards which were guessed, discarded or skipped during the turn.
@@ -184,7 +200,7 @@ module.exports = app => {
      * @apiParam (Request Body Parameters) {Number{> 0}} cards.playingTime Time in seconds taken by the speaker to play this card. Floats are allowed.
      * @apiUse GameResponse
      */
-    app.post("/games/:id/play", defaultLimiter, [
+    app.post("/games/:id/play", basicAndJWTAuth, defaultLimiter, [
         param("id")
             .isMongoId().withMessage("Must be a valid ObjectId."),
         body("cards")

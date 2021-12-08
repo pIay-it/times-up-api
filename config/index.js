@@ -4,9 +4,14 @@ const Config = {
     app: {
         nodeEnv: process.env.NODE_ENV || "production",
         port: process.env.PORT || 4242,
-        basicAuth: {
-            username: process.env.BASIC_AUTH_USERNAME || "root",
-            password: process.env.BASIC_AUTH_PASSWORD || "secret",
+        routes: {
+            auth: {
+                basic: {
+                    username: process.env.BASIC_AUTH_USERNAME || "root",
+                    password: process.env.BASIC_AUTH_PASSWORD || "secret",
+                },
+                JWT: { privateKey: process.env.JWT_PRIVATE_KEY || "somethingsecret" },
+            },
         },
     },
     db: {

@@ -7,6 +7,18 @@ const GameSummarySchema = require("./GameSummary");
 const GameOptionsSchema = require("./GameOptions");
 const GameHistorySchema = require("./GameHistory");
 const { getGameStatuses, getGameDefaultOptions, getGameCardById } = require("../../helpers/functions/Game");
+const { generateError } = require("../../helpers/functions/Error");
+
+const AnonymousUserSchema = new Schema({
+    _id: {
+        type: String,
+        required: true,
+    },
+}, {
+    _id: false,
+    timestamps: false,
+    versionKey: false,
+});
 
 const GameSchema = new Schema({
     players: {
@@ -17,6 +29,7 @@ const GameSchema = new Schema({
         type: [CardSchema],
         required: true,
     },
+    anonymousUser: { type: AnonymousUserSchema },
     status: {
         type: String,
         required: true,
@@ -87,6 +100,15 @@ GameSchema.virtual("isRoundOver").get(isRoundOver);
 GameSchema.virtual("isOver").get(isOver);
 GameSchema.virtual("firstQueue").get(getFirstQueue);
 GameSchema.virtual("nextSpeaker").get(getNextSpeaker);
+
+function checkBelongsToUserFromReq(req) {
+    if (req?.user?.strategy === "JWT") {
+        const { mode, _id } = req.user;
+        if (mode === "anonymous" && (!this.anonymousUser || _id.toString() !== this.anonymousUser?._id.toString())) {
+            throw generateError("GAME_DOESNT_BELONG_TO_USER", `Game with id ${this._id} doesn't belong to user with id "${_id}".`);
+        }
+    }
+}
 
 function getCardById(id) {
     return getGameCardById(this, id);
@@ -191,6 +213,7 @@ function setFinalSummary() {
     this.set("summary.winners", winners);
 }
 
+GameSchema.methods.checkBelongsToUserFromReq = checkBelongsToUserFromReq;
 GameSchema.methods.getCardById = getCardById;
 GameSchema.methods.getPlayersByTeam = getPlayersByTeam;
 GameSchema.methods.rollQueue = rollQueue;

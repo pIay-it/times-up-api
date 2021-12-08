@@ -3,6 +3,7 @@ const { it } = require("mocha");
 const chai = require("chai");
 const { getDummyCards } = require("./Card");
 const Config = require("../../../config");
+const { basic: basicAuth } = Config.app.routes.auth;
 const app = require("../../../app");
 
 exports.resetDatabase = done => {
@@ -15,7 +16,7 @@ exports.createDummyCards = () => {
         const requests = [];
         const cards = getDummyCards();
         for (const card of cards) {
-            requests.push(chai.request(server).post("/cards").auth(Config.app.basicAuth.username, Config.app.basicAuth.password).send(card));
+            requests.push(chai.request(server).post("/cards").auth(basicAuth.username, basicAuth.password).send(card));
         }
         Promise.all(requests).then(() => done());
     });

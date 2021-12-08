@@ -10,14 +10,20 @@ exports.find = (search, projection, options = {}) => Game.find(search, projectio
 
 exports.findOne = (search, projection, options = {}) => Game.findOne(search, projection, options);
 
-exports.findOneAndUpdate = async(search, data, options = {}) => {
-    const { toJSON } = options;
-    delete options.toJSON;
-    options.new = options.new === undefined ? true : options.new;
+exports.checkDataBeforeUpdate = async(search, data, options) => {
     const existingGame = await this.findOne(search);
     if (!existingGame) {
         throw generateError("GAME_NOT_FOUND", `Game not found.`);
     }
+    // TODO : Check if game is still updatable by JWT users and if actual status permits it.
+    existingGame.checkBelongsToUserFromReq(options.req);
+};
+
+exports.findOneAndUpdate = async(search, data, options = {}) => {
+    const { toJSON } = options;
+    delete options.toJSON;
+    options.new = options.new === undefined ? true : options.new;
+    await this.checkDataBeforeUpdate(search, data, options);
     const updatedGame = await Game.findOneAndUpdate(search, flatten(data), options);
     return toJSON ? updatedGame.toJSON() : updatedGame;
 };
@@ -56,7 +62,22 @@ exports.checkAndFillPlayersData = players => {
     this.fillPlayersTeam(players);
 };
 
+exports.checkAndFillUserData = async data => {
+    const { user } = data;
+    delete data.user;
+    if (user.strategy === "JWT") {
+        const { _id, mode } = user;
+        const onGoingGameUserSearch = mode === "anonymous" ? { anonymousUser: { _id } } : { user: _id };
+        if (await this.findOne({ ...onGoingGameUserSearch, status: { $in: ["preparing", "playing"] } })) {
+            throw generateError("USER_HAS_ON_GOING_GAMES", `User with id "${_id}" already has at least one game in "preparing" or "playing" status.`);
+        } else if (mode === "anonymous") {
+            data.anonymousUser = { _id };
+        }
+    }
+};
+
 exports.checkAndFillDataBeforeCreate = async data => {
+    await this.checkAndFillUserData(data);
     this.checkAndFillPlayersData(data.players);
     data.cards = await this.getRandomCards(data.options);
 };
@@ -76,6 +97,18 @@ exports.create = async(data, options = {}) => {
     return toJSON ? game.toJSON() : game;
 };
 
+exports.getFindSearch = (query, req) => {
+    const search = {};
+    if (req.user.strategy === "JWT") {
+        if (req.user.mode === "anonymous") {
+            search.anonymousUser = { _id: req.user._id };
+        } else {
+            search.user = req.user._id;
+        }
+    }
+    return search;
+};
+
 exports.getFindProjection = query => query.fields ? query.fields.split(",") : null;
 
 exports.getFindOptions = options => ({ limit: options.limit });
@@ -83,9 +116,10 @@ exports.getFindOptions = options => ({ limit: options.limit });
 exports.getGames = async(req, res) => {
     try {
         const { query } = checkRequestData(req);
+        const findSearch = this.getFindSearch(query, req);
         const findProjection = this.getFindProjection(query);
         const findOptions = this.getFindOptions(query);
-        const games = await this.find({}, findProjection, findOptions);
+        const games = await this.find(findSearch, findProjection, findOptions);
         return res.status(200).json(games);
     } catch (e) {
         sendError(res, e);
@@ -99,6 +133,7 @@ exports.getGame = async(req, res) => {
         if (!game) {
             throw generateError("GAME_NOT_FOUND", `Game not found with ID "${params.id}".`);
         }
+        game.checkBelongsToUserFromReq(req);
         return res.status(200).json(game);
     } catch (e) {
         sendError(res, e);
@@ -108,7 +143,7 @@ exports.getGame = async(req, res) => {
 exports.postGame = async(req, res) => {
     try {
         const { body } = checkRequestData(req);
-        const game = await this.create(body);
+        const game = await this.create({ ...body, user: req.user });
         return res.status(200).json(game);
     } catch (e) {
         sendError(res, e);
@@ -118,7 +153,7 @@ exports.postGame = async(req, res) => {
 exports.patchGame = async(req, res) => {
     try {
         const { body, params } = checkRequestData(req);
-        const game = await this.findOneAndUpdate({ _id: params.id }, body);
+        const game = await this.findOneAndUpdate({ _id: params.id }, body, { req });
         return res.status(200).json(game);
     } catch (e) {
         sendError(res, e);
@@ -162,10 +197,12 @@ exports.checkAndFillGamePlayCardsData = ({ cards }, game) => {
     }
 };
 
-exports.checkAndFillGamePlayData = (play, game) => {
+exports.checkAndFillGamePlayData = (play, game, user) => {
     if (!game) {
         throw generateError("GAME_NOT_FOUND", `Game not found with ID "${play.gameId}".`);
-    } else if (game.status !== "playing") {
+    }
+    game.checkBelongsToUserFromReq({ user });
+    if (game.status !== "playing") {
         throw generateError("GAME_NOT_PLAYING", `Game with ID "${game._id}" doesn't have the "playing" status, plays are not allowed.`);
     }
     if (play.cards) {
@@ -173,9 +210,9 @@ exports.checkAndFillGamePlayData = (play, game) => {
     }
 };
 
-exports.play = async play => {
+exports.play = async(play, user) => {
     const game = await this.findOne({ _id: play.gameId });
-    this.checkAndFillGamePlayData(play, game);
+    this.checkAndFillGamePlayData(play, game, user);
     game.unshiftHistoryEntry(play);
     if (game.isRoundOver) {
         game.pushSummaryRound();
@@ -201,7 +238,7 @@ exports.play = async play => {
 exports.postPlay = async(req, res) => {
     try {
         const { params, body } = checkRequestData(req);
-        const game = await this.play({ ...body, gameId: params.id });
+        const game = await this.play({ ...body, gameId: params.id }, req.user);
         return res.status(200).json(game);
     } catch (e) {
         sendError(res, e);

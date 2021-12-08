@@ -7,7 +7,7 @@ const { getGameCardById } = require("../../../src/helpers/functions/Game");
 const { resetDatabase, createDummyCards } = require("../../../src/helpers/functions/Test");
 const Config = require("../../../config");
 const { expect } = chai;
-let server, game, cards;
+let server, game, cards, firstAnonymousUserJWT, secondAnonymousUserJWT;
 const players = [
     { name: "Doudou" },
     { name: "Juju" },
@@ -23,9 +23,30 @@ describe("B - Classic game with 4 players", () => {
     });
     after(done => resetDatabase(done));
     createDummyCards();
+    it(`🥸 Registers first user anonymously (POST /anonymous-users)`, done => {
+        chai.request(server)
+            .post("/anonymous-users")
+            .end((err, res) => {
+                expect(res).to.have.status(200);
+                expect(res.body.token).to.exist;
+                firstAnonymousUserJWT = res.body.token;
+                done();
+            });
+    });
+    it(`🥸 Registers second user anonymously (POST /anonymous-users)`, done => {
+        chai.request(server)
+            .post("/anonymous-users")
+            .end((err, res) => {
+                expect(res).to.have.status(200);
+                expect(res.body.token).to.exist;
+                secondAnonymousUserJWT = res.body.token;
+                done();
+            });
+    });
     it(`🎲 Creates a classic game with 4 players and default options (POST /games)`, done => {
         chai.request(server)
             .post("/games")
+            .set({ Authorization: `Bearer ${firstAnonymousUserJWT}` })
             .send({ players })
             .end((err, res) => {
                 expect(res).to.have.status(200);
@@ -39,6 +60,7 @@ describe("B - Classic game with 4 players", () => {
         chai.request(server)
             // eslint-disable-next-line new-cap
             .post(`/games/${mongoose.Types.ObjectId()}/play`)
+            .set({ Authorization: `Bearer ${firstAnonymousUserJWT}` })
             .end((err, res) => {
                 expect(res).to.have.status(404);
                 expect(res.body.type).to.equal("GAME_NOT_FOUND");
@@ -48,6 +70,7 @@ describe("B - Classic game with 4 players", () => {
     it(`🎲 Can't make a game play into a game not "playing" (POST /games/:id/play)`, done => {
         chai.request(server)
             .post(`/games/${game._id}/play`)
+            .set({ Authorization: `Bearer ${firstAnonymousUserJWT}` })
             .end((err, res) => {
                 expect(res).to.have.status(400);
                 expect(res.body.type).to.equal("GAME_NOT_PLAYING");
@@ -57,7 +80,7 @@ describe("B - Classic game with 4 players", () => {
     it(`🎲 Update the game to "playing" status (PATCH /games/:id)`, done => {
         chai.request(server)
             .patch(`/games/${game._id}`)
-            .auth(Config.app.basicAuth.username, Config.app.basicAuth.password)
+            .set({ Authorization: `Bearer ${firstAnonymousUserJWT}` })
             .send({ status: "playing" })
             .end((err, res) => {
                 expect(res).to.have.status(200);
@@ -69,6 +92,7 @@ describe("B - Classic game with 4 players", () => {
     it(`🎲 Can't make a game play with one card not belonging to the game (POST /games/:id/play)`, done => {
         chai.request(server)
             .post(`/games/${game._id}/play`)
+            .set({ Authorization: `Bearer ${firstAnonymousUserJWT}` })
             // eslint-disable-next-line new-cap
             .send({ cards: [{ _id: mongoose.Types.ObjectId(), status: "discarded", playingTime: 2 }] })
             .end((err, res) => {
@@ -80,6 +104,7 @@ describe("B - Classic game with 4 players", () => {
     it(`🎲 Can't make a game play with one skipped card during first game's round (POST /games/:id/play)`, done => {
         chai.request(server)
             .post(`/games/${game._id}/play`)
+            .set({ Authorization: `Bearer ${firstAnonymousUserJWT}` })
             .send({ cards: [{ _id: cards[0]._id, status: "skipped", playingTime: 2 }] })
             .end((err, res) => {
                 expect(res).to.have.status(400);
@@ -90,6 +115,7 @@ describe("B - Classic game with 4 players", () => {
     it(`🎲 Can't make a game play with twice the same card (POST /games/:id/play)`, done => {
         chai.request(server)
             .post(`/games/${game._id}/play`)
+            .set({ Authorization: `Bearer ${firstAnonymousUserJWT}` })
             .send({ cards: [{ _id: cards[0]._id, status: "skipped", playingTime: 2 }, { _id: cards[0]._id, status: "guessed", playingTime: 2 }] })
             .end((err, res) => {
                 expect(res).to.have.status(400);
@@ -97,9 +123,27 @@ describe("B - Classic game with 4 players", () => {
                 done();
             });
     });
+    it(`🎲 Can't make a play if game doesn't belong to user (POST /games/:id/play)`, done => {
+        chai.request(server)
+            .post(`/games/${game._id}/play`)
+            .set({ Authorization: `Bearer ${secondAnonymousUserJWT}` })
+            .send({
+                cards: [
+                    { _id: cards[0]._id, status: "guessed", playingTime: 0.2 },
+                    { _id: cards[1]._id, status: "guessed", playingTime: 10 },
+                    { _id: cards[2]._id, status: "discarded", playingTime: 4.5 },
+                ],
+            })
+            .end((err, res) => {
+                expect(res).to.have.status(401);
+                expect(res.body.type).to.equal("GAME_DOESNT_BELONG_TO_USER");
+                done();
+            });
+    });
     it(`🎲 First speaker of the first team made his team guess two cards and discarded the third (POST /games/:id/play)`, done => {
         chai.request(server)
             .post(`/games/${game._id}/play`)
+            .set({ Authorization: `Bearer ${firstAnonymousUserJWT}` })
             .send({
                 cards: [
                     { _id: cards[0]._id, status: "guessed", playingTime: 0.2 },
@@ -157,6 +201,7 @@ describe("B - Classic game with 4 players", () => {
     it(`🎲 Can't make a game play with a guessed card which was already guessed (POST /games/:id/play)`, done => {
         chai.request(server)
             .post(`/games/${game._id}/play`)
+            .set({ Authorization: `Bearer ${firstAnonymousUserJWT}` })
             .send({ cards: [{ _id: cards[0]._id, status: "guessed", playingTime: 2 }] })
             .end((err, res) => {
                 expect(res).to.have.status(400);
@@ -164,9 +209,10 @@ describe("B - Classic game with 4 players", () => {
                 done();
             });
     });
-    it(`🎲 First speaker of the second team made his team guess five cards (POST /games/:id/play)`, done => {
+    it(`🎲 First speaker of the second team made his team guess five cards, sent with basic auth (POST /games/:id/play)`, done => {
         chai.request(server)
             .post(`/games/${game._id}/play`)
+            .auth(Config.app.routes.auth.basic.username, Config.app.routes.auth.basic.password)
             .send({
                 cards: [
                     { _id: cards[3]._id, status: "guessed", playingTime: 3 },
@@ -204,6 +250,7 @@ describe("B - Classic game with 4 players", () => {
     it(`🎲 Second speaker of the first team made his team guess ten cards (POST /games/:id/play)`, done => {
         chai.request(server)
             .post(`/games/${game._id}/play`)
+            .set({ Authorization: `Bearer ${firstAnonymousUserJWT}` })
             .send({
                 cards: [
                     { _id: cards[8]._id, status: "guessed", playingTime: 3 },
@@ -246,6 +293,7 @@ describe("B - Classic game with 4 players", () => {
     it(`🎲 Second speaker of the second team made his team guess eleven cards (POST /games/:id/play)`, done => {
         chai.request(server)
             .post(`/games/${game._id}/play`)
+            .set({ Authorization: `Bearer ${firstAnonymousUserJWT}` })
             .send({
                 cards: [
                     { _id: cards[18]._id, status: "guessed", playingTime: 3 },
@@ -289,6 +337,7 @@ describe("B - Classic game with 4 players", () => {
     it(`🎲 First speaker of the first team made his team guess all remaining cards, round 2 starts after this play (POST /games/:id/play)`, done => {
         chai.request(server)
             .post(`/games/${game._id}/play`)
+            .set({ Authorization: `Bearer ${firstAnonymousUserJWT}` })
             .send({
                 cards: [
                     { _id: cards[2]._id, status: "guessed", playingTime: 4 },
@@ -345,6 +394,7 @@ describe("B - Classic game with 4 players", () => {
     it(`🎲 First speaker of the second team made his team guess 10 cards and skipped 2 (POST /games/:id/play)`, done => {
         chai.request(server)
             .post(`/games/${game._id}/play`)
+            .set({ Authorization: `Bearer ${firstAnonymousUserJWT}` })
             .send({
                 cards: [
                     { _id: cards[0]._id, status: "skipped", playingTime: 2 },
@@ -379,6 +429,7 @@ describe("B - Classic game with 4 players", () => {
     it(`🎲 Second speaker of the first team made his team guess 12 cards (POST /games/:id/play)`, done => {
         chai.request(server)
             .post(`/games/${game._id}/play`)
+            .set({ Authorization: `Bearer ${firstAnonymousUserJWT}` })
             .send({
                 cards: [
                     { _id: cards[0]._id, status: "guessed", playingTime: 2 },
@@ -412,6 +463,7 @@ describe("B - Classic game with 4 players", () => {
     it(`🎲 Second speaker of the second team made his team guess all remaining cards, round 3 starts after this play (POST /games/:id/play)`, done => {
         chai.request(server)
             .post(`/games/${game._id}/play`)
+            .set({ Authorization: `Bearer ${firstAnonymousUserJWT}` })
             .send({
                 cards: [
                     { _id: cards[22]._id, status: "guessed", playingTime: 2 },
@@ -459,6 +511,7 @@ describe("B - Classic game with 4 players", () => {
     it(`🎲 First speaker of the first team made his team guess all cards in once, what a beast, game is over (POST /games/:id/play)`, done => {
         chai.request(server)
             .post(`/games/${game._id}/play`)
+            .set({ Authorization: `Bearer ${firstAnonymousUserJWT}` })
             .send({
                 cards: [
                     { _id: cards[0]._id, status: "guessed", playingTime: 2 },
@@ -541,6 +594,7 @@ describe("B - Classic game with 4 players", () => {
     it(`🎲 Can't make a play if the game is over (POST /games/:id/play)`, done => {
         chai.request(server)
             .post(`/games/${game._id}/play`)
+            .set({ Authorization: `Bearer ${firstAnonymousUserJWT}` })
             .send({
                 cards: [
                     { _id: cards[22]._id, status: "guessed", playingTime: 2 },

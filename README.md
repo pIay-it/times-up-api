@@ -81,6 +81,10 @@ Complete list of all enabled rules is available in the **[.eslintrc.js file](htt
 1. Install dependencies with `npm install` (add `--production` to omit dev dependencies).
 2. Copy `.env.example` and paste it as `.env`.
 3. Replace environment values in the fresh new `.env` file if necessary (When **⚠️️ Required** is specified):
+    * **PORT**: Which port the API must run.
+        - _**Not required - Default value**: `4242`_
+    * **JWT_PRIVATE_KEY**: Encryption key used for JSON Web Token.
+       - _**Not required - Default value**: `somethingsecret`_
     * **DB_USER**: User for authenticating into the MongoDB database.
         - _**⚠️ Required if MongoDB auth is enabled**_
     * **DB_PASSWORD**: Password for authenticating into the MongoDB database.
@@ -91,8 +95,6 @@ Complete list of all enabled rules is available in the **[.eslintrc.js file](htt
         - _**Not required - Default value**: `root`_
     * **BASIC_PASSWORD**: Password for basic authentication.
         - _**Not required - Default value**: `secret`_
-    * **PORT**: Which port the API must run.
-        - _**Not required - Default value**: `4242`_
     * **IS_SENTRY_ENABLED**: Set to `true` if you want errors to be caught and sent to Sentry.
         - _**Not required**_
     * **SENTRY_PROJECT_ID**: Sentry project's ID. 

@@ -3,6 +3,14 @@ const { anonymousRegistrationLimiter } = require("../helpers/constants/Route");
 
 module.exports = app => {
     /**
+     * @apiDefine JWT Bearer Authorization with JSON Web Token.
+     */
+
+    /**
+     * @apiDefine Basic Basic authentication with username and password.
+     */
+
+    /**
      * @api {POST} /anonymous-users A] Register anonymously
      * @apiName CreateAnonymousUser
      * @apiGroup Users 👤

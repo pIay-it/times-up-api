@@ -14,7 +14,10 @@
 * `passport-jwt` installed with version `4.0.0`.
 * `passport-local` installed with version `1.0.0`.
 * `uniqid` installed with version `5.4.0`.
-* `eslint` updated to version `8.4.0`.
+* `@sentry/node` updated to version `6.16.0`.
+* `@sentry/tracing` updated to version `6.16.0`.
+* `eslint` updated to version `8.4.1`.
+* `mongoose` updated to version `6.1.0`.
 
 ---
 

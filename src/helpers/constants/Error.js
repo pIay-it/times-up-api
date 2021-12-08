@@ -43,4 +43,12 @@ exports.errorMetadata = {
         code: 11,
         HTTPCode: 400,
     },
+    GAME_DOESNT_BELONG_TO_USER: {
+        code: 12,
+        HTTPCode: 401,
+    },
+    USER_HAS_ON_GOING_GAMES: {
+        code: 13,
+        HTTPCode: 400,
+    },
 };
