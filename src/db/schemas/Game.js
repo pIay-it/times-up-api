@@ -7,6 +7,7 @@ const GameSummarySchema = require("./GameSummary");
 const GameOptionsSchema = require("./GameOptions");
 const GameHistorySchema = require("./GameHistory");
 const { getGameStatuses, getGameDefaultOptions, getGameCardById } = require("../../helpers/functions/Game");
+const { getAuthStrategyFromReq } = require("../../helpers/functions/Passport");
 const { generateError } = require("../../helpers/functions/Error");
 
 const AnonymousUserSchema = new Schema({
@@ -102,7 +103,7 @@ GameSchema.virtual("firstQueue").get(getFirstQueue);
 GameSchema.virtual("nextSpeaker").get(getNextSpeaker);
 
 function checkBelongsToUserFromReq(req) {
-    if (req?.user?.strategy === "JWT") {
+    if (getAuthStrategyFromReq(req) === "JWT") {
         const { mode, _id } = req.user;
         if (mode === "anonymous" && (!this.anonymousUser || _id.toString() !== this.anonymousUser?._id.toString())) {
             throw generateError("GAME_DOESNT_BELONG_TO_USER", `Game with id ${this._id} doesn't belong to user with id "${_id}".`);

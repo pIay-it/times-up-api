@@ -1,9 +1,10 @@
 # ⏳ LIST OF CHANGES FOR TIME'S UP API
 
-## 0.1.2 (2021-12-??)
+## 0.1.2 (2021-12-09)
 
 ### 🚀 New features
 
+* [#17](https://github.com/pIay-it/times-up-api/issues/17) - JWT authentication for anonymous users.
 * [#18](https://github.com/pIay-it/times-up-api/issues/18) - Decimal seconds for `playingTime` card's field.
 * [#19](https://github.com/pIay-it/times-up-api/issues/19) - Change `timeToGuess` for `playingTime` for game's cards.
 * [#20](https://github.com/pIay-it/times-up-api/issues/20) - Prevent to play card with `to-guess` status.

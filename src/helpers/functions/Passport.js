@@ -42,3 +42,5 @@ exports.basicAuth = (req, res, next) => passportAuth(["basic"], req, res, next)(
 exports.JWTAuth = (req, res, next) => passportAuth(["jwt"], req, res, next)(req, res, next);
 
 exports.basicAndJWTAuth = (req, res, next) => passportAuth(["jwt", "basic"], req, res, next)(req, res, next);
+
+exports.getAuthStrategyFromReq = req => req?.user?.strategy;

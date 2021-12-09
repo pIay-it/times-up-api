@@ -51,4 +51,12 @@ exports.errorMetadata = {
         code: 13,
         HTTPCode: 400,
     },
+    GAME_NOT_UPDATABLE: {
+        code: 14,
+        HTTPCode: 400,
+    },
+    FORBIDDEN_NEW_GAME_STATUS: {
+        code: 15,
+        HTTPCode: 400,
+    },
 };

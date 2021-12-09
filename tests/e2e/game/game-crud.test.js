@@ -374,6 +374,17 @@ describe("A - Game CRUD [Create / Read / Update / Delete]", () => {
                 done();
             });
     });
+    it(`🎲 Can't update the first game of first anonymous user for "done" status with JWT auth (PATCH /games/:id)`, done => {
+        chai.request(server)
+            .patch(`/games/${firstAnonymousUserJWTFirstGame._id}`)
+            .set({ Authorization: `Bearer ${firstAnonymousUserJWT}` })
+            .send({ status: "over" })
+            .end((err, res) => {
+                expect(res).to.have.status(400);
+                expect(res.body.type).to.equal("FORBIDDEN_NEW_GAME_STATUS");
+                done();
+            });
+    });
     it(`🎲 Updates the first game of first anonymous user with JWT auth (PATCH /games/:id)`, done => {
         chai.request(server)
             .patch(`/games/${firstAnonymousUserJWTFirstGame._id}`)
@@ -383,6 +394,17 @@ describe("A - Game CRUD [Create / Read / Update / Delete]", () => {
                 expect(res).to.have.status(200);
                 const game = res.body;
                 expect(game.status).to.equal("canceled");
+                done();
+            });
+    });
+    it(`🎲 Can't update the first game of first anonymous user with JWT auth because it's canceled (PATCH /games/:id)`, done => {
+        chai.request(server)
+            .patch(`/games/${firstAnonymousUserJWTFirstGame._id}`)
+            .set({ Authorization: `Bearer ${firstAnonymousUserJWT}` })
+            .send({ status: "canceled" })
+            .end((err, res) => {
+                expect(res).to.have.status(400);
+                expect(res.body.type).to.equal("GAME_NOT_UPDATABLE");
                 done();
             });
     });

@@ -159,7 +159,7 @@ module.exports = app => {
      * @apiPermission Basic
      *
      * @apiParam (Route Parameters) {ObjectId} id Game's ID.
-     * @apiParam (Request Body Parameters) {String} [status] Game's status. (_Possibilities: [Codes - Game Statuses](#game-statuses)_)
+     * @apiParam (Request Body Parameters) {String} [status] Game's status. (_Possibilities: [Codes - Game Statuses](#game-statuses)_)<hr/>⚠️ JWT authenticated users can only update their `preparing` or `playing` games for the `playing` or `canceled` status.
      * @apiUse GameResponse
      */
     app.patch("/games/:id", basicAndJWTAuth, defaultLimiter, [

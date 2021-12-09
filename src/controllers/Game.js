@@ -4,6 +4,7 @@ const Game = require("../db/models/Game");
 const Card = require("./Card");
 const { checkRequestData } = require("../helpers/functions/Express");
 const { deleteProperties } = require("../helpers/functions/Object");
+const { getAuthStrategyFromReq } = require("../helpers/functions/Passport");
 const { sendError, generateError } = require("../helpers/functions/Error");
 
 exports.find = (search, projection, options = {}) => Game.find(search, projection, options);
@@ -14,8 +15,15 @@ exports.checkDataBeforeUpdate = async(search, data, options) => {
     const existingGame = await this.findOne(search);
     if (!existingGame) {
         throw generateError("GAME_NOT_FOUND", `Game not found.`);
+    } else if (getAuthStrategyFromReq(options?.req) === "JWT") {
+        const unUpdatableGameStatuses = ["over", "canceled"];
+        const allowedNewStatuses = ["playing", "canceled"];
+        if (unUpdatableGameStatuses.includes(existingGame.status)) {
+            throw generateError("GAME_NOT_UPDATABLE", `Game with ID "${existingGame._id}" is in status "${existingGame.status}" and so can't be updated by JWT user anymore.`);
+        } else if (data?.status && !allowedNewStatuses.includes(data.status)) {
+            throw generateError("FORBIDDEN_NEW_GAME_STATUS", `JWT users can't update a game status for "${data.status}".`);
+        }
     }
-    // TODO : Check if game is still updatable by JWT users and if actual status permits it.
     existingGame.checkBelongsToUserFromReq(options.req);
 };
 
@@ -65,7 +73,7 @@ exports.checkAndFillPlayersData = players => {
 exports.checkAndFillUserData = async data => {
     const { user } = data;
     delete data.user;
-    if (user.strategy === "JWT") {
+    if (getAuthStrategyFromReq({ user }) === "JWT") {
         const { _id, mode } = user;
         const onGoingGameUserSearch = mode === "anonymous" ? { anonymousUser: { _id } } : { user: _id };
         if (await this.findOne({ ...onGoingGameUserSearch, status: { $in: ["preparing", "playing"] } })) {
@@ -99,7 +107,7 @@ exports.create = async(data, options = {}) => {
 
 exports.getFindSearch = (query, req) => {
     const search = {};
-    if (req.user.strategy === "JWT") {
+    if (getAuthStrategyFromReq(req) === "JWT") {
         if (req.user.mode === "anonymous") {
             search.anonymousUser = { _id: req.user._id };
         } else {
