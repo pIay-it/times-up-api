@@ -43,12 +43,20 @@ exports.errorMetadata = {
         code: 11,
         HTTPCode: 400,
     },
-    MISSING_TIME_TO_GUESS: {
+    GAME_DOESNT_BELONG_TO_USER: {
         code: 12,
+        HTTPCode: 401,
+    },
+    USER_HAS_ON_GOING_GAMES: {
+        code: 13,
         HTTPCode: 400,
     },
-    FORBIDDEN_TIME_TO_GUESS: {
-        code: 13,
+    GAME_NOT_UPDATABLE: {
+        code: 14,
+        HTTPCode: 400,
+    },
+    FORBIDDEN_NEW_GAME_STATUS: {
+        code: 15,
         HTTPCode: 400,
     },
 };

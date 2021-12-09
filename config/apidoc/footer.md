@@ -60,18 +60,20 @@ If you have an error from the API, you'll get a generic structure. (_See: [Class
 
 Description for each case below :   
 
-| Code |          Type           | HTTP Code | Description                                                     |
-|:----:|:-----------------------:|:---------:|-----------------------------------------------------------------|
-|  1   |      BAD_REQUEST        |    400    | You provided incorrect params and/or your request is malformed. |
-|  2   |      UNAUTHORIZED       |    401    | You're not authorized.                                          |
-|  3   |  INTERNAL_SERVER_ERROR  |    500    | The server got an error, this is not your fault.                |
-|  4   | PLAYERS_NAME_NOT_UNIQUE |    400    | Players don't all have unique name when creating a game.        |
-|  5   |    GAME_NOT_PLAYING     |    400    | Game doesn't have the `playing` status, plays are not allowed.  |
-|  6   |     GAME_NOT_FOUND      |    404    | Requested game was not found.                                   |
-|  7   |     CARD_NOT_FOUND      |    404    | Requested card was not found.                                   |
-|  8   |    CARD_NOT_IN_GAME     |    400    | Card not found in game.                                         |
-|  9   |  CARD_ALREADY_GUESSED   |    400    | Card was already guessed before.                                |
-|  10  |     CANT_SKIP_CARD      |    400    | Card with ID can't be skipped because game's round is `1`.      |
-|  11  |  CANT_PLAY_CARD_TWICE   |    400    | One or more cards are played twice in the same play.            |
-|  12  |  MISSING_TIME_TO_GUESS  |    400    | Card is set to `guessed` but is missing `timeToGuess` value.    |
-|  13  | FORBIDDEN_TIME_TO_GUESS |    400    | Card has `timeToGuess` value but is not guessed yet.            |
+| Code |            Type            | HTTP Code | Description                                                                        |
+|:----:|:--------------------------:|:---------:|------------------------------------------------------------------------------------|
+|  1   |        BAD_REQUEST         |    400    | You provided incorrect params and/or your request is malformed.                    |
+|  2   |        UNAUTHORIZED        |    401    | You're not authorized.                                                             |
+|  3   |   INTERNAL_SERVER_ERROR    |    500    | The server got an error, this is not your fault.                                   |
+|  4   |  PLAYERS_NAME_NOT_UNIQUE   |    400    | Players don't all have unique name when creating a game.                           |
+|  5   |      GAME_NOT_PLAYING      |    400    | Game doesn't have the `playing` status, plays are not allowed.                     |
+|  6   |       GAME_NOT_FOUND       |    404    | Requested game was not found.                                                      |
+|  7   |       CARD_NOT_FOUND       |    404    | Requested card was not found.                                                      |
+|  8   |      CARD_NOT_IN_GAME      |    400    | Card not found in game.                                                            |
+|  9   |    CARD_ALREADY_GUESSED    |    400    | Card was already guessed before.                                                   |
+|  10  |       CANT_SKIP_CARD       |    400    | Card with ID can't be skipped because game's round is `1`.                         |
+|  11  |    CANT_PLAY_CARD_TWICE    |    400    | One or more cards are played twice in the same play.                               |
+|  12  | GAME_DOESNT_BELONG_TO_USER |    401    | Game doesn't belong to user.                                                       |
+|  13  |  USER_HAS_ON_GOING_GAMES   |    400    | User already has at least one game in `preparing` or `playing` status.             |
+|  14  |     GAME_NOT_UPDATABLE     |    400    | Game has status `canceled` or `over` and so, can't be updated by JWT user anymore. |
+|  15  | FORBIDDEN_NEW_GAME_STATUS  |    400    | JWT users can't update a game status for `preparing` or `over`.                    |
