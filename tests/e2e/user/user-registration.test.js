@@ -21,7 +21,7 @@ describe("A - User registration", () => {
                 const decodedToken = decodeJWT(res.body.token);
                 expect(decodedToken.mode).to.equal("anonymous");
                 expect(decodedToken.userId).to.exist;
-                expect(decodedToken.userId.match(/^anonymous-[a-z0-9]{16}$/u)).to.be.an("array");
+                expect(decodedToken.userId.match(/^anonymous-[a-z0-9]+$/u)).to.be.an("array");
                 expect(decodedToken.iat).to.exist;
                 expect(decodedToken.exp).to.not.exist;
                 done();
