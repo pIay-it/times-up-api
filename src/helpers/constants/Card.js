@@ -26,6 +26,8 @@ exports.cardCategories = [
 
 exports.cardStatuses = ["to-guess", "discarded", "skipped", "guessed"];
 
+exports.cardPlayableStatuses = ["discarded", "skipped", "guessed"];
+
 exports.dummyCards = [
     { label: "Bill Gates", categories: ["personality"], difficulty: 2 },
     { label: "Barack Obama", categories: ["personality"], difficulty: 1 },

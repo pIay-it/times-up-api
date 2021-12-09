@@ -4,20 +4,34 @@ const Game = require("../db/models/Game");
 const Card = require("./Card");
 const { checkRequestData } = require("../helpers/functions/Express");
 const { deleteProperties } = require("../helpers/functions/Object");
+const { getAuthStrategyFromReq } = require("../helpers/functions/Passport");
 const { sendError, generateError } = require("../helpers/functions/Error");
 
 exports.find = (search, projection, options = {}) => Game.find(search, projection, options);
 
 exports.findOne = (search, projection, options = {}) => Game.findOne(search, projection, options);
 
+exports.checkDataBeforeUpdate = async(search, data, options) => {
+    const existingGame = await this.findOne(search);
+    if (!existingGame) {
+        throw generateError("GAME_NOT_FOUND", `Game not found.`);
+    } else if (getAuthStrategyFromReq(options?.req) === "JWT") {
+        const unUpdatableGameStatuses = ["over", "canceled"];
+        const allowedNewStatuses = ["playing", "canceled"];
+        if (unUpdatableGameStatuses.includes(existingGame.status)) {
+            throw generateError("GAME_NOT_UPDATABLE", `Game with ID "${existingGame._id}" is in status "${existingGame.status}" and so can't be updated by JWT user anymore.`);
+        } else if (data?.status && !allowedNewStatuses.includes(data.status)) {
+            throw generateError("FORBIDDEN_NEW_GAME_STATUS", `JWT users can't update a game status for "${data.status}".`);
+        }
+    }
+    existingGame.checkBelongsToUserFromReq(options.req);
+};
+
 exports.findOneAndUpdate = async(search, data, options = {}) => {
     const { toJSON } = options;
     delete options.toJSON;
     options.new = options.new === undefined ? true : options.new;
-    const existingGame = await this.findOne(search);
-    if (!existingGame) {
-        throw generateError("GAME_NOT_FOUND", `Game not found.`);
-    }
+    await this.checkDataBeforeUpdate(search, data, options);
     const updatedGame = await Game.findOneAndUpdate(search, flatten(data), options);
     return toJSON ? updatedGame.toJSON() : updatedGame;
 };
@@ -56,7 +70,22 @@ exports.checkAndFillPlayersData = players => {
     this.fillPlayersTeam(players);
 };
 
+exports.checkAndFillUserData = async data => {
+    const { user } = data;
+    delete data.user;
+    if (getAuthStrategyFromReq({ user }) === "JWT") {
+        const { _id, mode } = user;
+        const onGoingGameUserSearch = mode === "anonymous" ? { anonymousUser: { _id } } : { user: _id };
+        if (await this.findOne({ ...onGoingGameUserSearch, status: { $in: ["preparing", "playing"] } })) {
+            throw generateError("USER_HAS_ON_GOING_GAMES", `User with id "${_id}" already has at least one game in "preparing" or "playing" status.`);
+        } else if (mode === "anonymous") {
+            data.anonymousUser = { _id };
+        }
+    }
+};
+
 exports.checkAndFillDataBeforeCreate = async data => {
+    await this.checkAndFillUserData(data);
     this.checkAndFillPlayersData(data.players);
     data.cards = await this.getRandomCards(data.options);
 };
@@ -76,6 +105,18 @@ exports.create = async(data, options = {}) => {
     return toJSON ? game.toJSON() : game;
 };
 
+exports.getFindSearch = (query, req) => {
+    const search = {};
+    if (getAuthStrategyFromReq(req) === "JWT") {
+        if (req.user.mode === "anonymous") {
+            search.anonymousUser = { _id: req.user._id };
+        } else {
+            search.user = req.user._id;
+        }
+    }
+    return search;
+};
+
 exports.getFindProjection = query => query.fields ? query.fields.split(",") : null;
 
 exports.getFindOptions = options => ({ limit: options.limit });
@@ -83,9 +124,10 @@ exports.getFindOptions = options => ({ limit: options.limit });
 exports.getGames = async(req, res) => {
     try {
         const { query } = checkRequestData(req);
+        const findSearch = this.getFindSearch(query, req);
         const findProjection = this.getFindProjection(query);
         const findOptions = this.getFindOptions(query);
-        const games = await this.find({}, findProjection, findOptions);
+        const games = await this.find(findSearch, findProjection, findOptions);
         return res.status(200).json(games);
     } catch (e) {
         sendError(res, e);
@@ -99,6 +141,7 @@ exports.getGame = async(req, res) => {
         if (!game) {
             throw generateError("GAME_NOT_FOUND", `Game not found with ID "${params.id}".`);
         }
+        game.checkBelongsToUserFromReq(req);
         return res.status(200).json(game);
     } catch (e) {
         sendError(res, e);
@@ -108,7 +151,7 @@ exports.getGame = async(req, res) => {
 exports.postGame = async(req, res) => {
     try {
         const { body } = checkRequestData(req);
-        const game = await this.create(body);
+        const game = await this.create({ ...body, user: req.user });
         return res.status(200).json(game);
     } catch (e) {
         sendError(res, e);
@@ -118,7 +161,7 @@ exports.postGame = async(req, res) => {
 exports.patchGame = async(req, res) => {
     try {
         const { body, params } = checkRequestData(req);
-        const game = await this.findOneAndUpdate({ _id: params.id }, body);
+        const game = await this.findOneAndUpdate({ _id: params.id }, body, { req });
         return res.status(200).json(game);
     } catch (e) {
         sendError(res, e);
@@ -142,10 +185,6 @@ exports.checkGamePlayCardData = (cardInGame, card, game) => {
         throw generateError("CARD_ALREADY_GUESSED", `Card with ID "${card._id}" was already guessed before.`);
     } else if (card.status === "skipped" && game.round === 1) {
         throw generateError("CANT_SKIP_CARD", `Card with ID "${card._id}" can't be skipped because game's round is 1.`);
-    } else if (card.status === "guessed" && !card.timeToGuess) {
-        throw generateError("MISSING_TIME_TO_GUESS", `Card with ID "${card._id}" is set to "guessed" but is missing "timeToGuess" value.`);
-    } else if (card.status !== "guessed" && card.timeToGuess) {
-        throw generateError("FORBIDDEN_TIME_TO_GUESS", `Card with ID "${card._id}" has "timeToGuess" value but is not guessed yet.`);
     }
 };
 
@@ -159,17 +198,19 @@ exports.checkAndFillGamePlayCardsData = ({ cards }, game) => {
         this.checkGamePlayCardData(cardInGame, card, game);
         if (card.status === "guessed") {
             cardInGame.set("status", "guessed");
-            cardInGame.set("timeToGuess", card.timeToGuess);
+            cardInGame.set("playingTime", card.playingTime);
         }
         cards[index] = { ...cardInGame.toJSON(), ...card };
         deleteProperties(cards[index], ["createdAt", "updatedAt"]);
     }
 };
 
-exports.checkAndFillGamePlayData = (play, game) => {
+exports.checkAndFillGamePlayData = (play, game, user) => {
     if (!game) {
         throw generateError("GAME_NOT_FOUND", `Game not found with ID "${play.gameId}".`);
-    } else if (game.status !== "playing") {
+    }
+    game.checkBelongsToUserFromReq({ user });
+    if (game.status !== "playing") {
         throw generateError("GAME_NOT_PLAYING", `Game with ID "${game._id}" doesn't have the "playing" status, plays are not allowed.`);
     }
     if (play.cards) {
@@ -177,9 +218,9 @@ exports.checkAndFillGamePlayData = (play, game) => {
     }
 };
 
-exports.play = async play => {
+exports.play = async(play, user) => {
     const game = await this.findOne({ _id: play.gameId });
-    this.checkAndFillGamePlayData(play, game);
+    this.checkAndFillGamePlayData(play, game, user);
     game.unshiftHistoryEntry(play);
     if (game.isRoundOver) {
         game.pushSummaryRound();
@@ -205,7 +246,7 @@ exports.play = async play => {
 exports.postPlay = async(req, res) => {
     try {
         const { params, body } = checkRequestData(req);
-        const game = await this.play({ ...body, gameId: params.id });
+        const game = await this.play({ ...body, gameId: params.id }, req.user);
         return res.status(200).json(game);
     } catch (e) {
         sendError(res, e);

@@ -13,7 +13,7 @@ module.exports = app => {
      * @apiSuccess {String} [status] Card's status for the current game's round and turn. (_Possibilities: [Codes - Card Statuses](#card-statuses)_)
      * @apiSuccess {String[]} [categories] Card's categories. (_Possibilities: [Codes - Card Categories](#card-categories)_)
      * @apiSuccess {Number{>= 1 && <= 3}} [difficulty] Card's difficulty to guess. Set from 1 (easiest) to 3 (hardest).
-     * @apiSuccess {Number{>= 1}} [timeToGuess] Set when `status` is `guessed`. Time in seconds taken by the speaker to make his team guess the card.
+     * @apiSuccess {Number{>= 1}} [playingTime] Time in seconds taken by the speaker to play this card.
      * @apiSuccess {String} [description] Card's description which can help to guess it.
      * @apiSuccess {String} [imageURL] Card's image URL which can help to guess it.
      * @apiSuccess {Date} createdAt When the card was created.
