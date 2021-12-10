@@ -5,6 +5,7 @@
 ### 🚀 New features
 
 * [#24](https://github.com/pIay-it/times-up-api/issues/24) - Get games by status.
+* [#27](https://github.com/pIay-it/times-up-api/issues/27) - Get games in specific order.
 * [#28](https://github.com/pIay-it/times-up-api/issues/28) - Get games by `anonymousUser`.
 
 ### 📦 Packages

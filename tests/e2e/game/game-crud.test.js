@@ -226,7 +226,7 @@ describe("A - Game CRUD [Create / Read / Update / Delete]", () => {
                 done();
             });
     });
-    it(`🎲 Gets only one game from the two with basic auth (GET /games?limit=1)`, done => {
+    it(`🎲 Gets only one game with basic auth (GET /games?limit=1)`, done => {
         chai.request(server)
             .get("/games?limit=1")
             .auth(Config.app.routes.auth.basic.username, Config.app.routes.auth.basic.password)
@@ -235,6 +235,20 @@ describe("A - Game CRUD [Create / Read / Update / Delete]", () => {
                 const games = res.body;
                 expect(games).to.be.an("array");
                 expect(games.length).to.equal(1);
+                expect(games[0]._id).to.equal(basicFirstGame._id);
+                done();
+            });
+    });
+    it(`🎲 Gets all available games sorted in descending creation date with basic auth (GET /games?sort-by=createdAt&order=desc)`, done => {
+        chai.request(server)
+            .get("/games?sort-by=createdAt&order=desc")
+            .auth(Config.app.routes.auth.basic.username, Config.app.routes.auth.basic.password)
+            .end((err, res) => {
+                expect(res).to.have.status(200);
+                const games = res.body;
+                expect(games).to.be.an("array");
+                expect(games.length).to.equal(4);
+                expect(games[0]._id).to.equal(secondAnonymousUserJWTFirstGame._id);
                 done();
             });
     });

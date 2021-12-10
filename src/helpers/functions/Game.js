@@ -1,6 +1,8 @@
-const { gameStatuses, gameDefaultOptions } = require("../constants/Game");
+const { gameStatuses, gameSortByFields, gameDefaultOptions } = require("../constants/Game");
 
 exports.getGameStatuses = () => JSON.parse(JSON.stringify(gameStatuses));
+
+exports.getGameSortByFields = () => JSON.parse(JSON.stringify(gameSortByFields));
 
 exports.getGameDefaultOptions = () => JSON.parse(JSON.stringify(gameDefaultOptions));
 

@@ -1,12 +1,15 @@
 const { query, param, body } = require("express-validator");
 const Game = require("../controllers/Game");
-const { getGameDefaultOptions, getGameStatuses } = require("../helpers/functions/Game");
+const { getGameDefaultOptions, getGameStatuses, getGameSortByFields } = require("../helpers/functions/Game");
 const { defaultLimiter, gameCreationLimiter } = require("../helpers/constants/Route");
 const { basicAuth, basicAndJWTAuth, getAuthStrategyFromReq } = require("../helpers/functions/Passport");
+const { getQueryStringOrderValues, getMongooseOrderValueFromQueryString } = require("../helpers/functions/Express");
 const { filterOutHTMLTags, removeMultipleSpacesToSingle } = require("../helpers/functions/String");
 const { getCardCategories, getCardPlayableStatuses } = require("../helpers/functions/Card");
 const gameDefaultOptions = getGameDefaultOptions();
 const gameStatuses = getGameStatuses();
+const gameSortByFields = getGameSortByFields();
+const queryStringOrderValues = getQueryStringOrderValues();
 const cardCategories = getCardCategories();
 const cardPlayableStatuses = getCardPlayableStatuses();
 
@@ -44,6 +47,8 @@ module.exports = app => {
      * @apiParam (Query String Parameters) {String} [status] Filter by status. Multiple statuses can be specified. Each value must be separated by a `,` without space. (e.g: `preparing,playing`)
      * @apiParam (Query String Parameters) {String} [fields] Specifies which fields to include. Each value must be separated by a `,` without space. (e.g: `_id,createdAt`)
      * @apiParam (Query String Parameters) {Number{>= 1}} [limit] Limit the number of games returned.
+     * @apiParam (Query String Parameters) {String} [order-by="createdAt"] Specifies which field will sort the results. Possibilities are `createdAt` or `updatedAt`.
+     * @apiParam (Query String Parameters) {String} [sort="asc"] Specifies to sort results in `ascending` or `descending` way. Possibilities are `ascending` (`asc`) or `descending` (`desc`).
      * @apiUse GameResponse
      */
     app.get("/games", basicAndJWTAuth, defaultLimiter, [
@@ -68,6 +73,15 @@ module.exports = app => {
             .optional()
             .isInt({ min: 1 }).withMessage("Must be a valid number greater than 0.")
             .toInt(),
+        query("sort-by")
+            .default("createdAt")
+            .isString().withMessage("Must be a valid string.")
+            .isIn(gameSortByFields).withMessage(`Must be one of the following values: ${gameSortByFields}.`),
+        query("order")
+            .default("asc")
+            .isString().withMessage("Must be a valid string.")
+            .isIn(queryStringOrderValues).withMessage(`Must be one of the following values: ${queryStringOrderValues}.`)
+            .customSanitizer(order => getMongooseOrderValueFromQueryString(order)),
     ], Game.getGames);
 
     /**

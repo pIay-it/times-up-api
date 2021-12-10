@@ -2,6 +2,8 @@ const { cardCategories } = require("./Card");
 
 exports.gameStatuses = ["preparing", "playing", "over", "canceled"];
 
+exports.gameSortByFields = ["createdAt", "updatedAt"];
+
 exports.gameDefaultOptions = {
     players: { areTeamUp: true },
     cards: {
