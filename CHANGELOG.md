@@ -5,9 +5,11 @@
 ### 🚀 New features
 
 * [#24](https://github.com/pIay-it/times-up-api/issues/24) - Get games by status.
+* [#28](https://github.com/pIay-it/times-up-api/issues/28) - Get games by `anonymousUser`.
 
 ### 📦 Packages
 
+* `camelcase` installed with version `6.2.1`.
 * `mongoose` updated to version `6.1.1`.
 
 ---

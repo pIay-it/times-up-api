@@ -424,6 +424,31 @@ describe("A - Game CRUD [Create / Read / Update / Delete]", () => {
                 done();
             });
     });
+    it(`🎲 Gets all games created by first anonymous user with basic auth (GET /games?anonymous-user-id=userId)`, done => {
+        const decodedJWT = decodeJWT(firstAnonymousUserJWT);
+        chai.request(server)
+            .get(`/games?anonymous-user-id=${decodedJWT.userId}`)
+            .auth(Config.app.routes.auth.basic.username, Config.app.routes.auth.basic.password)
+            .end((err, res) => {
+                expect(res).to.have.status(200);
+                const games = res.body;
+                expect(games).to.be.an("array");
+                expect(games.length).to.equal(1);
+                expect(games.every(game => game.anonymousUser._id === decodedJWT.userId)).to.be.true;
+                done();
+            });
+    });
+    it(`🔒 Can't get all games created by first anonymous user with JWT auth (GET /games?anonymous-user-id=userId)`, done => {
+        const decodedJWT = decodeJWT(firstAnonymousUserJWT);
+        chai.request(server)
+            .get(`/games?anonymous-user-id=${decodedJWT.userId}`)
+            .set({ Authorization: `Bearer ${firstAnonymousUserJWT}` })
+            .end((err, res) => {
+                expect(res).to.have.status(400);
+                expect(res.body.type).to.equal("BAD_REQUEST");
+                done();
+            });
+    });
     it(`🎲 Can't update the first game of first anonymous user with JWT auth because it's canceled (PATCH /games/:id)`, done => {
         chai.request(server)
             .patch(`/games/${firstAnonymousUserJWTFirstGame._id}`)

@@ -2,7 +2,7 @@ const { query, param, body } = require("express-validator");
 const Game = require("../controllers/Game");
 const { getGameDefaultOptions, getGameStatuses } = require("../helpers/functions/Game");
 const { defaultLimiter, gameCreationLimiter } = require("../helpers/constants/Route");
-const { basicAuth, basicAndJWTAuth } = require("../helpers/functions/Passport");
+const { basicAuth, basicAndJWTAuth, getAuthStrategyFromReq } = require("../helpers/functions/Passport");
 const { filterOutHTMLTags, removeMultipleSpacesToSingle } = require("../helpers/functions/String");
 const { getCardCategories, getCardPlayableStatuses } = require("../helpers/functions/Card");
 const gameDefaultOptions = getGameDefaultOptions();
@@ -40,12 +40,19 @@ module.exports = app => {
      * - `JWT auth`: Only games created by the user attached to token can be retrieved from this route. Works for both `anonymous` and `registered` users.
      * - `Basic auth`: All games can be retrieved.
      *
+     * @apiParam (Query String Parameters) {String} [anonymous-user-id] Filter by anonymous' user ID.<hr/>⚠️ Only available for `Basic` auth.
      * @apiParam (Query String Parameters) {String} [status] Filter by status. Multiple statuses can be specified. Each value must be separated by a `,` without space. (e.g: `preparing,playing`)
      * @apiParam (Query String Parameters) {String} [fields] Specifies which fields to include. Each value must be separated by a `,` without space. (e.g: `_id,createdAt`)
      * @apiParam (Query String Parameters) {Number{>= 1}} [limit] Limit the number of games returned.
      * @apiUse GameResponse
      */
     app.get("/games", basicAndJWTAuth, defaultLimiter, [
+        query("anonymous-user-id")
+            .optional()
+            .custom((value, { req }) => getAuthStrategyFromReq(req) === "basic" ? Promise.resolve() : Promise.reject(new Error()))
+            .withMessage(`You can't use "anonymous-user-id" query string parameter with JWT auth. Use Basic auth instead.`)
+            .isString().withMessage("Must be a valid string.")
+            .notEmpty().withMessage("Can't be empty."),
         query("status")
             .optional()
             .isString().withMessage("Must be a valid string.")

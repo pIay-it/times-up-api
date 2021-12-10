@@ -1,5 +1,6 @@
 const { sampleSize } = require("lodash");
 const { flatten } = require("mongo-dot-notation");
+const camelCase = require("camelcase");
 const Game = require("../db/models/Game");
 const Card = require("./Card");
 const { checkRequestData } = require("../helpers/functions/Express");
@@ -109,8 +110,10 @@ exports.getFindSearch = (query, req) => {
     const searchFieldsFromQuery = ["status"];
     const search = {};
     for (const field in query) {
-        if (searchFieldsFromQuery.includes(field)) {
-            search[field] = query[field];
+        if (field === "anonymous-user-id") {
+            search.anonymousUser = { _id: query[field] };
+        } else if (searchFieldsFromQuery.includes(field)) {
+            search[camelCase(field)] = query[field];
         }
     }
     if (getAuthStrategyFromReq(req) === "JWT") {
