@@ -40,16 +40,23 @@ module.exports = app => {
      * - `JWT auth`: Only games created by the user attached to token can be retrieved from this route. Works for both `anonymous` and `registered` users.
      * - `Basic auth`: All games can be retrieved.
      *
-     * @apiParam (Query String Parameters) {String} [fields] Specifies which fields to include. Each value must be separated by a `,` without space. (e.g: `label,createdAt`)
+     * @apiParam (Query String Parameters) {String} [status] Filter by status. Multiple statuses can be specified. Each value must be separated by a `,` without space. (e.g: `preparing,playing`)
+     * @apiParam (Query String Parameters) {String} [fields] Specifies which fields to include. Each value must be separated by a `,` without space. (e.g: `_id,createdAt`)
      * @apiParam (Query String Parameters) {Number{>= 1}} [limit] Limit the number of games returned.
      * @apiUse GameResponse
      */
     app.get("/games", basicAndJWTAuth, defaultLimiter, [
+        query("status")
+            .optional()
+            .isString().withMessage("Must be a valid string.")
+            .custom(value => (/^[a-z-]+(?:,[a-z-]+)*$/u).test(value) ? Promise.resolve() : Promise.reject(new Error()))
+            .withMessage("Each value must be separated by a `,` without space. (e.g: `preparing,playing`)")
+            .customSanitizer(statuses => ({ $in: statuses.split(",") })),
         query("fields")
             .optional()
             .isString().withMessage("Must be a valid string.")
             .custom(value => (/^[A-z]+(?:,[A-z]+)*$/u).test(value) ? Promise.resolve() : Promise.reject(new Error()))
-            .withMessage("Each value must be separated by a `,` without space. (e.g: `label,createdAt`)"),
+            .withMessage("Each value must be separated by a `,` without space. (e.g: `_id,createdAt`)"),
         query("limit")
             .optional()
             .isInt({ min: 1 }).withMessage("Must be a valid number greater than 0.")

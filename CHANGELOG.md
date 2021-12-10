@@ -1,5 +1,17 @@
 # ⏳ LIST OF CHANGES FOR TIME'S UP API
 
+## 0.2.0 (2021-12-??)
+
+### 🚀 New features
+
+* [#24](https://github.com/pIay-it/times-up-api/issues/24) - Get games by status.
+
+### 📦 Packages
+
+* `mongoose` updated to version `6.1.1`.
+
+---
+
 ## 0.1.2 (2021-12-09)
 
 ### 🚀 New features

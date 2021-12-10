@@ -213,6 +213,19 @@ describe("A - Game CRUD [Create / Read / Update / Delete]", () => {
                 done();
             });
     });
+    it(`🎲 Gets all games with status "preparing" with basic auth (GET /games?status=preparing)`, done => {
+        chai.request(server)
+            .get("/games?status=preparing")
+            .auth(Config.app.routes.auth.basic.username, Config.app.routes.auth.basic.password)
+            .end((err, res) => {
+                expect(res).to.have.status(200);
+                const games = res.body;
+                expect(games).to.be.an("array");
+                expect(games.length).to.equal(2);
+                expect(games.every(game => game.status === "preparing")).to.be.true;
+                done();
+            });
+    });
     it(`🎲 Gets only one game from the two with basic auth (GET /games?limit=1)`, done => {
         chai.request(server)
             .get("/games?limit=1")
@@ -394,6 +407,20 @@ describe("A - Game CRUD [Create / Read / Update / Delete]", () => {
                 expect(res).to.have.status(200);
                 const game = res.body;
                 expect(game.status).to.equal("canceled");
+                done();
+            });
+    });
+    it(`🎲 Gets all games with status "preparing" with basic auth (GET /games?status=playing,canceled)`, done => {
+        chai.request(server)
+            .get("/games?status=playing,canceled")
+            .auth(Config.app.routes.auth.basic.username, Config.app.routes.auth.basic.password)
+            .end((err, res) => {
+                expect(res).to.have.status(200);
+                const games = res.body;
+                const expectedGameStatuses = ["playing", "canceled"];
+                expect(games).to.be.an("array");
+                expect(games.length).to.equal(2);
+                expect(games.every(game => expectedGameStatuses.includes(game.status))).to.be.true;
                 done();
             });
     });

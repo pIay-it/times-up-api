@@ -106,7 +106,13 @@ exports.create = async(data, options = {}) => {
 };
 
 exports.getFindSearch = (query, req) => {
+    const searchFieldsFromQuery = ["status"];
     const search = {};
+    for (const field in query) {
+        if (searchFieldsFromQuery.includes(field)) {
+            search[field] = query[field];
+        }
+    }
     if (getAuthStrategyFromReq(req) === "JWT") {
         if (req.user.mode === "anonymous") {
             search.anonymousUser = { _id: req.user._id };
