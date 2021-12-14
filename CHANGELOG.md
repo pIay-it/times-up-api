@@ -13,14 +13,18 @@
 ### 🛣 Routes
 
 * [#25](https://github.com/pIay-it/times-up-api/issues/25) - Route `POST /games/:id/cards/shuffle` for shuffling cards.
+* [#26](https://github.com/pIay-it/times-up-api/issues/26) - Route `GET /images` for retrieving images from multiple APIs.
 
 ### 📚 Documentation
 
 * [#25](https://github.com/pIay-it/times-up-api/issues/25) - Route `POST /games/:id/cards/shuffle` in APIDoc.
+* [#26](https://github.com/pIay-it/times-up-api/issues/26) - Route `GET /images` in APIDoc.
 
 ### 📦 Packages
 
+* `axios` installed with version `0.24.0`.
 * `camelcase` installed with version `6.2.1`.
+* `qs` installed with version `6.10.2`.
 * `@sentry/node` updated to version `6.16.1`.
 * `@sentry/tracing` updated to version `6.16.1`.
 * `body-parser` updated to version `1.19.1`.
