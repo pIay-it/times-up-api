@@ -7,10 +7,15 @@
 * [#24](https://github.com/pIay-it/times-up-api/issues/24) - Get games by status.
 * [#27](https://github.com/pIay-it/times-up-api/issues/27) - Get games in specific order.
 * [#28](https://github.com/pIay-it/times-up-api/issues/28) - Get games by `anonymousUser`.
+* [#29](https://github.com/pIay-it/times-up-api/issues/29) - Get cards in specific order.
 
 ### 📦 Packages
 
 * `camelcase` installed with version `6.2.1`.
+* `@sentry/node` updated to version `6.16.1`.
+* `@sentry/tracing` updated to version `6.16.1`.
+* `body-parser` updated to version `1.19.1`.
+* `express-validator` updated to version `6.14.1`.
 * `mongoose` updated to version `6.1.1`.
 
 ---

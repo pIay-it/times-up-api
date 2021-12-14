@@ -88,7 +88,10 @@ exports.getFindSearch = query => {
 
 exports.getFindProjection = query => query.fields ? query.fields.split(",") : null;
 
-exports.getFindOptions = options => ({ limit: options.limit });
+exports.getFindOptions = options => ({
+    limit: options.limit,
+    sort: { [options["sort-by"]]: options.order },
+});
 
 exports.getCards = async(req, res) => {
     try {
