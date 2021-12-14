@@ -245,4 +245,20 @@ module.exports = app => {
             .isFloat({ gt: 0 }).withMessage("Must be a valid number greater than 0. Floats are allowed.")
             .toFloat(),
     ], Game.postPlay);
+
+    /**
+     * @api {POST} /games/:id/cards/shuffle G] Shuffle cards
+     * @apiName ShuffleGameCards
+     * @apiGroup Games 🎲
+     * @apiDescription Shuffle all game's cards. Useful when a turn must be replayed for example. Game's status must be `preparing` or `playing`.
+     * @apiPermission JWT
+     * @apiPermission Basic
+     *
+     * @apiParam (Route Parameters) {ObjectId} id Game's ID.
+     * @apiUse GameResponse
+     */
+    app.post("/games/:id/cards/shuffle", basicAndJWTAuth, defaultLimiter, [
+        param("id")
+            .isMongoId().withMessage("Must be a valid ObjectId."),
+    ], Game.postShuffleCards);
 };

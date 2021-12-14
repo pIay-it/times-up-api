@@ -5,9 +5,18 @@
 ### 🚀 New features
 
 * [#24](https://github.com/pIay-it/times-up-api/issues/24) - Get games by status.
+* [#25](https://github.com/pIay-it/times-up-api/issues/25) - Route for shuffling cards.
 * [#27](https://github.com/pIay-it/times-up-api/issues/27) - Get games in specific order.
 * [#28](https://github.com/pIay-it/times-up-api/issues/28) - Get games by `anonymousUser`.
 * [#29](https://github.com/pIay-it/times-up-api/issues/29) - Get cards in specific order.
+
+### 🛣 Routes
+
+* [#25](https://github.com/pIay-it/times-up-api/issues/25) - Route `POST /games/:id/cards/shuffle` for shuffling cards.
+
+### 📚 Documentation
+
+* [#25](https://github.com/pIay-it/times-up-api/issues/25) - Route `POST /games/:id/cards/shuffle` in APIDoc.
 
 ### 📦 Packages
 

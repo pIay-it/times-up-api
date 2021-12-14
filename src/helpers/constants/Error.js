@@ -59,4 +59,8 @@ exports.errorMetadata = {
         code: 15,
         HTTPCode: 400,
     },
+    CANT_SHUFFLE_CARDS: {
+        code: 16,
+        HTTPCode: 400,
+    },
 };

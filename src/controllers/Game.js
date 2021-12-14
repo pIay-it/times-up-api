@@ -264,3 +264,27 @@ exports.postPlay = async(req, res) => {
         sendError(res, e);
     }
 };
+
+exports.shuffleCards = async(gameId, user) => {
+    const game = await this.findOne({ _id: gameId });
+    const allowedGameStatuses = ["preparing", "playing"];
+    if (!game) {
+        throw generateError("GAME_NOT_FOUND", `Game not found with ID "${gameId}".`);
+    }
+    game.checkBelongsToUserFromReq({ user });
+    if (!allowedGameStatuses.includes(game.status)) {
+        throw generateError("CANT_SHUFFLE_CARDS", `Game with ID "${gameId}" doesn't have the "preparing" or "playing" status, cards shuffles are not allowed.`);
+    }
+    game.shuffleCards(false);
+    return game.save();
+};
+
+exports.postShuffleCards = async(req, res) => {
+    try {
+        const { params } = checkRequestData(req);
+        const game = await this.shuffleCards(params.id, req.user);
+        return res.status(200).json(game);
+    } catch (e) {
+        sendError(res, e);
+    }
+};
