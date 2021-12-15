@@ -28,8 +28,6 @@ jobs:
               run: npm run lint
             - name: Run tests ☑️
               run: npm test
-              env:
-                FLICKR_API_KEY: ${{ secrets.FLICKR_API_KEY }}
             - name: Generate documentation 📚
               run: npm run doc
             - name: Send Slack notification ✉️
