@@ -1,5 +1,6 @@
 const { sampleSize } = require("lodash");
 const { flatten } = require("mongo-dot-notation");
+const camelCase = require("camelcase");
 const Game = require("../db/models/Game");
 const Card = require("./Card");
 const { checkRequestData } = require("../helpers/functions/Express");
@@ -106,7 +107,15 @@ exports.create = async(data, options = {}) => {
 };
 
 exports.getFindSearch = (query, req) => {
+    const searchFieldsFromQuery = ["status"];
     const search = {};
+    for (const field in query) {
+        if (field === "anonymous-user-id") {
+            search.anonymousUser = { _id: query[field] };
+        } else if (searchFieldsFromQuery.includes(field)) {
+            search[camelCase(field)] = query[field];
+        }
+    }
     if (getAuthStrategyFromReq(req) === "JWT") {
         if (req.user.mode === "anonymous") {
             search.anonymousUser = { _id: req.user._id };
@@ -119,7 +128,10 @@ exports.getFindSearch = (query, req) => {
 
 exports.getFindProjection = query => query.fields ? query.fields.split(",") : null;
 
-exports.getFindOptions = options => ({ limit: options.limit });
+exports.getFindOptions = options => ({
+    limit: options.limit,
+    sort: { [options["sort-by"]]: options.order },
+});
 
 exports.getGames = async(req, res) => {
     try {
@@ -247,6 +259,30 @@ exports.postPlay = async(req, res) => {
     try {
         const { params, body } = checkRequestData(req);
         const game = await this.play({ ...body, gameId: params.id }, req.user);
+        return res.status(200).json(game);
+    } catch (e) {
+        sendError(res, e);
+    }
+};
+
+exports.shuffleCards = async(gameId, user) => {
+    const game = await this.findOne({ _id: gameId });
+    const allowedGameStatuses = ["preparing", "playing"];
+    if (!game) {
+        throw generateError("GAME_NOT_FOUND", `Game not found with ID "${gameId}".`);
+    }
+    game.checkBelongsToUserFromReq({ user });
+    if (!allowedGameStatuses.includes(game.status)) {
+        throw generateError("CANT_SHUFFLE_CARDS", `Game with ID "${gameId}" doesn't have the "preparing" or "playing" status, cards shuffles are not allowed.`);
+    }
+    game.shuffleCards(false);
+    return game.save();
+};
+
+exports.postShuffleCards = async(req, res) => {
+    try {
+        const { params } = checkRequestData(req);
+        const game = await this.shuffleCards(params.id, req.user);
         return res.status(200).json(game);
     } catch (e) {
         sendError(res, e);

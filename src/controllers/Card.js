@@ -76,10 +76,10 @@ exports.findOneAndDelete = async search => {
 };
 
 exports.getFindSearch = query => {
-    const searchFields = ["label", "categories", "difficulty"];
+    const searchFieldsFromQuery = ["label", "categories", "difficulty"];
     const search = {};
     for (const field in query) {
-        if (searchFields.includes(field)) {
+        if (searchFieldsFromQuery.includes(field)) {
             search[field] = query[field];
         }
     }
@@ -88,7 +88,10 @@ exports.getFindSearch = query => {
 
 exports.getFindProjection = query => query.fields ? query.fields.split(",") : null;
 
-exports.getFindOptions = options => ({ limit: options.limit });
+exports.getFindOptions = options => ({
+    limit: options.limit,
+    sort: { [options["sort-by"]]: options.order },
+});
 
 exports.getCards = async(req, res) => {
     try {

@@ -95,6 +95,12 @@ Complete list of all enabled rules is available in the **[.eslintrc.js file](htt
         - _**Not required - Default value**: `root`_
     * **BASIC_PASSWORD**: Password for basic authentication.
         - _**Not required - Default value**: `secret`_
+    * **WIKIPEDIA_API_SEARCH_IMAGES_URL**: Wikipedia APIs URL for retrieving images from articles.
+       - _**Not required - Default value**: `https://fr.wikipedia.org/w/rest.php/v1/search/title`_
+    * **FLICKR_API_SEARCH_IMAGES_URL**: Flickr APIs URL for retrieving images from galleries and collections.
+       - _**Not required - Default value**: `https://www.flickr.com/services/rest`_
+    * **FLICKR_API_KEY**: Flickr APIs key.
+        - _**⚠️ Required for Flickr API calls**_
     * **IS_SENTRY_ENABLED**: Set to `true` if you want errors to be caught and sent to Sentry.
         - _**Not required**_
     * **SENTRY_PROJECT_ID**: Sentry project's ID. 

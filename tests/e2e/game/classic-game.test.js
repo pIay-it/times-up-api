@@ -391,6 +391,38 @@ describe("B - Classic game with 4 players", () => {
                 done();
             });
     });
+    it(`❓  Can't make a game play into an unknown game (POST /games/:id/cards/shuffle)`, done => {
+        chai.request(server)
+            // eslint-disable-next-line new-cap
+            .post(`/games/${mongoose.Types.ObjectId()}/cards/shuffle`)
+            .set({ Authorization: `Bearer ${firstAnonymousUserJWT}` })
+            .end((err, res) => {
+                expect(res).to.have.status(404);
+                expect(res.body.type).to.equal("GAME_NOT_FOUND");
+                done();
+            });
+    });
+    it(`🃏 Can't shuffle cards if the game doesnn't belong to user (POST /games/:id/cards/shuffle)`, done => {
+        chai.request(server)
+            .post(`/games/${game._id}/cards/shuffle`)
+            .set({ Authorization: `Bearer ${secondAnonymousUserJWT}` })
+            .end((err, res) => {
+                expect(res).to.have.status(401);
+                expect(res.body.type).to.equal("GAME_DOESNT_BELONG_TO_USER");
+                done();
+            });
+    });
+    it(`🃏 Shuffle cards (POST /games/:id/cards/shuffle)`, done => {
+        chai.request(server)
+            .post(`/games/${game._id}/cards/shuffle`)
+            .set({ Authorization: `Bearer ${firstAnonymousUserJWT}` })
+            .end((err, res) => {
+                expect(res).to.have.status(200);
+                game = res.body;
+                cards = game.cards;
+                done();
+            });
+    });
     it(`🎲 First speaker of the second team made his team guess 10 cards and skipped 2 (POST /games/:id/play)`, done => {
         chai.request(server)
             .post(`/games/${game._id}/play`)
@@ -609,6 +641,16 @@ describe("B - Classic game with 4 players", () => {
             .end((err, res) => {
                 expect(res).to.have.status(400);
                 expect(res.body.type).to.equal("GAME_NOT_PLAYING");
+                done();
+            });
+    });
+    it(`🃏 Can't shuffle cards if the game is over (POST /games/:id/cards/shuffle)`, done => {
+        chai.request(server)
+            .post(`/games/${game._id}/cards/shuffle`)
+            .set({ Authorization: `Bearer ${firstAnonymousUserJWT}` })
+            .end((err, res) => {
+                expect(res).to.have.status(400);
+                expect(res.body.type).to.equal("CANT_SHUFFLE_CARDS");
                 done();
             });
     });

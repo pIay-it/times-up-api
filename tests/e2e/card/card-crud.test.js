@@ -218,6 +218,17 @@ describe("A - Card CRUD [Create / Read / Update / Delete]", () => {
                 done();
             });
     });
+    it(`🃏 Get cards sorted in descending creation date (GET /cards?sort-by=createdAt&order=desc)`, done => {
+        chai.request(server)
+            .get("/cards?sort-by=createdAt&order=desc")
+            .end((err, res) => {
+                expect(res).to.have.status(200);
+                const cards = res.body;
+                expect(cards).to.be.an("array");
+                expect(cards[0]._id).to.equal(pacManCard._id);
+                done();
+            });
+    });
     it(`❓  Can't get an unknown card (GET /cards/:id)`, done => {
         chai.request(server)
             // eslint-disable-next-line new-cap

@@ -2,8 +2,11 @@ const { param, body, query } = require("express-validator");
 const Card = require("../controllers/Card");
 const { defaultLimiter } = require("../helpers/constants/Route");
 const { basicAuth } = require("../helpers/functions/Passport");
-const { getCardCategories } = require("../helpers/functions/Card");
+const { getCardCategories, getCardSortByFields } = require("../helpers/functions/Card");
 const { toTitleCase, filterOutHTMLTags, removeMultipleSpacesToSingle } = require("../helpers/functions/String");
+const { getQueryStringOrderValues, getMongooseOrderValueFromQueryString } = require("../helpers/functions/Express");
+const queryStringOrderValues = getQueryStringOrderValues();
+const cardSortByFields = getCardSortByFields();
 
 module.exports = app => {
     /**
@@ -30,6 +33,8 @@ module.exports = app => {
      * @apiParam (Query String Parameters) {Number{>= 1 && <= 3}} [difficulty] Filter by difficulty.
      * @apiParam (Query String Parameters) {String} [fields] Specifies which fields to include. Each value must be separated by a `,` without space. (e.g: `label,createdAt`)
      * @apiParam (Query String Parameters) {Number{>= 1}} [limit] Limit the number of cards returned.
+     * @apiParam (Query String Parameters) {String} [order-by="createdAt"] Specifies which field will sort the results. Possibilities are `createdAt` or `updatedAt`.
+     * @apiParam (Query String Parameters) {String} [sort="asc"] Specifies to sort results in `ascending` or `descending` way. Possibilities are `ascending` (`asc`) or `descending` (`desc`).
      * @apiUse CardResponse
      */
     app.get("/cards", defaultLimiter, [
@@ -63,6 +68,15 @@ module.exports = app => {
             .optional()
             .isInt({ min: 1 }).withMessage("Must be a valid number greater than 0.")
             .toInt(),
+        query("sort-by")
+            .default("createdAt")
+            .isString().withMessage("Must be a valid string.")
+            .isIn(cardSortByFields).withMessage(`Must be one of the following values: ${cardSortByFields}.`),
+        query("order")
+            .default("asc")
+            .isString().withMessage("Must be a valid string.")
+            .isIn(queryStringOrderValues).withMessage(`Must be one of the following values: ${queryStringOrderValues}.`)
+            .customSanitizer(order => getMongooseOrderValueFromQueryString(order)),
     ], Card.getCards);
 
     /**

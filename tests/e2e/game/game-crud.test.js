@@ -213,7 +213,20 @@ describe("A - Game CRUD [Create / Read / Update / Delete]", () => {
                 done();
             });
     });
-    it(`🎲 Gets only one game from the two with basic auth (GET /games?limit=1)`, done => {
+    it(`🎲 Gets all games with status "preparing" with basic auth (GET /games?status=preparing)`, done => {
+        chai.request(server)
+            .get("/games?status=preparing")
+            .auth(Config.app.routes.auth.basic.username, Config.app.routes.auth.basic.password)
+            .end((err, res) => {
+                expect(res).to.have.status(200);
+                const games = res.body;
+                expect(games).to.be.an("array");
+                expect(games.length).to.equal(2);
+                expect(games.every(game => game.status === "preparing")).to.be.true;
+                done();
+            });
+    });
+    it(`🎲 Gets only one game with basic auth (GET /games?limit=1)`, done => {
         chai.request(server)
             .get("/games?limit=1")
             .auth(Config.app.routes.auth.basic.username, Config.app.routes.auth.basic.password)
@@ -222,6 +235,20 @@ describe("A - Game CRUD [Create / Read / Update / Delete]", () => {
                 const games = res.body;
                 expect(games).to.be.an("array");
                 expect(games.length).to.equal(1);
+                expect(games[0]._id).to.equal(basicFirstGame._id);
+                done();
+            });
+    });
+    it(`🎲 Gets all available games sorted in descending creation date with basic auth (GET /games?sort-by=createdAt&order=desc)`, done => {
+        chai.request(server)
+            .get("/games?sort-by=createdAt&order=desc")
+            .auth(Config.app.routes.auth.basic.username, Config.app.routes.auth.basic.password)
+            .end((err, res) => {
+                expect(res).to.have.status(200);
+                const games = res.body;
+                expect(games).to.be.an("array");
+                expect(games.length).to.equal(4);
+                expect(games[0]._id).to.equal(secondAnonymousUserJWTFirstGame._id);
                 done();
             });
     });
@@ -394,6 +421,45 @@ describe("A - Game CRUD [Create / Read / Update / Delete]", () => {
                 expect(res).to.have.status(200);
                 const game = res.body;
                 expect(game.status).to.equal("canceled");
+                done();
+            });
+    });
+    it(`🎲 Gets all games with status "preparing" with basic auth (GET /games?status=playing,canceled)`, done => {
+        chai.request(server)
+            .get("/games?status=playing,canceled")
+            .auth(Config.app.routes.auth.basic.username, Config.app.routes.auth.basic.password)
+            .end((err, res) => {
+                expect(res).to.have.status(200);
+                const games = res.body;
+                const expectedGameStatuses = ["playing", "canceled"];
+                expect(games).to.be.an("array");
+                expect(games.length).to.equal(2);
+                expect(games.every(game => expectedGameStatuses.includes(game.status))).to.be.true;
+                done();
+            });
+    });
+    it(`🎲 Gets all games created by first anonymous user with basic auth (GET /games?anonymous-user-id=userId)`, done => {
+        const decodedJWT = decodeJWT(firstAnonymousUserJWT);
+        chai.request(server)
+            .get(`/games?anonymous-user-id=${decodedJWT.userId}`)
+            .auth(Config.app.routes.auth.basic.username, Config.app.routes.auth.basic.password)
+            .end((err, res) => {
+                expect(res).to.have.status(200);
+                const games = res.body;
+                expect(games).to.be.an("array");
+                expect(games.length).to.equal(1);
+                expect(games.every(game => game.anonymousUser._id === decodedJWT.userId)).to.be.true;
+                done();
+            });
+    });
+    it(`🔒 Can't get all games created by first anonymous user with JWT auth (GET /games?anonymous-user-id=userId)`, done => {
+        const decodedJWT = decodeJWT(firstAnonymousUserJWT);
+        chai.request(server)
+            .get(`/games?anonymous-user-id=${decodedJWT.userId}`)
+            .set({ Authorization: `Bearer ${firstAnonymousUserJWT}` })
+            .end((err, res) => {
+                expect(res).to.have.status(400);
+                expect(res.body.type).to.equal("BAD_REQUEST");
                 done();
             });
     });
