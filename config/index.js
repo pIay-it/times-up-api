@@ -28,6 +28,13 @@ const Config = {
         projectID: process.env.SENTRY_PROJECT_ID,
         key: process.env.SENTRY_KEY,
     },
+    APIs: {
+        wikipedia: { searchImagesURL: process.env.WIKIPEDIA_API_SEARCH_IMAGES_URL || "https://fr.wikipedia.org/w/rest.php/v1/search/title" },
+        flickr: {
+            key: process.env.FLICKR_API_KEY,
+            searchImagesURL: process.env.FLICKR_API_SEARCH_IMAGES_URL || "https://www.flickr.com/services/rest",
+        },
+    },
 };
 
 if (Config.app.nodeEnv === "test") {

@@ -1,5 +1,38 @@
 # ⏳ LIST OF CHANGES FOR TIME'S UP API
 
+## 0.2.0 (2021-12-15)
+
+### 🚀 New features
+
+* [#24](https://github.com/pIay-it/times-up-api/issues/24) - Get games by status.
+* [#25](https://github.com/pIay-it/times-up-api/issues/25) - Route for shuffling cards.
+* [#27](https://github.com/pIay-it/times-up-api/issues/27) - Get games in specific order.
+* [#28](https://github.com/pIay-it/times-up-api/issues/28) - Get games by `anonymousUser`.
+* [#29](https://github.com/pIay-it/times-up-api/issues/29) - Get cards in specific order.
+
+### 🛣 Routes
+
+* [#25](https://github.com/pIay-it/times-up-api/issues/25) - Route `POST /games/:id/cards/shuffle` for shuffling cards.
+* [#26](https://github.com/pIay-it/times-up-api/issues/26) - Route `GET /images` for retrieving images from multiple APIs.
+
+### 📚 Documentation
+
+* [#25](https://github.com/pIay-it/times-up-api/issues/25) - Route `POST /games/:id/cards/shuffle` in APIDoc.
+* [#26](https://github.com/pIay-it/times-up-api/issues/26) - Route `GET /images` in APIDoc.
+
+### 📦 Packages
+
+* `axios` installed with version `0.24.0`.
+* `camelcase` installed with version `6.2.1`.
+* `qs` installed with version `6.10.2`.
+* `@sentry/node` updated to version `6.16.1`.
+* `@sentry/tracing` updated to version `6.16.1`.
+* `body-parser` updated to version `1.19.1`.
+* `express-validator` updated to version `6.14.1`.
+* `mongoose` updated to version `6.1.2`.
+
+---
+
 ## 0.1.2 (2021-12-09)
 
 ### 🚀 New features

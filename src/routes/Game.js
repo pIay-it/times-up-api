@@ -1,12 +1,15 @@
 const { query, param, body } = require("express-validator");
 const Game = require("../controllers/Game");
-const { getGameDefaultOptions, getGameStatuses } = require("../helpers/functions/Game");
+const { getGameDefaultOptions, getGameStatuses, getGameSortByFields } = require("../helpers/functions/Game");
 const { defaultLimiter, gameCreationLimiter } = require("../helpers/constants/Route");
-const { basicAuth, basicAndJWTAuth } = require("../helpers/functions/Passport");
+const { basicAuth, basicAndJWTAuth, getAuthStrategyFromReq } = require("../helpers/functions/Passport");
+const { getQueryStringOrderValues, getMongooseOrderValueFromQueryString } = require("../helpers/functions/Express");
 const { filterOutHTMLTags, removeMultipleSpacesToSingle } = require("../helpers/functions/String");
 const { getCardCategories, getCardPlayableStatuses } = require("../helpers/functions/Card");
 const gameDefaultOptions = getGameDefaultOptions();
 const gameStatuses = getGameStatuses();
+const gameSortByFields = getGameSortByFields();
+const queryStringOrderValues = getQueryStringOrderValues();
 const cardCategories = getCardCategories();
 const cardPlayableStatuses = getCardPlayableStatuses();
 
@@ -40,20 +43,45 @@ module.exports = app => {
      * - `JWT auth`: Only games created by the user attached to token can be retrieved from this route. Works for both `anonymous` and `registered` users.
      * - `Basic auth`: All games can be retrieved.
      *
-     * @apiParam (Query String Parameters) {String} [fields] Specifies which fields to include. Each value must be separated by a `,` without space. (e.g: `label,createdAt`)
+     * @apiParam (Query String Parameters) {String} [anonymous-user-id] Filter by anonymous' user ID.<hr/>⚠️ Only available for `Basic` auth.
+     * @apiParam (Query String Parameters) {String} [status] Filter by status. Multiple statuses can be specified. Each value must be separated by a `,` without space. (e.g: `preparing,playing`)
+     * @apiParam (Query String Parameters) {String} [fields] Specifies which fields to include. Each value must be separated by a `,` without space. (e.g: `_id,createdAt`)
      * @apiParam (Query String Parameters) {Number{>= 1}} [limit] Limit the number of games returned.
+     * @apiParam (Query String Parameters) {String} [order-by="createdAt"] Specifies which field will sort the results. Possibilities are `createdAt` or `updatedAt`.
+     * @apiParam (Query String Parameters) {String} [sort="asc"] Specifies to sort results in `ascending` or `descending` way. Possibilities are `ascending` (`asc`) or `descending` (`desc`).
      * @apiUse GameResponse
      */
     app.get("/games", basicAndJWTAuth, defaultLimiter, [
+        query("anonymous-user-id")
+            .optional()
+            .custom((value, { req }) => getAuthStrategyFromReq(req) === "basic" ? Promise.resolve() : Promise.reject(new Error()))
+            .withMessage(`You can't use "anonymous-user-id" query string parameter with JWT auth. Use Basic auth instead.`)
+            .isString().withMessage("Must be a valid string.")
+            .notEmpty().withMessage("Can't be empty."),
+        query("status")
+            .optional()
+            .isString().withMessage("Must be a valid string.")
+            .custom(value => (/^[a-z-]+(?:,[a-z-]+)*$/u).test(value) ? Promise.resolve() : Promise.reject(new Error()))
+            .withMessage("Each value must be separated by a `,` without space. (e.g: `preparing,playing`)")
+            .customSanitizer(statuses => ({ $in: statuses.split(",") })),
         query("fields")
             .optional()
             .isString().withMessage("Must be a valid string.")
             .custom(value => (/^[A-z]+(?:,[A-z]+)*$/u).test(value) ? Promise.resolve() : Promise.reject(new Error()))
-            .withMessage("Each value must be separated by a `,` without space. (e.g: `label,createdAt`)"),
+            .withMessage("Each value must be separated by a `,` without space. (e.g: `_id,createdAt`)"),
         query("limit")
             .optional()
             .isInt({ min: 1 }).withMessage("Must be a valid number greater than 0.")
             .toInt(),
+        query("sort-by")
+            .default("createdAt")
+            .isString().withMessage("Must be a valid string.")
+            .isIn(gameSortByFields).withMessage(`Must be one of the following values: ${gameSortByFields}.`),
+        query("order")
+            .default("asc")
+            .isString().withMessage("Must be a valid string.")
+            .isIn(queryStringOrderValues).withMessage(`Must be one of the following values: ${queryStringOrderValues}.`)
+            .customSanitizer(order => getMongooseOrderValueFromQueryString(order)),
     ], Game.getGames);
 
     /**
@@ -217,4 +245,20 @@ module.exports = app => {
             .isFloat({ gt: 0 }).withMessage("Must be a valid number greater than 0. Floats are allowed.")
             .toFloat(),
     ], Game.postPlay);
+
+    /**
+     * @api {POST} /games/:id/cards/shuffle G] Shuffle cards
+     * @apiName ShuffleGameCards
+     * @apiGroup Games 🎲
+     * @apiDescription Shuffle all game's cards. Useful when a turn must be replayed for example. Game's status must be `preparing` or `playing`.
+     * @apiPermission JWT
+     * @apiPermission Basic
+     *
+     * @apiParam (Route Parameters) {ObjectId} id Game's ID.
+     * @apiUse GameResponse
+     */
+    app.post("/games/:id/cards/shuffle", basicAndJWTAuth, defaultLimiter, [
+        param("id")
+            .isMongoId().withMessage("Must be a valid ObjectId."),
+    ], Game.postShuffleCards);
 };
