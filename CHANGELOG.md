@@ -1,6 +1,6 @@
 # ⏳ LIST OF CHANGES FOR TIME'S UP API
 
-## 0.2.0 (2021-12-??)
+## 0.2.0 (2021-12-15)
 
 ### 🚀 New features
 
@@ -29,7 +29,7 @@
 * `@sentry/tracing` updated to version `6.16.1`.
 * `body-parser` updated to version `1.19.1`.
 * `express-validator` updated to version `6.14.1`.
-* `mongoose` updated to version `6.1.1`.
+* `mongoose` updated to version `6.1.2`.
 
 ---
 
