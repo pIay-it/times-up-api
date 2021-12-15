@@ -23,6 +23,8 @@ jobs:
               run: npm run lint
             - name: Run tests ☑️
               run: npm test
+              env:
+                FLICKR_API_KEY: ${{ secrets.FLICKR_API_KEY }}
             - name: Install SSH Key 🔑
               uses: shimataro/ssh-key-action@v2
               with:
