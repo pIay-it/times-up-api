@@ -21,10 +21,29 @@ const AnonymousUserSchema = new Schema({
     versionKey: false,
 });
 
+const GameTeamSchema = new Schema({
+    name: {
+        type: String,
+        required: true,
+    },
+    color: {
+        type: String,
+        required: true,
+    },
+}, {
+    _id: false,
+    timestamps: false,
+    versionKey: false,
+});
+
 const GameSchema = new Schema({
     players: {
         type: [PlayerSchema],
         required: true,
+    },
+    teams: {
+        type: [GameTeamSchema],
+        default: undefined,
     },
     cards: {
         type: [CardSchema],

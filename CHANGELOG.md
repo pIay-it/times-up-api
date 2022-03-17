@@ -1,5 +1,32 @@
 # ⏳ LIST OF CHANGES FOR TIME'S UP API
 
+## 0.3.0 (2022-03-??)
+
+### 🚀 New features
+
+* [#35](https://github.com/pIay-it/times-up-api/issues/35) - Team's color.
+
+### 📦 Packages
+
+* `@sentry/node` updated to version `6.18.2`.
+* `@sentry/tracing` updated to version `6.18.2`.
+* `apidoc` updated to version `0.50.5`.
+* `axios` updated to version `0.26.1`.
+* `body-parser` updated to version `1.19.2`.
+* `camelcase` updated to version `6.3.0`.
+* `chai` updated to version `4.3.6`.
+* `dotenv` updated to version `16.0.0`.
+* `eslint` updated to version `8.11.0`.
+* `express` updated to version `4.17.3`.
+* `express-rate-limit` updated to version `6.3.0`.
+* `mocha` updated to version `9.2.2`.
+* `mongoose` updated to version `6.2.2`.
+* `passport` updated to version `0.5.2`.
+* `qs` updated to version `6.10.3`.
+* `xss` updated to version `1.0.11`.
+
+---
+
 ## 0.2.0 (2021-12-15)
 
 ### 🚀 New features

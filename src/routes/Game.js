@@ -18,6 +18,9 @@ module.exports = app => {
      * @apiDefine GameResponse
      * @apiSuccess {ObjectID} _id Game's ID.
      * @apiSuccess {Player[]} players Game's players. (_See: [Classes - Player](#player-structure)_)
+     * @apiSuccess {Object[]} [teams] Game's different unique teams. Set only if `options.players.areTeam` is `true`.
+     * @apiSuccess {String} teams.name Game's team name.
+     * @apiSuccess {String} teams.color Game's team color in hexadecimal value.
      * @apiSuccess {Card[]} cards Game's cards. (_See: [Classes - Card](#card-structure)_)
      * @apiSuccess {Object} [anonymousUser] Game's anonymous creator data. Set only if game was created by an anonymous user.
      * @apiSuccess {String} anonymousUser._id Game's anonymous creator ID. Prefixed by `anonymous-`.

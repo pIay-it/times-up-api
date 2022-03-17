@@ -55,8 +55,8 @@ exports.getRandomCards = async() => {
     return sample;
 };
 
-exports.fillPlayersTeam = players => players.forEach((player, index) => {
-    player.team = index % 2 ? "Rouge" : "Bleue";
+exports.fillPlayersTeam = (players, teams) => players.forEach((player, index) => {
+    player.team = index % 2 ? teams[0].name : teams[1].name;
 });
 
 exports.checkUniqueNameInPlayers = players => {
@@ -66,10 +66,20 @@ exports.checkUniqueNameInPlayers = players => {
     }
 };
 
-exports.checkAndFillPlayersData = players => {
+exports.checkAndFillPlayersData = (players, teams) => {
     this.checkUniqueNameInPlayers(players);
-    this.fillPlayersTeam(players);
+    this.fillPlayersTeam(players, teams);
 };
+
+exports.getGameTeams = () => [
+    {
+        name: "Jaune",
+        color: "#FFE41D",
+    }, {
+        name: "Bleue",
+        color: "#07ABFF",
+    },
+];
 
 exports.checkAndFillUserData = async data => {
     const { user } = data;
@@ -87,7 +97,8 @@ exports.checkAndFillUserData = async data => {
 
 exports.checkAndFillDataBeforeCreate = async data => {
     await this.checkAndFillUserData(data);
-    this.checkAndFillPlayersData(data.players);
+    data.teams = this.getGameTeams();
+    this.checkAndFillPlayersData(data.players, data.teams);
     data.cards = await this.getRandomCards(data.options);
 };
 

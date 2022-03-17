@@ -172,7 +172,7 @@ describe("B - Classic game with 4 players", () => {
                 expect(game.queue[0].players).to.be.an("array");
                 expect(game.queue[0].players[0]._id).to.equal(game.players[2]._id);
                 expect(game.queue[0].players[1]._id).to.equal(game.players[0]._id);
-                expect(game.queue[1].team).to.equal("Rouge");
+                expect(game.queue[1].team).to.equal("Jaune");
                 expect(game.queue[1].players.length).to.equal(2);
                 expect(game.queue[1].players[0]._id).to.equal(game.players[3]._id);
                 expect(game.queue[1].players[1]._id).to.equal(game.players[1]._id);
@@ -228,7 +228,7 @@ describe("B - Classic game with 4 players", () => {
                 expect(game.round).to.equal(1);
                 expect(game.turn).to.equal(3);
                 expect(game.speaker._id).to.equal(game.players[2]._id);
-                expect(game.queue[0].team).to.equal("Rouge");
+                expect(game.queue[0].team).to.equal("Jaune");
                 expect(game.queue[0].players.length).to.equal(2);
                 expect(game.queue[0].players).to.be.an("array");
                 expect(game.queue[0].players[0]._id).to.equal(game.players[3]._id);
@@ -276,7 +276,7 @@ describe("B - Classic game with 4 players", () => {
                 expect(game.queue[0].players).to.be.an("array");
                 expect(game.queue[0].players[0]._id).to.equal(game.players[0]._id);
                 expect(game.queue[0].players[1]._id).to.equal(game.players[2]._id);
-                expect(game.queue[1].team).to.equal("Rouge");
+                expect(game.queue[1].team).to.equal("Jaune");
                 expect(game.queue[1].players.length).to.equal(2);
                 expect(game.queue[1].players[0]._id).to.equal(game.players[1]._id);
                 expect(game.queue[1].players[1]._id).to.equal(game.players[3]._id);
@@ -315,7 +315,7 @@ describe("B - Classic game with 4 players", () => {
                 expect(game.round).to.equal(1);
                 expect(game.turn).to.equal(5);
                 expect(game.speaker._id).to.equal(game.players[0]._id);
-                expect(game.queue[0].team).to.equal("Rouge");
+                expect(game.queue[0].team).to.equal("Jaune");
                 expect(game.queue[0].players.length).to.equal(2);
                 expect(game.queue[0].players).to.be.an("array");
                 expect(game.queue[0].players[0]._id).to.equal(game.players[1]._id);
@@ -367,7 +367,7 @@ describe("B - Classic game with 4 players", () => {
                 expect(game.queue[0].players).to.be.an("array");
                 expect(game.queue[0].players[0]._id).to.equal(game.players[2]._id);
                 expect(game.queue[0].players[1]._id).to.equal(game.players[0]._id);
-                expect(game.queue[1].team).to.equal("Rouge");
+                expect(game.queue[1].team).to.equal("Jaune");
                 expect(game.queue[1].players.length).to.equal(2);
                 expect(game.queue[1].players[0]._id).to.equal(game.players[3]._id);
                 expect(game.queue[1].players[1]._id).to.equal(game.players[1]._id);
@@ -379,7 +379,7 @@ describe("B - Classic game with 4 players", () => {
                 expect(game.summary.rounds[0].scores.length).to.equal(2);
                 expect(game.summary.rounds[0].scores[0].team).to.equal("Bleue");
                 expect(game.summary.rounds[0].scores[0].score).to.equal(24);
-                expect(game.summary.rounds[0].scores[1].team).to.equal("Rouge");
+                expect(game.summary.rounds[0].scores[1].team).to.equal("Jaune");
                 expect(game.summary.rounds[0].scores[1].score).to.equal(16);
                 expect(game.history).to.be.an("array");
                 expect(game.history.length).to.equal(5);
@@ -530,7 +530,7 @@ describe("B - Classic game with 4 players", () => {
                 expect(game.summary.rounds[1].scores.length).to.equal(2);
                 expect(game.summary.rounds[1].scores[0].team).to.equal("Bleue");
                 expect(game.summary.rounds[1].scores[0].score).to.equal(12);
-                expect(game.summary.rounds[1].scores[1].team).to.equal("Rouge");
+                expect(game.summary.rounds[1].scores[1].team).to.equal("Jaune");
                 expect(game.summary.rounds[1].scores[1].score).to.equal(28);
                 expect(game.history.length).to.equal(8);
                 expect(game.history[0].round).to.equal(2);
@@ -601,14 +601,14 @@ describe("B - Classic game with 4 players", () => {
                 expect(game.summary.rounds[2].scores.length).to.equal(2);
                 expect(game.summary.rounds[2].scores[0].team).to.equal("Bleue");
                 expect(game.summary.rounds[2].scores[0].score).to.equal(40);
-                expect(game.summary.rounds[2].scores[1].team).to.equal("Rouge");
+                expect(game.summary.rounds[2].scores[1].team).to.equal("Jaune");
                 expect(game.summary.rounds[2].scores[1].score).to.equal(0);
                 expect(game.summary.finalScores).to.exist;
                 expect(game.summary.finalScores).to.be.an("array");
                 expect(game.summary.finalScores.length).to.equal(2);
                 expect(game.summary.finalScores[0].team).to.equal("Bleue");
                 expect(game.summary.finalScores[0].score).to.equal(40 + 12 + 24);
-                expect(game.summary.finalScores[1].team).to.equal("Rouge");
+                expect(game.summary.finalScores[1].team).to.equal("Jaune");
                 expect(game.summary.finalScores[1].score).to.equal(28 + 16);
                 expect(game.summary.winners).to.exist;
                 expect(game.summary.winners.teams).to.be.an("array");
