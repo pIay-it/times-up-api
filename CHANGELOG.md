@@ -6,7 +6,7 @@
 
 * [#35](https://github.com/pIay-it/times-up-api/issues/35) - Team's color.
 
-### 📦 Packages
+### 📦 Packages 
 
 * `@sentry/node` updated to version `6.18.2`.
 * `@sentry/tracing` updated to version `6.18.2`.
