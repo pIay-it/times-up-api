@@ -77,6 +77,57 @@ describe("B - Classic game with 4 players", () => {
                 done();
             });
     });
+    it(`❓  Can't update game players if one player ID is unknown (PATCH /games/:id/players)`, done => {
+        chai.request(server)
+            .patch(`/games/${game._id}/players`)
+            .set({ Authorization: `Bearer ${firstAnonymousUserJWT}` })
+            // eslint-disable-next-line new-cap
+            .send({ players: [{ _id: mongoose.Types.ObjectId(), team: "Jaune" }] })
+            .end((err, res) => {
+                expect(res).to.have.status(404);
+                expect(res.body.type).to.equal("PLAYER_NOT_FOUND");
+                done();
+            });
+    });
+    it(`❓  Can't update game player's team if the desired team is unknown (PATCH /games/:id/players)`, done => {
+        chai.request(server)
+            .patch(`/games/${game._id}/players`)
+            .set({ Authorization: `Bearer ${firstAnonymousUserJWT}` })
+            // eslint-disable-next-line new-cap
+            .send({ players: [{ _id: game.players[0]._id, team: "Verte" }] })
+            .end((err, res) => {
+                expect(res).to.have.status(404);
+                expect(res.body.type).to.equal("UNKNOWN_TEAM");
+                done();
+            });
+    });
+    it(`👤 Update the first player's team to "Jaune" (PATCH /games/:id/players)`, done => {
+        chai.request(server)
+            .patch(`/games/${game._id}/players`)
+            .set({ Authorization: `Bearer ${firstAnonymousUserJWT}` })
+            // eslint-disable-next-line new-cap
+            .send({ players: [{ _id: game.players[0]._id, team: "Jaune" }] })
+            .end((err, res) => {
+                expect(res).to.have.status(200);
+                game = res.body;
+                expect(game.players[0].team).to.equal("Jaune");
+                done();
+            });
+    });
+    it(`👤 Update back the first player's team to "Jaune" (PATCH /games/:id/players)`, done => {
+        chai.request(server)
+            .patch(`/games/${game._id}/players`)
+            .auth(Config.app.routes.auth.basic.username, Config.app.routes.auth.basic.password)
+            // eslint-disable-next-line new-cap
+            .send({ players: [{ _id: game.players[0]._id, team: "Bleue" }, { _id: game.players[1]._id, team: "Jaune" }] })
+            .end((err, res) => {
+                expect(res).to.have.status(200);
+                game = res.body;
+                expect(game.players[0].team).to.equal("Bleue");
+                expect(game.players[1].team).to.equal("Jaune");
+                done();
+            });
+    });
     it(`🎲 Update the game to "playing" status (PATCH /games/:id)`, done => {
         chai.request(server)
             .patch(`/games/${game._id}`)
@@ -86,6 +137,30 @@ describe("B - Classic game with 4 players", () => {
                 expect(res).to.have.status(200);
                 game = res.body;
                 expect(game.status).to.equal("playing");
+                done();
+            });
+    });
+    it(`❓  Can't update game players into an unknown game (PATCH /games/:id/players)`, done => {
+        chai.request(server)
+            // eslint-disable-next-line new-cap
+            .patch(`/games/${mongoose.Types.ObjectId()}/players`)
+            .send({ players: [{ _id: game.players[0]._id, team: "Jaune" }] })
+            .set({ Authorization: `Bearer ${firstAnonymousUserJWT}` })
+            .end((err, res) => {
+                expect(res).to.have.status(404);
+                expect(res.body.type).to.equal("GAME_NOT_FOUND");
+                done();
+            });
+    });
+    it(`🎲 Can't update game players if status is not "preparing" (PATCH /games/:id/players)`, done => {
+        chai.request(server)
+            .patch(`/games/${game._id}/players`)
+            .set({ Authorization: `Bearer ${firstAnonymousUserJWT}` })
+            // eslint-disable-next-line new-cap
+            .send({ players: [{ _id: game.players[0]._id, team: "Jaune" }] })
+            .end((err, res) => {
+                expect(res).to.have.status(400);
+                expect(res.body.type).to.equal("CANT_UPDATE_PLAYERS");
                 done();
             });
     });

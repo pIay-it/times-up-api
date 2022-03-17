@@ -299,3 +299,35 @@ exports.postShuffleCards = async(req, res) => {
         sendError(res, e);
     }
 };
+
+exports.updateGamePlayers = async(gameId, user, data) => {
+    const game = await this.findOne({ _id: gameId });
+    if (!game) {
+        throw generateError("GAME_NOT_FOUND", `Game not found with ID "${gameId}".`);
+    }
+    if (game.status !== "preparing") {
+        throw generateError("CANT_UPDATE_PLAYERS", `Game with ID "${gameId}" doesn't have the "preparing" status, players can't be updated.`);
+    }
+    game.checkBelongsToUserFromReq({ user });
+    for (const player of data.players) {
+        const gamePlayer = game.getPlayerById(player._id);
+        if (!gamePlayer) {
+            throw generateError("PLAYER_NOT_FOUND", `Player with ID ${player._id} not found for game with ID "${gameId}".`);
+        } else if (player.team && !game.teams.find(({ name }) => name === player.team)) {
+            throw generateError("UNKNOWN_TEAM", `Team "${player.team}" is unknown for game with ID "${gameId}".`);
+        }
+        gamePlayer.set({ ...gamePlayer, ...player });
+    }
+    // TODO CHECK GAME COMPOSITION
+    return game.save();
+};
+
+exports.patchGamePlayers = async(req, res) => {
+    try {
+        const { params, body } = checkRequestData(req);
+        const game = await this.updateGamePlayers(params.id, req.user, body);
+        return res.status(200).json(game);
+    } catch (e) {
+        sendError(res, e);
+    }
+};

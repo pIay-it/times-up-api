@@ -134,6 +134,10 @@ function getCardById(id) {
     return getGameCardById(this, id);
 }
 
+function getPlayerById(id) {
+    return this.players.find(({ _id }) => _id.toString() === id.toString());
+}
+
 function getPlayersByTeam(team) {
     return this.players.filter(player => player.team === team);
 }
@@ -235,6 +239,7 @@ function setFinalSummary() {
 
 GameSchema.methods.checkBelongsToUserFromReq = checkBelongsToUserFromReq;
 GameSchema.methods.getCardById = getCardById;
+GameSchema.methods.getPlayerById = getPlayerById;
 GameSchema.methods.getPlayersByTeam = getPlayersByTeam;
 GameSchema.methods.rollQueue = rollQueue;
 GameSchema.methods.setNextSpeakerAndRollQueue = setNextSpeakerAndRollQueue;

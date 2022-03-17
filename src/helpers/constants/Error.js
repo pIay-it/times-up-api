@@ -63,4 +63,16 @@ exports.errorMetadata = {
         code: 16,
         HTTPCode: 400,
     },
+    CANT_UPDATE_PLAYERS: {
+        code: 17,
+        HTTPCode: 400,
+    },
+    PLAYER_NOT_FOUND: {
+        code: 18,
+        HTTPCode: 404,
+    },
+    UNKNOWN_TEAM: {
+        code: 19,
+        HTTPCode: 404,
+    },
 };
