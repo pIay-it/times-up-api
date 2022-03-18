@@ -18,6 +18,9 @@ module.exports = app => {
      * @apiDefine GameResponse
      * @apiSuccess {ObjectID} _id Game's ID.
      * @apiSuccess {Player[]} players Game's players. (_See: [Classes - Player](#player-structure)_)
+     * @apiSuccess {Object[]} [teams] Game's different unique teams. Set only if `options.players.areTeam` is `true`.
+     * @apiSuccess {String} teams.name Game's team name.
+     * @apiSuccess {String} teams.color Game's team color in hexadecimal value.
      * @apiSuccess {Card[]} cards Game's cards. (_See: [Classes - Card](#card-structure)_)
      * @apiSuccess {Object} [anonymousUser] Game's anonymous creator data. Set only if game was created by an anonymous user.
      * @apiSuccess {String} anonymousUser._id Game's anonymous creator ID. Prefixed by `anonymous-`.
@@ -234,7 +237,8 @@ module.exports = app => {
         body("cards")
             .optional()
             .isArray().withMessage("Must be a valid array.")
-            .notEmpty().withMessage(`Can't be empty.`),
+            .notEmpty().withMessage(`Can't be empty.`)
+            .toArray(),
         body("cards.*._id")
             .isMongoId().withMessage("Must be a valid ObjectId."),
         body("cards.*.status")
@@ -261,4 +265,35 @@ module.exports = app => {
         param("id")
             .isMongoId().withMessage("Must be a valid ObjectId."),
     ], Game.postShuffleCards);
+
+    /**
+     * @api {PATCH} /games/:id/players H] Update game's players
+     * @apiName UpdateGamePlayers
+     * @apiGroup Games 🎲
+     * @apiDescription Update player(s) metadata before the game starts. Game's status must be `preparing`.
+     * @apiPermission JWT
+     * @apiPermission Basic
+     *
+     * @apiParam (Route Parameters) {ObjectId} id Game's ID.
+     * @apiParam (Request Body Parameters) {Object[]} [players]
+     * @apiParam (Request Body Parameters) {String} players._id Player's _id.
+     * @apiParam (Request Body Parameters) {String} [players.team] New team for the player.
+     * @apiUse GameResponse
+     */
+    app.patch("/games/:id/players", basicAndJWTAuth, defaultLimiter, [
+        param("id")
+            .isMongoId().withMessage("Must be a valid ObjectId."),
+        body("players")
+            .optional()
+            .isArray().withMessage("Must be a valid array.")
+            .notEmpty().withMessage(`Can't be empty.`)
+            .toArray(),
+        body("players.*._id")
+            .isMongoId().withMessage("Must be a valid ObjectId."),
+        body("players.*.team")
+            .optional()
+            .isString().withMessage("Must be a valid string.")
+            .trim()
+            .notEmpty().withMessage(`Can't be empty.`),
+    ], Game.patchGamePlayers);
 };

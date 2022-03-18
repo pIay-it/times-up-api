@@ -55,8 +55,8 @@ exports.getRandomCards = async() => {
     return sample;
 };
 
-exports.fillPlayersTeam = players => players.forEach((player, index) => {
-    player.team = index % 2 ? "Rouge" : "Bleue";
+exports.fillPlayersTeam = (players, teams) => players.forEach((player, index) => {
+    player.team = index % 2 ? teams[0].name : teams[1].name;
 });
 
 exports.checkUniqueNameInPlayers = players => {
@@ -66,10 +66,20 @@ exports.checkUniqueNameInPlayers = players => {
     }
 };
 
-exports.checkAndFillPlayersData = players => {
+exports.checkAndFillPlayersData = (players, teams) => {
     this.checkUniqueNameInPlayers(players);
-    this.fillPlayersTeam(players);
+    this.fillPlayersTeam(players, teams);
 };
+
+exports.getGameTeams = () => [
+    {
+        name: "Jaune",
+        color: "#FFE41D",
+    }, {
+        name: "Bleue",
+        color: "#07ABFF",
+    },
+];
 
 exports.checkAndFillUserData = async data => {
     const { user } = data;
@@ -87,7 +97,8 @@ exports.checkAndFillUserData = async data => {
 
 exports.checkAndFillDataBeforeCreate = async data => {
     await this.checkAndFillUserData(data);
-    this.checkAndFillPlayersData(data.players);
+    data.teams = this.getGameTeams();
+    this.checkAndFillPlayersData(data.players, data.teams);
     data.cards = await this.getRandomCards(data.options);
 };
 
@@ -283,6 +294,38 @@ exports.postShuffleCards = async(req, res) => {
     try {
         const { params } = checkRequestData(req);
         const game = await this.shuffleCards(params.id, req.user);
+        return res.status(200).json(game);
+    } catch (e) {
+        sendError(res, e);
+    }
+};
+
+exports.updateGamePlayers = async(gameId, user, data) => {
+    const game = await this.findOne({ _id: gameId });
+    if (!game) {
+        throw generateError("GAME_NOT_FOUND", `Game not found with ID "${gameId}".`);
+    }
+    if (game.status !== "preparing") {
+        throw generateError("CANT_UPDATE_PLAYERS", `Game with ID "${gameId}" doesn't have the "preparing" status, players can't be updated.`);
+    }
+    game.checkBelongsToUserFromReq({ user });
+    for (const player of data.players) {
+        const gamePlayer = game.getPlayerById(player._id);
+        if (!gamePlayer) {
+            throw generateError("PLAYER_NOT_FOUND", `Player with ID ${player._id} not found for game with ID "${gameId}".`);
+        } else if (player.team && !game.teams.find(({ name }) => name === player.team)) {
+            throw generateError("UNKNOWN_TEAM", `Team "${player.team}" is unknown for game with ID "${gameId}".`);
+        }
+        gamePlayer.set({ ...gamePlayer, ...player });
+    }
+    game.checkTeamsSize();
+    return game.save();
+};
+
+exports.patchGamePlayers = async(req, res) => {
+    try {
+        const { params, body } = checkRequestData(req);
+        const game = await this.updateGamePlayers(params.id, req.user, body);
         return res.status(200).json(game);
     } catch (e) {
         sendError(res, e);

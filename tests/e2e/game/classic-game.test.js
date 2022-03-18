@@ -77,6 +77,70 @@ describe("B - Classic game with 4 players", () => {
                 done();
             });
     });
+    it(`❓  Can't update game players if one player ID is unknown (PATCH /games/:id/players)`, done => {
+        chai.request(server)
+            .patch(`/games/${game._id}/players`)
+            .set({ Authorization: `Bearer ${firstAnonymousUserJWT}` })
+            // eslint-disable-next-line new-cap
+            .send({ players: [{ _id: mongoose.Types.ObjectId(), team: "Jaune" }] })
+            .end((err, res) => {
+                expect(res).to.have.status(404);
+                expect(res.body.type).to.equal("PLAYER_NOT_FOUND");
+                done();
+            });
+    });
+    it(`❓  Can't update game player's team if the desired team is unknown (PATCH /games/:id/players)`, done => {
+        chai.request(server)
+            .patch(`/games/${game._id}/players`)
+            .set({ Authorization: `Bearer ${firstAnonymousUserJWT}` })
+            // eslint-disable-next-line new-cap
+            .send({ players: [{ _id: game.players[0]._id, team: "Verte" }] })
+            .end((err, res) => {
+                expect(res).to.have.status(404);
+                expect(res.body.type).to.equal("UNKNOWN_TEAM");
+                done();
+            });
+    });
+    it(`👤 Can't update only the first player's team to "Jaune", because the "Blue" team will be too small (PATCH /games/:id/players)`, done => {
+        chai.request(server)
+            .patch(`/games/${game._id}/players`)
+            .set({ Authorization: `Bearer ${firstAnonymousUserJWT}` })
+            // eslint-disable-next-line new-cap
+            .send({ players: [{ _id: game.players[0]._id, team: "Jaune" }] })
+            .end((err, res) => {
+                expect(res).to.have.status(400);
+                expect(res.body.type).to.equal("TEAM_TOO_SMALL");
+                done();
+            });
+    });
+    it(`👤 Update the first player's team to "Jaune" and second player's team to "Bleue" (PATCH /games/:id/players)`, done => {
+        chai.request(server)
+            .patch(`/games/${game._id}/players`)
+            .set({ Authorization: `Bearer ${firstAnonymousUserJWT}` })
+            // eslint-disable-next-line new-cap
+            .send({ players: [{ _id: game.players[0]._id, team: "Jaune" }, { _id: game.players[1]._id, team: "Bleue" }] })
+            .end((err, res) => {
+                expect(res).to.have.status(200);
+                game = res.body;
+                expect(game.players[0].team).to.equal("Jaune");
+                expect(game.players[1].team).to.equal("Bleue");
+                done();
+            });
+    });
+    it(`👤 Update back the first player's team to "Jaune" (PATCH /games/:id/players)`, done => {
+        chai.request(server)
+            .patch(`/games/${game._id}/players`)
+            .auth(Config.app.routes.auth.basic.username, Config.app.routes.auth.basic.password)
+            // eslint-disable-next-line new-cap
+            .send({ players: [{ _id: game.players[0]._id, team: "Bleue" }, { _id: game.players[1]._id, team: "Jaune" }] })
+            .end((err, res) => {
+                expect(res).to.have.status(200);
+                game = res.body;
+                expect(game.players[0].team).to.equal("Bleue");
+                expect(game.players[1].team).to.equal("Jaune");
+                done();
+            });
+    });
     it(`🎲 Update the game to "playing" status (PATCH /games/:id)`, done => {
         chai.request(server)
             .patch(`/games/${game._id}`)
@@ -86,6 +150,30 @@ describe("B - Classic game with 4 players", () => {
                 expect(res).to.have.status(200);
                 game = res.body;
                 expect(game.status).to.equal("playing");
+                done();
+            });
+    });
+    it(`❓  Can't update game players into an unknown game (PATCH /games/:id/players)`, done => {
+        chai.request(server)
+            // eslint-disable-next-line new-cap
+            .patch(`/games/${mongoose.Types.ObjectId()}/players`)
+            .send({ players: [{ _id: game.players[0]._id, team: "Jaune" }] })
+            .set({ Authorization: `Bearer ${firstAnonymousUserJWT}` })
+            .end((err, res) => {
+                expect(res).to.have.status(404);
+                expect(res.body.type).to.equal("GAME_NOT_FOUND");
+                done();
+            });
+    });
+    it(`🎲 Can't update game players if status is not "preparing" (PATCH /games/:id/players)`, done => {
+        chai.request(server)
+            .patch(`/games/${game._id}/players`)
+            .set({ Authorization: `Bearer ${firstAnonymousUserJWT}` })
+            // eslint-disable-next-line new-cap
+            .send({ players: [{ _id: game.players[0]._id, team: "Jaune" }] })
+            .end((err, res) => {
+                expect(res).to.have.status(400);
+                expect(res.body.type).to.equal("CANT_UPDATE_PLAYERS");
                 done();
             });
     });
@@ -172,7 +260,7 @@ describe("B - Classic game with 4 players", () => {
                 expect(game.queue[0].players).to.be.an("array");
                 expect(game.queue[0].players[0]._id).to.equal(game.players[2]._id);
                 expect(game.queue[0].players[1]._id).to.equal(game.players[0]._id);
-                expect(game.queue[1].team).to.equal("Rouge");
+                expect(game.queue[1].team).to.equal("Jaune");
                 expect(game.queue[1].players.length).to.equal(2);
                 expect(game.queue[1].players[0]._id).to.equal(game.players[3]._id);
                 expect(game.queue[1].players[1]._id).to.equal(game.players[1]._id);
@@ -228,7 +316,7 @@ describe("B - Classic game with 4 players", () => {
                 expect(game.round).to.equal(1);
                 expect(game.turn).to.equal(3);
                 expect(game.speaker._id).to.equal(game.players[2]._id);
-                expect(game.queue[0].team).to.equal("Rouge");
+                expect(game.queue[0].team).to.equal("Jaune");
                 expect(game.queue[0].players.length).to.equal(2);
                 expect(game.queue[0].players).to.be.an("array");
                 expect(game.queue[0].players[0]._id).to.equal(game.players[3]._id);
@@ -276,7 +364,7 @@ describe("B - Classic game with 4 players", () => {
                 expect(game.queue[0].players).to.be.an("array");
                 expect(game.queue[0].players[0]._id).to.equal(game.players[0]._id);
                 expect(game.queue[0].players[1]._id).to.equal(game.players[2]._id);
-                expect(game.queue[1].team).to.equal("Rouge");
+                expect(game.queue[1].team).to.equal("Jaune");
                 expect(game.queue[1].players.length).to.equal(2);
                 expect(game.queue[1].players[0]._id).to.equal(game.players[1]._id);
                 expect(game.queue[1].players[1]._id).to.equal(game.players[3]._id);
@@ -315,7 +403,7 @@ describe("B - Classic game with 4 players", () => {
                 expect(game.round).to.equal(1);
                 expect(game.turn).to.equal(5);
                 expect(game.speaker._id).to.equal(game.players[0]._id);
-                expect(game.queue[0].team).to.equal("Rouge");
+                expect(game.queue[0].team).to.equal("Jaune");
                 expect(game.queue[0].players.length).to.equal(2);
                 expect(game.queue[0].players).to.be.an("array");
                 expect(game.queue[0].players[0]._id).to.equal(game.players[1]._id);
@@ -367,7 +455,7 @@ describe("B - Classic game with 4 players", () => {
                 expect(game.queue[0].players).to.be.an("array");
                 expect(game.queue[0].players[0]._id).to.equal(game.players[2]._id);
                 expect(game.queue[0].players[1]._id).to.equal(game.players[0]._id);
-                expect(game.queue[1].team).to.equal("Rouge");
+                expect(game.queue[1].team).to.equal("Jaune");
                 expect(game.queue[1].players.length).to.equal(2);
                 expect(game.queue[1].players[0]._id).to.equal(game.players[3]._id);
                 expect(game.queue[1].players[1]._id).to.equal(game.players[1]._id);
@@ -379,7 +467,7 @@ describe("B - Classic game with 4 players", () => {
                 expect(game.summary.rounds[0].scores.length).to.equal(2);
                 expect(game.summary.rounds[0].scores[0].team).to.equal("Bleue");
                 expect(game.summary.rounds[0].scores[0].score).to.equal(24);
-                expect(game.summary.rounds[0].scores[1].team).to.equal("Rouge");
+                expect(game.summary.rounds[0].scores[1].team).to.equal("Jaune");
                 expect(game.summary.rounds[0].scores[1].score).to.equal(16);
                 expect(game.history).to.be.an("array");
                 expect(game.history.length).to.equal(5);
@@ -530,7 +618,7 @@ describe("B - Classic game with 4 players", () => {
                 expect(game.summary.rounds[1].scores.length).to.equal(2);
                 expect(game.summary.rounds[1].scores[0].team).to.equal("Bleue");
                 expect(game.summary.rounds[1].scores[0].score).to.equal(12);
-                expect(game.summary.rounds[1].scores[1].team).to.equal("Rouge");
+                expect(game.summary.rounds[1].scores[1].team).to.equal("Jaune");
                 expect(game.summary.rounds[1].scores[1].score).to.equal(28);
                 expect(game.history.length).to.equal(8);
                 expect(game.history[0].round).to.equal(2);
@@ -601,14 +689,14 @@ describe("B - Classic game with 4 players", () => {
                 expect(game.summary.rounds[2].scores.length).to.equal(2);
                 expect(game.summary.rounds[2].scores[0].team).to.equal("Bleue");
                 expect(game.summary.rounds[2].scores[0].score).to.equal(40);
-                expect(game.summary.rounds[2].scores[1].team).to.equal("Rouge");
+                expect(game.summary.rounds[2].scores[1].team).to.equal("Jaune");
                 expect(game.summary.rounds[2].scores[1].score).to.equal(0);
                 expect(game.summary.finalScores).to.exist;
                 expect(game.summary.finalScores).to.be.an("array");
                 expect(game.summary.finalScores.length).to.equal(2);
                 expect(game.summary.finalScores[0].team).to.equal("Bleue");
                 expect(game.summary.finalScores[0].score).to.equal(40 + 12 + 24);
-                expect(game.summary.finalScores[1].team).to.equal("Rouge");
+                expect(game.summary.finalScores[1].team).to.equal("Jaune");
                 expect(game.summary.finalScores[1].score).to.equal(28 + 16);
                 expect(game.summary.winners).to.exist;
                 expect(game.summary.winners.teams).to.be.an("array");

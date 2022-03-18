@@ -78,3 +78,7 @@ Description for each case below :
 |  14  |     GAME_NOT_UPDATABLE     |    400    | Game has status `canceled` or `over` and so, can't be updated by JWT user anymore.     |
 |  15  | FORBIDDEN_NEW_GAME_STATUS  |    400    | JWT users can't update a game status for `preparing` or `over`.                        |
 |  16  |     CANT_SHUFFLE_CARDS     |    400    | Game doesn't have the `preparing` or `playing` status, cards shuffles are not allowed. |
+|  17  |    CANT_UPDATE_PLAYERS     |    400    | Game doesn't have the `preparing` status, players can't be updated.                    |
+|  18  |      PLAYER_NOT_FOUND      |    404    | Player not found for game.                                                             |                                
+|  19  |        UNKNOWN_TEAM        |    404    | Team is unknown for game.                                                              |                                
+|  20  |       TEAM_TOO_SMALL       |    400    | Team is too small for game. Must be at least 2.                                        |                                
