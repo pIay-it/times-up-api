@@ -81,3 +81,4 @@ Description for each case below :
 |  17  |    CANT_UPDATE_PLAYERS     |    400    | Game doesn't have the `preparing` status, players can't be updated.                    |
 |  18  |      PLAYER_NOT_FOUND      |    404    | Player not found for game.                                                             |                                
 |  19  |        UNKNOWN_TEAM        |    404    | Team is unknown for game.                                                              |                                
+|  20  |       TEAM_TOO_SMALL       |    400    | Team is too small for game. Must be at least 2.                                        |                                

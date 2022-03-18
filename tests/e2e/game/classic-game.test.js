@@ -101,16 +101,29 @@ describe("B - Classic game with 4 players", () => {
                 done();
             });
     });
-    it(`👤 Update the first player's team to "Jaune" (PATCH /games/:id/players)`, done => {
+    it(`👤 Can't update only the first player's team to "Jaune", because the "Blue" team will be too small (PATCH /games/:id/players)`, done => {
         chai.request(server)
             .patch(`/games/${game._id}/players`)
             .set({ Authorization: `Bearer ${firstAnonymousUserJWT}` })
             // eslint-disable-next-line new-cap
             .send({ players: [{ _id: game.players[0]._id, team: "Jaune" }] })
             .end((err, res) => {
+                expect(res).to.have.status(400);
+                expect(res.body.type).to.equal("TEAM_TOO_SMALL");
+                done();
+            });
+    });
+    it(`👤 Update the first player's team to "Jaune" and second player's team to "Bleue" (PATCH /games/:id/players)`, done => {
+        chai.request(server)
+            .patch(`/games/${game._id}/players`)
+            .set({ Authorization: `Bearer ${firstAnonymousUserJWT}` })
+            // eslint-disable-next-line new-cap
+            .send({ players: [{ _id: game.players[0]._id, team: "Jaune" }, { _id: game.players[1]._id, team: "Bleue" }] })
+            .end((err, res) => {
                 expect(res).to.have.status(200);
                 game = res.body;
                 expect(game.players[0].team).to.equal("Jaune");
+                expect(game.players[1].team).to.equal("Bleue");
                 done();
             });
     });

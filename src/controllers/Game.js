@@ -318,7 +318,7 @@ exports.updateGamePlayers = async(gameId, user, data) => {
         }
         gamePlayer.set({ ...gamePlayer, ...player });
     }
-    // TODO CHECK GAME COMPOSITION
+    game.checkTeamsSize();
     return game.save();
 };
 

@@ -75,4 +75,8 @@ exports.errorMetadata = {
         code: 19,
         HTTPCode: 404,
     },
+    TEAM_TOO_SMALL: {
+        code: 20,
+        HTTPCode: 400,
+    },
 };

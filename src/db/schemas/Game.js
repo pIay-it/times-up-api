@@ -215,6 +215,15 @@ function shuffleCards(isFirstCardLocked) {
     this.set("cards", newDeck);
 }
 
+function checkTeamsSize() {
+    for (const team of this.teams) {
+        const teamPlayers = this.getPlayersByTeam(team.name);
+        if (teamPlayers.length <= 1) {
+            throw generateError("TEAM_TOO_SMALL", `Team "${team.name}" is too small (${teamPlayers.length}) for game with ID "${this._id}". Must be at least 2.`);
+        }
+    }
+}
+
 function setFinalSummary() {
     const finalScores = this.summary.rounds.reduce((acc, round) => {
         round.scores.forEach(roundScore => {
@@ -247,6 +256,7 @@ GameSchema.methods.unshiftHistoryEntry = unshiftHistoryEntry;
 GameSchema.methods.pushSummaryRound = pushSummaryRound;
 GameSchema.methods.resetCardsForNewRound = resetCardsForNewRound;
 GameSchema.methods.shuffleCards = shuffleCards;
+GameSchema.methods.checkTeamsSize = checkTeamsSize;
 GameSchema.methods.setFinalSummary = setFinalSummary;
 
 module.exports = GameSchema;

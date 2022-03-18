@@ -1,9 +1,10 @@
 # ⏳ LIST OF CHANGES FOR TIME'S UP API
 
-## 0.3.0 (2022-03-??)
+## 0.3.0 (2022-03-18)
 
 ### 🚀 New features
 
+* [#34](https://github.com/pIay-it/times-up-api/issues/34) - Route for changing player's name and team when game is preparing.
 * [#35](https://github.com/pIay-it/times-up-api/issues/35) - Team's color.
 
 ### 📦 Packages 
