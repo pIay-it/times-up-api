@@ -21,10 +21,29 @@ const AnonymousUserSchema = new Schema({
     versionKey: false,
 });
 
+const GameTeamSchema = new Schema({
+    name: {
+        type: String,
+        required: true,
+    },
+    color: {
+        type: String,
+        required: true,
+    },
+}, {
+    _id: false,
+    timestamps: false,
+    versionKey: false,
+});
+
 const GameSchema = new Schema({
     players: {
         type: [PlayerSchema],
         required: true,
+    },
+    teams: {
+        type: [GameTeamSchema],
+        default: undefined,
     },
     cards: {
         type: [CardSchema],
@@ -115,6 +134,10 @@ function getCardById(id) {
     return getGameCardById(this, id);
 }
 
+function getPlayerById(id) {
+    return this.players.find(({ _id }) => _id.toString() === id.toString());
+}
+
 function getPlayersByTeam(team) {
     return this.players.filter(player => player.team === team);
 }
@@ -192,6 +215,15 @@ function shuffleCards(isFirstCardLocked) {
     this.set("cards", newDeck);
 }
 
+function checkTeamsSize() {
+    for (const team of this.teams) {
+        const teamPlayers = this.getPlayersByTeam(team.name);
+        if (teamPlayers.length <= 1) {
+            throw generateError("TEAM_TOO_SMALL", `Team "${team.name}" is too small (${teamPlayers.length}) for game with ID "${this._id}". Must be at least 2.`);
+        }
+    }
+}
+
 function setFinalSummary() {
     const finalScores = this.summary.rounds.reduce((acc, round) => {
         round.scores.forEach(roundScore => {
@@ -216,6 +248,7 @@ function setFinalSummary() {
 
 GameSchema.methods.checkBelongsToUserFromReq = checkBelongsToUserFromReq;
 GameSchema.methods.getCardById = getCardById;
+GameSchema.methods.getPlayerById = getPlayerById;
 GameSchema.methods.getPlayersByTeam = getPlayersByTeam;
 GameSchema.methods.rollQueue = rollQueue;
 GameSchema.methods.setNextSpeakerAndRollQueue = setNextSpeakerAndRollQueue;
@@ -223,6 +256,7 @@ GameSchema.methods.unshiftHistoryEntry = unshiftHistoryEntry;
 GameSchema.methods.pushSummaryRound = pushSummaryRound;
 GameSchema.methods.resetCardsForNewRound = resetCardsForNewRound;
 GameSchema.methods.shuffleCards = shuffleCards;
+GameSchema.methods.checkTeamsSize = checkTeamsSize;
 GameSchema.methods.setFinalSummary = setFinalSummary;
 
 module.exports = GameSchema;
