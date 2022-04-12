@@ -1,5 +1,22 @@
 # ⏳ LIST OF CHANGES FOR TIME'S UP API
 
+## 0.3.1 (2022-04-12)
+
+### 🐛 Bug fixes
+
+* Can't make a game play if there is no card played.
+
+### 📦 Packages
+
+* `@sentry/node` updated to version `6.19.6`.
+* `@sentry/tracing` updated to version `6.19.6`.
+* `apidoc` updated to version `0.51.0`.
+* `body-parser` updated to version `1.20.0`.
+* `eslint` updated to version `8.13.0`.
+* `mongoose` updated to version `6.2.10`.
+
+---
+
 ## 0.3.0 (2022-03-18)
 
 ### 🚀 New features
