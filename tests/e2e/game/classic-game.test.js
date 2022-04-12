@@ -628,7 +628,34 @@ describe("B - Classic game with 4 players", () => {
                 done();
             });
     });
-    it(`🎲 First speaker of the first team made his team guess all cards in once, what a beast, game is over (POST /games/:id/play)`, done => {
+    it(`🎲 First speaker of the first team didn't play any card (POST /games/:id/play)`, done => {
+        chai.request(server)
+            .post(`/games/${game._id}/play`)
+            .set({ Authorization: `Bearer ${firstAnonymousUserJWT}` })
+            .send({})
+            .end((err, res) => {
+                expect(res).to.have.status(200);
+                game = res.body;
+                expect(game.history[0].cards).to.be.an("array");
+                expect(game.history[0].cards.length).to.equal(0);
+                expect(game.history[0].score).to.equal(0);
+                done();
+            });
+    });
+    it(`🎲 First speaker of the second team didn't play any card either (POST /games/:id/play)`, done => {
+        chai.request(server)
+            .post(`/games/${game._id}/play`)
+            .set({ Authorization: `Bearer ${firstAnonymousUserJWT}` })
+            .end((err, res) => {
+                expect(res).to.have.status(200);
+                game = res.body;
+                expect(game.history[0].cards).to.be.an("array");
+                expect(game.history[0].cards.length).to.equal(0);
+                expect(game.history[0].score).to.equal(0);
+                done();
+            });
+    });
+    it(`🎲 Second speaker of the first team made his team guess all cards in once, what a beast, game is over (POST /games/:id/play)`, done => {
         chai.request(server)
             .post(`/games/${game._id}/play`)
             .set({ Authorization: `Bearer ${firstAnonymousUserJWT}` })
@@ -680,8 +707,8 @@ describe("B - Classic game with 4 players", () => {
                 expect(res).to.have.status(200);
                 game = res.body;
                 expect(game.round).to.equal(3);
-                expect(game.turn).to.equal(1);
-                expect(game.speaker._id).to.equal(game.players[0]._id);
+                expect(game.turn).to.equal(3);
+                expect(game.speaker._id).to.equal(game.players[2]._id);
                 expect(game.status).to.equal("over");
                 expect(game.summary.rounds.length).to.equal(3);
                 expect(game.summary.rounds[2].number).to.equal(3);
@@ -703,11 +730,13 @@ describe("B - Classic game with 4 players", () => {
                 expect(game.summary.winners.teams.length).to.equal(1);
                 expect(game.summary.winners.teams[0]).to.equal("Bleue");
                 expect(game.summary.winners.players.every(({ team }) => team === "Bleue")).to.be.true;
-                expect(game.history.length).to.equal(9);
+                expect(game.history.length).to.equal(11);
                 expect(game.history[0].round).to.equal(3);
-                expect(game.history[0].turn).to.equal(1);
-                expect(game.history[0].speaker._id).to.equal(game.players[0]._id);
+                expect(game.history[0].turn).to.equal(3);
+                expect(game.history[0].speaker._id).to.equal(game.players[2]._id);
                 expect(game.history[0].score).to.equal(40);
+                expect(game.history[1].score).to.equal(0);
+                expect(game.history[2].score).to.equal(0);
                 done();
             });
     });
