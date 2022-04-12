@@ -153,13 +153,14 @@ function setNextSpeakerAndRollQueue() {
 }
 
 function unshiftHistoryEntry(play) {
+    const { cards = [] } = play;
     const newGameHistoryEntry = {
         round: this.round,
         turn: this.turn,
         speaker: this.speaker,
         guesser: this.guesser,
-        cards: play.cards,
-        score: play.cards.reduce((acc, { status }) => status === "guessed" ? acc + 1 : acc, 0),
+        cards,
+        score: cards.reduce((acc, { status }) => status === "guessed" ? acc + 1 : acc, 0),
     };
     const gameHistory = this.history ? [newGameHistoryEntry, ...this.history] : [newGameHistoryEntry];
     this.set("history", gameHistory);
