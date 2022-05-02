@@ -23,7 +23,7 @@ jobs:
               with:
                 mongodb-version: '5'
             - name: Install project dependencies 📦
-              run: npm install
+              run: npm install --skip-scripts
             - name: Check and lint code 🔍
               run: npm run lint
             - name: Run tests ☑️

@@ -32,6 +32,7 @@ exports.cardSortByFields = ["createdAt", "updatedAt"];
 
 exports.dummyCards = [
     { label: "Bill Gates", categories: ["personality"], difficulty: 2 },
+    { label: "Bill Gates", categories: ["personality"], difficulty: 2 },
     { label: "Barack Obama", categories: ["personality"], difficulty: 1 },
     { label: "Madonna", categories: ["personality"], difficulty: 2 },
     { label: "Will Smith", categories: ["personality"], difficulty: 1 },

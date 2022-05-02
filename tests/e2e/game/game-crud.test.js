@@ -72,6 +72,7 @@ describe("A - Game CRUD [Create / Read / Update / Delete]", () => {
                 expect(players[3].team).to.equal("Jaune");
                 expect(basicFirstGame.cards).to.be.an("array");
                 expect(basicFirstGame.cards.length).to.equal(40);
+                expect([...new Set(basicFirstGame.cards.map(({ label }) => label))].length).to.equal(40);
                 expect(basicFirstGame.cards.every(({ status }) => status === "to-guess")).to.be.true;
                 expect(basicFirstGame.anonymousUser).to.not.exist;
                 expect(basicFirstGame.status).to.equal("playing");

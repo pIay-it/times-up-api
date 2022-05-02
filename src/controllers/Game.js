@@ -1,4 +1,4 @@
-const { sampleSize } = require("lodash");
+const { shuffle: shuffleArray } = require("lodash");
 const { flatten } = require("mongo-dot-notation");
 const camelCase = require("camelcase");
 const Game = require("../db/models/Game");
@@ -46,18 +46,21 @@ exports.findOneAndDelete = async search => {
     return game;
 };
 
-exports.getRandomCards = async() => {
+exports.getRandomCards = async options => {
     const cards = await Card.find({}, "-createdAt -updatedAt");
-    const sample = sampleSize(cards, 40);
-    sample.forEach(card => {
-        card.set("status", "to-guess");
-    });
+    const shuffledCards = shuffleArray(cards);
+    const sample = [];
+    for (let i = 0; i < shuffledCards.length && sample.length < options.cards.count; i++) {
+        const card = shuffledCards[i];
+        if (!sample.find(({ label }) => label === card.label)) {
+            card.set("status", "to-guess");
+            sample.push(card);
+        }
+    }
     return sample;
 };
 
-exports.fillPlayersTeam = (players, teams) => players.forEach((player, index) => {
-    player.team = index % 2 ? teams[0].name : teams[1].name;
-});
+exports.fillPlayersTeam = (players, teams) => players.forEach((player, index) => (player.team = index % 2 ? teams[0].name : teams[1].name));
 
 exports.checkUniqueNameInPlayers = players => {
     const playerNameSet = [...new Set(players.map(({ name }) => name))];
