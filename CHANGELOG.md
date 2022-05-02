@@ -1,5 +1,29 @@
 # ⏳ LIST OF CHANGES FOR TIME'S UP API
 
+## 0.3.2 (2022-05-02)
+
+### 🐛 Bug fixes
+
+* No duplicate cards with the same label in a game.
+
+### 📦 Packages
+
+* `@commitlint/cli` installed with version `16.2.4`.
+* `@commitlint/config-conventional` installed with version `16.2.4`.
+* `husky` installed with version `7.0.4`.
+* `@sentry/node` updated to version `6.19.7`.
+* `@sentry/tracing` updated to version `6.19.7`.
+* `apidoc` updated to version `0.51.1`.
+* `axios` updated to version `0.27.2`.
+* `eslint` updated to version `8.14.0`.
+* `express` updated to version `4.18.1`.
+* `express-rate-limit` updated to version `6.4.0`.
+* `mocha` updated to version `10.0.0`.
+* `mongoose` updated to version `6.3.1`.
+* `nodemon` updated to version `2.0.16`.
+
+---
+
 ## 0.3.1 (2022-04-12)
 
 ### 🐛 Bug fixes
