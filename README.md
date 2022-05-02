@@ -78,9 +78,10 @@ Complete list of all enabled rules is available in the **[.eslintrc.js file](htt
 
 ## <a name="installation">🔨 Installation</a>
 
-1. Install dependencies with `npm install` (add `--production` to omit dev dependencies).
-2. Copy `.env.example` and paste it as `.env`.
-3. Replace environment values in the fresh new `.env` file if necessary (When **⚠️️ Required** is specified):
+1. `npm install`: Install dependencies (add `--production` to omit dev dependencies).
+2. `npm run prepare`: Init git hooks with `husky`.
+3. `cp .env.example .env`: Prepare your local `.env` file for step `4`.
+4. Replace environment values in the fresh new `.env` file if necessary (When **⚠️️ Required** is specified):
     * **PORT**: Which port the API must run.
         - _**Not required - Default value**: `4242`_
     * **JWT_PRIVATE_KEY**: Encryption key used for JSON Web Token.
